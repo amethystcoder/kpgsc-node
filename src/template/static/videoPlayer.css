@@ -1,0 +1,204 @@
+.gd-video{
+    background-color: black;
+    border-radius: 10px;
+    overflow: hidden;
+    resize: both;
+    width: 100%;
+    height: 100%;
+}
+.gd-video-container{
+    position: relative;
+    width:max-content;
+}
+.control-bar-container{
+    position: absolute;
+    bottom:0;
+    width:100%;
+}
+.total-video-length-cont{
+    width: 100%;
+    padding: 10px;
+    padding-top: 0;
+    box-sizing: border-box;
+}
+.total-video-length{
+    display:flex;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.63);
+    height: 5px;
+    border:hidden;
+    border-radius:20px;
+    z-index: 2;
+}
+.progressed-video-lenght{
+    display:flex;
+    z-index: 5;
+    position: absolute;
+    top: 0;
+    width: 0%;
+    background-color: white;
+    height: 5px;
+    border:hidden;
+    border-radius:20px;
+}
+.container-for-button-functions{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 5px;
+    padding-top:0;
+}
+.bar{
+    display:flex;
+}
+.play-button{
+    background-image: url(../static/icons/play-svgrepo-com.svg);
+    background-size: cover;
+    border: hidden;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    margin: 5px;
+    margin-top:0;
+}
+.volume-cont{
+    display: flex;
+    align-items: center;
+    width: max-content;
+}
+.volume-button{
+    border: hidden;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    margin: 5px;
+    margin-top:0;
+}
+.volume-full{
+    background-image: url(../static/icons/volume-max-svgrepo-com.svg);
+    background-size: cover;
+}
+input[type=range].volume-control {
+    width: 60px;
+}
+.volume-control{
+    display: none;
+}
+.volume-cont:hover>.volume-control{
+    display: inline-block;
+}
+.volume-mute{
+    background-image: url(../static/icons/volume-xmark-svgrepo-com.svg);
+    background-size: cover;
+}
+.backward-button{
+    background-image: url(../static/icons/fast-backward-svgrepo-com.svg);
+    background-size: cover;
+    border: hidden;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    margin: 5px;
+    margin-top:0;
+    align-self: flex-end;
+}
+.forward-button{
+    background-image: url(../static/icons/fast-backward-svgrepo-com.svg);
+    background-size: cover;
+    border: hidden;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    margin: 5px;
+    margin-top:0;
+    transform: rotate(180deg);
+    align-self: flex-end;
+}
+.current-time{
+    margin: 5px;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 600;
+}
+.fullscreen-button{
+    background-image: url(../static/icons/fullscreen-svgrepo-com.svg);
+    background-size: cover;
+    border: hidden;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    margin: 5px;
+    margin-top:0;
+}
+.sources-button{
+    background-image: url(../static/icons/align-left-02-svgrepo-com.svg);
+    background-size: cover;
+    border: hidden;
+    position: relative;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    margin: 5px;
+    margin-top:0;
+}
+.source-div,.playback-button{
+    font-weight: 600;
+    padding: 10px;
+    width: 240px;
+    text-align: start;
+    border: hidden;
+    border-radius: 10px;
+}
+.source-div:hover,.playback-button:hover{
+    background-color: rgb(231, 231, 231);
+}
+.options-button{
+    background-image: url(../static/icons/options-svgrepo-com.svg);
+    background-size: cover;
+    border: hidden;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    position: relative;
+    margin: 5px;
+    margin-top:0;
+}
+.sources-container,.settings-container{
+    display: none;
+    padding: 10px;
+    border: hidden;
+    border-radius:10px;
+    position: absolute;
+    top: -200px;
+    left: -200px;
+    background-color: white;
+    height: 150px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 250px;
+    box-sizing: border-box;
+}
+.options-button:hover>.settings-container{
+    display:block;
+    top: -150px;
+    left: -200px;
+}
+.playback-heading{
+    text-align: start;
+    font-weight: 600;
+}
+.sub-cont{
+    position: absolute;
+    bottom: 87px;
+    /* left: 493px; */
+    color: white;
+    font-weight: 600;
+    font-size: xx-large;
+    right: 0;
+    left: 0;
+    top: 0;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}

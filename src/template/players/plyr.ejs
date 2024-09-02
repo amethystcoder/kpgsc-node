@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.8/plyr.css">
+    <script src="https://cdn.plyr.io/3.6.8/plyr.polyfilled.js"></script>
+    <script src="https://cdn.plyr.io/3.6.8/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-core@latest/build/p2p-media-loader-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@latest/build/p2p-media-loader-hlsjs.min.js"></script>
+    <script>
+        let isHls = true
+
+        window.addEventListener("DOMContentLoaded",()=>{
+            let player = document.getElementById("video")
+            let videoPath = 'http://localhost:3000/api/hls/<%=slug%>'
+            let engine = new p2pml.hlsjs.Engine()
+            if(isHls && engine){
+                let hls = new Hls({
+                    liveSyncDurationCount: 7,
+                    loader: engine.createLoaderClass()
+                })
+                hls.loadSource(videoPath)
+                hls.attachMedia(player)
+                hls.on(Hls.Events.MANIFEST_PARSED,()=>{
+                    player.play()
+                })
+            }
+            else{
+                player.src = videoPath
+            }
+
+            const plyr = new Plyr(player)
+        })
+    </script>
+</head>
+<body>
+    <video src="http://localhost:3000/api/hls/<%=slug%>" id="video"></video>
+</body>
+</html>

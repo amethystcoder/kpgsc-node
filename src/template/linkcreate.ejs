@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../static/common_styles.css">
+        <link rel="stylesheet" href="../static/linkCU.css">
+        <title><%=title%></title>
+        <script>
+            window.addEventListener("DOMContentLoaded",(ev)=>{
+                let linkForm = document.querySelector(".main-link-form")
+                linkForm.addEventListener("submit",(ev)=>{
+                    ev.preventDefault()
+                    let formdata = new FormData(linkForm)
+                    fetch("../api/link/create",{
+                        method:"POST",
+                        body:formdata
+                    }).then(Response=>Response.json())
+                    .then(body=>{
+                        console.log(body)
+                        if(body.success){
+                            window.location.replace('../link/'+body.message[0].insertId)
+                        }
+                    })
+                    .catch(error=>{console.log(error)})
+                })
+            })
+            function convertHLS(){
+                fetch("../api/convert/hls",{
+                    method:"POST",
+                    body:formdata
+                }).then(Response=>Response.json())
+                .then(body=>{console.log(body)})
+                .catch(error=>{console.log(error)})
+            }
+        </script>
+    </head>
+    <body>
+        <div class="side-div">
+            <%- include('./sections/nav')%>
+        </div>
+        <main>
+            <%- include('./sections/header')%>
+            <form class="main-link-form glass card">
+                <h1>Create/Edit Link</h1>
+                <span>
+                    <label for="title">File Title</label>
+                    <br>
+                    <input type="text" class="light" placeholder="Enter File Title" name="title" id="title">
+                </span>
+                <br>
+                <div class="link-section">
+                    <div>
+                        <select name="link_select" id="link-select">
+                            <option value="link">Link</option>
+                            <option value="upload">Upload</option>
+                            <option value="ftp">FTP</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span>
+                            <label for="main_link">Main Link</label>
+                            <br>
+                            <input type="text" class="light" placeholder="Enter Main Link to file" name="main_link" id="main_link">
+                        </span>
+                        <br>
+                        <span>
+                            <label for="alt_link">Alternate Link</label>
+                            <br>
+                            <input type="text" class="light" placeholder="Enter File Alternate Links" name="alt_link" id="alt_link">
+                        </span>
+                    </div>
+                    <div>
+                        <label for="main_link">Upload Video File</label>
+                        <br>
+                        <input type="file" class="light" accept=".mp4" name="preview_img" id="preview_img">
+                    </div>
+                    <div></div>
+                </div>
+                <br>
+                <span>
+                    <label for="subtitles">Subtitle File</label>
+                    <br>
+                    <input type="file" class="light" accept=".srt,.ttml,.xml,.vtt" id="subtitles" name="subtitles">
+                </span>
+                <br>
+                <span>
+                    <label for="preview_img">Preview Image</label>
+                    <br>
+                    <input type="file" class="light" accept=".png,.jpg" name="preview_img" id="preview_img">
+                </span>
+                <button>Submit</button>
+            </form>
+        </main>
+    </body>
+</html>

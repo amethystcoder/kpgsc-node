@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="../static/videoPlayer.js"></script>
+    <script src="../static/adplayer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-core@latest/build/p2p-media-loader-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@latest/build/p2p-media-loader-hlsjs.min.js"></script>
+    <link rel="stylesheet" href="../static/videoPlayer.css">
+    <script>
+        let isHls = true
+        window.addEventListener("DOMContentLoaded",()=>{
+            const player = new GDPlyr("video",{sources:[
+                //{src:"https://b.kpgsc.xyz/boku.mp4",title:"My Hero Academia Episode 165"},
+                //{src:"https://e.kpgsc.xyz/index.php/s/ob4AqL1tqnX3Um1/download",title:"Solo Levelling"},
+                //{src:"https://b.kpgsc.xyz/boku.mp4",title:"My Hero Academia Episode 165"},
+                {src:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).mp4",title:"Despicable Me 4",subtitle:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).srt"},
+            ]})
+            let vastAds = [{"tag":"http://localhost:3000/advast.xml","offset":"123","type":"nonlinear"}];
+            let adplayer = new AdLoader('video',vastAds)
+        })
+    </script>
+</head>
+<body>
+    <video id="video" width="600px" height="400px" type='video/x-matroska; codecs="theora, vorbis"'></video>
+</body>
+</html>

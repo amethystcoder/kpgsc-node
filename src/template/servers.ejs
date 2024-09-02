@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./static/common_styles.css">
+    <link rel="stylesheet" href="./static/servers.css">
+    <title>Servers</title>
+    <script>
+        window.addEventListener("DOMContentLoaded",(ev)=>{
+            let serverForm = document.querySelector(".server-create")
+            serverForm.addEventListener("submit",(ev)=>{
+                ev.preventDefault()
+                let formdata = new FormData(serverForm)
+                let data = {
+                    name:formdata.get("name"),
+                    type:formdata.get("type"),
+                    domain:formdata.get("domain")
+                }
+                fetch("../api/server/create",{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    method:"POST",
+                    body:JSON.stringify(data)
+                }).then(Response=>Response.json())
+                .then(body=>{
+                    if(body.success){
+                        window.location.reload()
+                    }
+                    else{
+
+                    }
+                })
+                .catch(error=>{console.log(error)})
+            })
+        })
+        function deleteServer(id){
+            fetch("../api/server/delete/"+id,{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    method:"DELETE"
+                }).then(Response=>Response.json())
+                .then(body=>{
+                    if(body.success){
+                        window.location.reload()
+                    }
+                })
+                .catch(error=>{console.log(error)})
+        }
+        function editSpecific(id,section){
+            let value = document.getElementById(id+section).innerText
+            console.log(value)
+            fetch("../api/server/edit/"+id,{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        name:section,
+                        value:value
+                    }),
+                    method:"PATCH"
+                }).then(Response=>Response.json())
+                .then(body=>{
+                    if(body.success){
+                        window.location.reload()
+                    }
+                })
+                .catch(error=>{console.log(error)})
+        }
+        function editServer(id){}
+        //turn on or of 
+        function toggleServer(id){}
+    </script>
+</head>
+<body>
+    <div class="side-div">
+        <%- include('./sections/nav')%>
+    </div>
+    <main>
+        <%- include('./sections/header')%>
+        <div class="contains-server-list">
+            <h2>Server List</h2>
+            <table class="glassy card">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Domain</td>
+                        <td>Type</td>
+                        <td>Playbacks</td>
+                        <td>Status</td>
+                        <td>options</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% servers.forEach((server)=>{ %>
+                        <tr>
+                            <td contenteditable="true" oninput="editSpecific('<%= server.id %>','name')" id="<%= server.id %>name"><%= server.name %></td>
+                            <td contenteditable="true" oninput="editSpecific('<%= server.id %>','domain')" id="<%= server.id %>domain"><%= server.domain %></td>
+                            <td contenteditable="true" oninput="editSpecific('<%= server.id %>','type')" id="<%= server.id %>type"><%= server.type %></td>
+                            <td contenteditable="true" oninput="editSpecific('<%= server.id %>','playbacks')" id="<%= server.id %>playbacks"><%= server.playbacks %></td>
+                            <td><%= server.status %></td>
+                            <td class="bar">
+                                <svg onclick="deleteServer('<%=server.id%>')" xmlns="http://www.w3.org/2000/svg"  
+                                viewBox="0 0 30 30" width="20px" height="20px">    
+                                    <path d="M 14.984375 2.4863281 A 1.0001 1.0001 0 0 0 14 3.5 L 14 4 L 8.5 4 A 1.0001 1.0001 0 0 0 7.4863281 5 L 6 5 A 1.0001 1.0001 0 1 0 6 7 L 24 7 A 1.0001 1.0001 0 1 0 24 5 L 22.513672 5 A 1.0001 1.0001 0 0 0 21.5 4 L 16 4 L 16 3.5 A 1.0001 1.0001 0 0 0 14.984375 2.4863281 z M 6 9 L 7.7929688 24.234375 C 7.9109687 25.241375 8.7633438 26 9.7773438 26 L 20.222656 26 C 21.236656 26 22.088031 25.241375 22.207031 24.234375 L 24 9 L 6 9 z"/>
+                                </svg>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <div class="contains-server-storage"></div>
+        <form class="server-create glassy">
+            <h2>Add Server</h2>
+            <div>
+                <span>
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" class="light">
+                </span>
+                <br>
+                <span>
+                    <label for="server-id">Server_ID</label>
+                    <input type="text" name="server-id" id="server-id" class="light">
+                </span>
+                <br>
+                <span>
+                    <label for="type">Type</label>
+                    <select name="type" id="type" class="light">
+                        <option value="stream">Stream</option>
+                        <option value="hls">HLS</option>
+                    </select>
+                </span>
+                <br>
+                <span>
+                    <label for="domain">Domain</label>
+                    <input type="url" name="domain" id="domain" class="light">
+                </span>
+                <button>Submit</button>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

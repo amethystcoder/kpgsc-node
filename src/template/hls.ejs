@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/common_styles.css">
+    <link rel="stylesheet" href="../static/hls.css">
+    <title>HLS</title>
+    <script>
+        function toggleSelectAll(){
+            let checkAll = document.getElementById("check-all")
+            let checks = document.querySelectorAll(".checkBoxes")
+            for (let index = 0; index < checks.length; index++) {
+                checks[index].checked = checkAll.checked
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="side-div">
+        <%- include('./sections/nav')%>
+    </div>
+    <main>
+        <%- include('./sections/header')%>
+        <div>
+            <a href="./all">
+                <button>Converted</button>
+            </a>
+            <a href="./bulk">
+                <button>Bulk Convert</button>
+            </a>
+            <a href="./failed">
+                <button>Failed</button>
+            </a>
+            <a href="./progress">
+                <button>Progress</button>
+            </a>
+            <a href="./broken">
+                <button>Broken</button>
+            </a>
+        </div>
+        <% if(type == "all"){ %>
+            <div>
+                <h1>HLS Links</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <td><input type="checkbox" name="" id="" onchange="toggleSelectAll()"></td>
+                            <td>ID</td>
+                            <td>Title</td>
+                            <td>Server</td>
+                            <td>Status</td>
+                            <td>File Name</td>
+                            <td>Created At</td>
+                            <td>Watch</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% hlsData.forEach((hls)=>{ %>
+                            <tr>
+                                <td><input type="checkbox" name="" id="" class="checkBoxes"></td>
+                                <td><%= hls.id %></td>
+                                <td><%= hls.title %></td>
+                                <td>Main</td><!-- Will add server later after seperating duties -->
+                                <td><%= hls.status %></td>
+                                <td><%= hls.slug %></td>
+                                <td><%= hls.created_at %></td>
+                                <td class="bar"></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
+        <% if(type == "bulk"){ %>
+            <div>
+                <h1>Bulk Link Convert</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <td><input type="checkbox" name="" id="" onchange="toggleSelectAll()"></td>
+                            <td>ID</td>
+                            <td>Title</td>
+                            <td>Source</td>
+                            <td>Quality</td>
+                            <td>Views</td>
+                            <td>Status</td>
+                            <td>File Name</td>
+                            <td>Last Updated At</td>
+                            <td>Options</td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        <% } %>
+        <% if(type == "failed"){ %>
+            <div>
+                <h1>Failed Links</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <td><input type="checkbox" name="" id="" onchange="toggleSelectAll()"></td>
+                            <td>ID</td>
+                            <td>Title</td>
+                            <td>Server</td>
+                            <td>Status</td>
+                            <td>File Name</td>
+                            <td>Created At</td>
+                            <td>Watch</td> 
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        <% } %>
+        <% if(type == "progress"){ %>
+            <div>
+                <h1>Progress</h1>
+            </div>
+        <% } %>
+        <% if(type == "broken"){ %>
+            <div>
+                <h1>Broken Links</h1>
+                <table>
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        <% } %>
+    </main>
+</body>
+</html>

@@ -1,0 +1,9 @@
+.tab{
+    justify-content: space-between;
+}
+.links{
+    display: flex;
+    flex-wrap: wrap;
+    width: 95%;
+    height: max-content;
+}

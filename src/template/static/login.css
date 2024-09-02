@@ -1,0 +1,23 @@
+.side-illstr{
+    width: 50%;
+    height: 100vh;
+    background-image: url(./icons/StockCake-Tech\ Nostalgia\ Setup_1718447518.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: hidden;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.contains-inputs{
+    width: 50%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+@media screen and(max-width:500px) {
+    .side-illstr{
+        display: none;
+    }
+}

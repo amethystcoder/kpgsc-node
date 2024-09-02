@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://content.jwplatform.com/libraries/7XBRYUMN.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-core@latest/build/p2p-media-loader-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@latest/build/p2p-media-loader-hlsjs.min.js"></script>
+    <!--  --><!-- Write code to get JWPlayer Licence here -->
+    <script>jwplayer.key="AIzaSyCCd7R6tUAGAwFNlq0hV_C7GWNEZNhzxa4";</script>
+    <title></title>
+    <script>
+        let isHls = true
+        let videoPath = 'http://localhost:3000/api/hls/<%=slug%>' //depends on isHls
+        let jwConfig = {
+            file: videoPath,
+            width: 640,
+            height: 360,
+            controls:true
+        }
+        if(isHls){
+            jwConfig.type = "hls"
+            jwConfig.androidhls = true
+        }
+        window.addEventListener("DOMContentLoaded",()=>{
+            jwplayer("video").setup(jwConfig)
+        })
+    </script>
+</head>
+<body>
+    <div id="video"></div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./static/common_styles.css">
+    <link rel="stylesheet" href="./static/dashboard.css">
+    <title>GDplyr Dashboard</title>
+</head>
+<body>
+    <div class="side-div">
+        <%- include('./sections/nav')%>
+    </div>
+    <main>
+        <%- include('./sections/header')%>
+        <h2>Dashboard</h2>
+        <div class="basic-info-holder">
+            <div class="surround" style="background: linear-gradient(#e66465,#9198e5);">
+                <div class="glassy b-info-cont">
+                    <h1><%=analytics.totalLinks%></h1>
+                    <h3>Total Links</h3>
+                </div>
+            </div>
+            <div class="surround" style="background: linear-gradient(#057c0b,#8d0ac1);">
+                <div class="glassy b-info-cont">
+                    <h1><%=analytics.totalViews%></h1>
+                    <h3>Total Views</h3>
+                </div>
+            </div>
+            <div class="surround" style="background: linear-gradient(#900404,#1f5192);">
+                <div class="glassy b-info-cont">
+                    <h1><%=analytics.totalServers%></h1>
+                    <h3>Total Servers</h3>
+                </div>
+            </div>
+            <div class="surround" style="background: linear-gradient(#e0d63f,#93055f);">
+                <div class="glassy b-info-cont">
+                    <h1><%=analytics.totalDriveAccounts%></h1>
+                    <h3>GDrive Accounts</h3>
+                </div>
+            </div>
+        </div>
+        <div class="container-for-link-types">
+            <div class="contains-link-types card glassy">
+                <div><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="40px" height="40px"><path fill="#FFC107" d="M17 6L31 6 45 30 31 30z"/><path fill="#1976D2" d="M9.875 42L16.938 30 45 30 38 42z"/><path fill="#4CAF50" d="M3 30.125L9.875 42 24 18 17 6z"/></svg></div>
+                <div>
+                    <h3>GDrive</h3>
+                    <p><%=analytics.linktypes.GoogleDrive ? analytics.linktypes.GoogleDrive : 0%> <%=analytics.linktypes.GoogleDrive && analytics.linktypes.GoogleDrive > 1 ? "links" : "link"%></p>
+                </div>
+            </div>
+            <div class="contains-link-types card glassy">
+                <div>
+                    <svg width="40px" height="40px" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
+                        <g>
+                            <path d="M64,58.1485714 C99.328,58.1485714 128,86.8205714 128,122.148571 L128,122.148571 L128,128 L5.85142857,128 C2.63314286,128 0,125.366857 0,122.148571 C0,86.8205714 28.672,58.1485714 64,58.1485714 L64,58.1485714 Z" fill="#FBBB05"></path>
+                            <path d="M197.851429,64 C197.851429,99.328 169.179429,128 133.851429,128 L128,128 L128,5.85142857 C128,2.63314286 130.633143,0 133.851429,0 L133.851429,0 C169.179429,0 197.851429,28.672 197.851429,64 Z" fill="#E94335"></path>
+                            <path d="M192,197.851429 C156.672,197.851429 128,169.179429 128,133.851429 L128,133.851429 L128,128 L250.148571,128 C253.366857,128 256,130.633143 256,133.851429 L256,133.851429 C256,169.179429 227.328,197.851429 192,197.851429 L192,197.851429 Z" fill="#4285F4"></path>
+                            <path d="M58.1485714,192 C58.1485714,156.672 86.8205714,128 122.148571,128 L128,128 L128,250.148571 C128,253.366857 125.366857,256 122.148571,256 L122.148571,256 C86.8205714,256 58.1485714,227.328 58.1485714,192 Z" fill="#0F9D58"></path>
+                        </g>
+                    </svg>
+                </div>
+                <div>
+                    <h3>GPhotos</h3>
+                    <p><%=analytics.linktypes.GooglePhotos ? analytics.linktypes.GooglePhotos : 0%> <%=analytics.linktypes.GooglePhotos && analytics.linktypes.GooglePhotos > 1 ? "links" : "link"%></p>
+                </div>
+            </div>
+            <div class="contains-link-types card glassy">
+                <div><svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="40px" height="40px"><linearGradient id="lpa7hSZqz_S376v76E9kia" x1="13.239" x2="37.906" y1="1.907" y2="33.479" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f52537"/><stop offset=".293" stop-color="#f32536"/><stop offset=".465" stop-color="#ea2434"/><stop offset=".605" stop-color="#dc2231"/><stop offset=".729" stop-color="#c8202c"/><stop offset=".841" stop-color="#ae1e25"/><stop offset=".944" stop-color="#8f1a1d"/><stop offset="1" stop-color="#7a1818"/></linearGradient><path fill="url(#lpa7hSZqz_S376v76E9kia)" d="M32,24h-7l8-18h7L32,24z M27,36.689	c0-4.168-0.953-8.357-2.758-12.117L15,6H8l10.833,21.169C20.251,30.123,21,33.415,21,36.689V42h6V36.689z"/></svg></div>
+                <div>
+                    <h3>Yandex</h3>
+                    <p><%=analytics.linktypes.Yandex ? analytics.linktypes.Yandex : 0%> <%=analytics.linktypes.Yandex && analytics.linktypes.Yandex > 1 ? "links" : "link"%></p>
+                </div>
+            </div>
+            <div class="contains-link-types card glassy">
+                <div>
+                    <svg width="40px" height="40px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#4F8AD8" fill-rule="evenodd" d="M21.6924215,13.986674 C22.9997233,14.1908343 24,15.3216239 24,16.6862741 C24,17.7522298 23.3892094,18.6751163 22.4988002,19.1254521 C22.4321553,19.1592575 22.3639409,19.1904067 22.294157,19.2186583 L8.59404885,19.2186583 L8.59404885,19.2181754 C6.85476268,19.2073094 5.44797646,17.7943658 5.44797646,16.0524235 C5.44797646,14.3037201 6.86550796,12.8860679 8.61421133,12.8860679 C8.70222602,12.8860679 8.78903338,12.8906557 8.87511633,12.8976583 C8.87028699,12.8172498 8.86702719,12.7364791 8.86702719,12.6548633 C8.86702719,10.4662072 10.6413261,8.69190834 12.8299821,8.69190834 C14.3676434,8.69190834 15.6998164,9.5683125 16.3568479,10.8482079 C16.9002691,10.4918027 17.5498151,10.283779 18.2483789,10.283779 C20.1559675,10.283779 21.7023216,11.8301331 21.7023216,13.7377217 C21.7023216,13.8215107 21.6982167,13.9043338 21.6924215,13.986674 Z M8.18741857,12.2086324 C6.25507961,12.421727 4.74711875,14.0641849 4.74711875,16.0524235 C4.74711875,16.8619413 4.9992102,17.6150766 5.42841764,18.2378198 L3.27887919,18.2378198 C1.46799809,18.2378198 -1.77635684e-15,16.7698217 -1.77635684e-15,14.9589406 C-1.77635684e-15,13.2281057 1.34134869,11.8115401 3.04103428,11.6894786 C2.98428956,11.4324371 2.95350253,11.1656161 2.95350253,10.8915512 C2.95350253,8.85248384 4.60646427,7.19964283 6.64541087,7.19964283 C7.40977438,7.19964283 8.11980783,7.43181327 8.70886636,7.82963 C9.54542848,6.15252157 11.276867,5 13.2783862,5 C15.9223281,5 18.0967377,7.01021204 18.3569183,9.58557738 C18.3206982,9.58461151 18.2847197,9.58292125 18.2483789,9.58292125 C17.6798451,9.58292125 17.1232638,9.6982217 16.6079734,9.92012979 C15.7386926,8.71545137 14.3462736,7.99105063 12.8299821,7.99105063 C10.4089142,7.99105063 8.41282793,9.84563725 8.18741857,12.2086324 Z"/>
+                      </svg>
+                </div>
+                <div>
+                    <h3>OneDrive</h3>
+                    <p><%=analytics.linktypes.OneDrive ? analytics.linktypes.OneDrive : 0%> <%=analytics.linktypes.OneDrive && analytics.linktypes.OneDrive > 1 ? "links" : "link"%></p>
+                </div>
+            </div>
+            <div class="contains-link-types card glassy">
+                <div>
+                    <?xml version="1.0" ?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg enable-background="new 0 0 100 100" height="40px" id="Layer_1" version="1.1" viewBox="0 0 100 100" width="40px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><circle cx="50" cy="50.001" fill="#F99400" r="45"/><g><path clip-rule="evenodd" d="M45.724,59.257c-1.623-0.377-3.136-0.922-4.574-1.662    c-0.515-0.266-1.022-0.551-1.514-0.857c-1.451-0.906-1.902-2.775-1.03-4.213c0.897-1.477,2.756-1.957,4.24-1.057    c1.46,0.883,3.007,1.525,4.688,1.828c3.308,0.594,6.416,0.047,9.312-1.656c0.591-0.348,1.188-0.621,1.893-0.617    c1.367,0.008,2.564,0.883,2.961,2.184c0.399,1.311-0.098,2.73-1.259,3.477c-1.809,1.164-3.768,1.984-5.854,2.498    c-0.09,0.021-0.178,0.047-0.304,0.08c0.085,0.092,0.151,0.164,0.221,0.234c1.854,1.854,3.709,3.705,5.561,5.562    c1.083,1.086,1.311,2.576,0.592,3.818c-1.035,1.789-3.415,2.086-4.906,0.604c-1.848-1.838-3.686-3.684-5.527-5.525    c-0.066-0.066-0.128-0.137-0.275-0.297c-0.061,0.109-0.094,0.215-0.162,0.283c-1.845,1.852-3.69,3.701-5.543,5.545    c-1.271,1.268-3.212,1.26-4.442-0.004c-1.125-1.156-1.157-2.992-0.069-4.205c0.147-0.166,0.307-0.322,0.463-0.479    c1.77-1.771,3.539-3.539,5.309-5.311C45.566,59.425,45.629,59.356,45.724,59.257z" fill="#FFFFFF" fill-rule="evenodd"/><path clip-rule="evenodd" d="M50.005,29.567c5.805,0,10.541,4.738,10.54,10.543    c-0.001,5.812-4.692,10.543-10.536,10.545c-5.877,0.006-10.544-4.732-10.553-10.525C39.446,34.317,44.149,29.583,50.005,29.567z     M54.362,40.12c0.002-2.402-1.941-4.361-4.331-4.367c-2.422-0.006-4.395,1.936-4.399,4.328c-0.004,2.396,1.939,4.391,4.284,4.393    C52.401,44.476,54.36,42.558,54.362,40.12z" fill="#FFFFFF" fill-rule="evenodd"/></g></g></svg></div>
+                <div>
+                    <h3>okru</h3>
+                    <p><%=analytics.linktypes.okru ? analytics.linktypes.okru : 0%> <%=analytics.linktypes.okru && analytics.linktypes.okru > 1 ? "links" : "link"%></p>
+                </div>
+            </div>
+            <div class="contains-link-types card glassy">
+                <div><svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 12C14 14.7614 11.7614 17 9 17H7C4.23858 17 2 14.7614 2 12C2 9.23858 4.23858 7 7 7H7.5M10 12C10 9.23858 12.2386 7 15 7H17C19.7614 7 22 9.23858 22 12C22 14.7614 19.7614 17 17 17H16.5" stroke="#000000" stroke-width="2" stroke-linecap="round"/>
+                    </svg></div>
+                <div>
+                    <h3>Direct</h3>
+                    <p><%=analytics.linktypes.Direct ? analytics.linktypes.Direct : 0%> <%=analytics.linktypes.Direct && analytics.linktypes.Direct > 1 ? "links" : "link"%></p>
+                </div>
+            </div>
+        </div>
+        <h1>Proxies</h1>
+        <div class="prox-holder">
+            <div class="glassy card">
+                <h3>Working Proxies</h3>
+                <h1><%= analytics.proxies %></h1>
+            </div>
+            <div class="glassy card">
+                <h3>Broken Proxies</h3>
+                <h1><%= analytics.brokenproxies %></h1>
+            </div>
+        </div>
+        <h2>Stats</h2>
+        <div class="chart-holder">
+            <div class="chart-div glassy"></div>
+            <div class="chart-div glassy"></div>
+        </div>
+        <div class="dest-links glassy card">
+            <table>
+                <thead>
+                    <tr>
+                        <td>Title</td>
+                        <td>Source</td>
+                        <td>Views</td>
+                        <td>Created At</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% links.forEach((link)=>{ %>
+                        <tr>
+                            <td><%= link.title %></td>
+                            <td><%= link.source %></td>
+                            <td><%= link.views %></td>
+                            <td><%= link.created_at %></td>
+                            <td>
+                                <div class="bar">
+                                    <a href="<%= link.main_link %>"><svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10 15H12C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3H8C4.68629 3 2 5.68629 2 9C2 10.5367 2.57771 11.9385 3.52779 13M16 21C19.3137 21 22 18.3137 22 15C22 13.4633 21.4223 12.0615 20.4722 11M12 21C8.68629 21 6 18.3137 6 15C6 11.6863 8.68629 9 12 9H14" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg></a>
+                                    <a href="../link/<%= link.id %>"><svg xmlns="http://www.w3.org/2000/svg"  
+                                        viewBox="0 0 50 50" width="20px" height="20px">
+                                            <path d="M 43.125 2 C 41.878906 2 40.636719 2.488281 39.6875 3.4375 L 38.875 4.25 L 45.75 11.125 C 45.746094 11.128906 46.5625 10.3125 46.5625 10.3125 C 48.464844 8.410156 48.460938 5.335938 46.5625 3.4375 C 45.609375 2.488281 44.371094 2 43.125 2 Z M 37.34375 6.03125 C 37.117188 6.0625 36.90625 6.175781 36.75 6.34375 L 4.3125 38.8125 C 4.183594 38.929688 4.085938 39.082031 4.03125 39.25 L 2.03125 46.75 C 1.941406 47.09375 2.042969 47.457031 2.292969 47.707031 C 2.542969 47.957031 2.90625 48.058594 3.25 47.96875 L 10.75 45.96875 C 10.917969 45.914063 11.070313 45.816406 11.1875 45.6875 L 43.65625 13.25 C 44.054688 12.863281 44.058594 12.226563 43.671875 11.828125 C 43.285156 11.429688 42.648438 11.425781 42.25 11.8125 L 9.96875 44.09375 L 5.90625 40.03125 L 38.1875 7.75 C 38.488281 7.460938 38.578125 7.011719 38.410156 6.628906 C 38.242188 6.246094 37.855469 6.007813 37.4375 6.03125 C 37.40625 6.03125 37.375 6.03125 37.34375 6.03125 Z"/>
+                                    </svg></a>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <div class="previous-links"></div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/common_styles.css">
+    <link rel="stylesheet" href="../static/settings.css">
+    <title>Settings</title>
+</head>
+<body>
+    <div class="side-div">
+        <%- include('./sections/nav')%>
+    </div>
+    <main>
+        <%- include('./sections/header')%>
+        <h1>Settings</h1>
+        <div class="divider"></div>
+        <ul class="contains-settings">
+            <a href="../settings/general">
+                <li class="setting">
+                    <span></span>
+                    <span>
+                        <h3>General</h3>
+                        <p style="font-weight: 500;">user accounts,</p>
+                    </span>
+                </li>
+            </a>
+            <a href="../settings/video">
+                <li class="setting">
+                    <span></span>
+                    <span>
+                        <h3>Video</h3>
+                        <p style="font-weight: 500;">video slug, default video player, stun servers, p2p settings</p>
+                    </span>
+                </li>
+            </a>
+            <a href="../settings/proxy">
+                <li class="setting">
+                    <span></span>
+                    <span>
+                        <h3>Proxy</h3>
+                        <p style="font-weight: 500;">proxy address, add proxy</p>
+                    </span>
+                </li>
+            </a>
+            <a href="../settings/gdriveAuth">
+                <li class="setting">
+                    <span></span>
+                    <span>
+                        <h3>GDrive Auth</h3>
+                        <p style="font-weight: 500;">Add Google Drive authorised accounts here for backups e.t.c</p>
+                    </span>
+                </li>
+            </a>
+        </ul>
+    </main>
+</body>
+</html>

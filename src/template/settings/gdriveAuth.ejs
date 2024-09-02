@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/common_styles.css">
+    <script>
+        window.addEventListener("DOMContentLoaded",(ev)=>{
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeParam = urlParams.get('code');
+            const client_id = localStorage.getItem("client_id")
+            if (codeParam) {
+                let data = {
+                    code: codeParam,
+                    scope: urlParams.get('scope'),
+                    client_id:client_id
+                }
+                fetch('/api/auth/gdriveAuth',{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    method:"POST",
+                    body:JSON.stringify(data)
+                }).then(Response=>Response.json())
+                .then(body=>{
+                    if(body.success){
+                        localStorage.removeItem("client_id")
+                        window.history.go()
+                    }
+                })
+                .catch(error=>{console.log(error)})
+            }
+            let gauthForm = document.querySelector(".gauth-form")
+            gauthForm.addEventListener("submit",(ev)=>{
+                ev.preventDefault()
+                let formdata = new FormData(gauthForm)
+                let data = {
+                    email:formdata.get("email"),
+                    client_id:formdata.get("client-id"),
+                    client_secret:formdata.get("client-secret"),
+                    refresh_token:formdata.get("refresh-token")
+                }
+                fetch('/api/auth/gauth/create',{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    method:"POST",
+                    body:JSON.stringify(data)
+                }).then(Response=>Response.json())
+                .then(body=>{
+                    if(body.success){
+                        localStorage.setItem("client_id",body.client_id)
+                        window.location.replace(body.link)
+                        //window.location.reload()
+                    }
+                })
+                .catch(error=>{console.log(error)})
+            })
+        })
+        function deleteAuth(id){
+            fetch("/api/auth/gauth/delete/"+id,{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    method:"DELETE"
+                }).then(Response=>Response.json())
+                .then(body=>{
+                    if(body.success){
+                        window.location.reload()
+                    }
+                })
+                .catch(error=>{console.log(error)})
+        }
+    </script>
+    <title>Google Drive Auth</title>
+</head>
+<body>
+    <div class="side-div">
+        <%- include('../sections/nav')%>
+    </div>
+    <main>
+        <div class="go-prev" onclick="history.go(-1)" title="Back">
+            <svg fill="#000000" width="30px" height="30px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <g data-name="Layer 2"><g data-name="arrowhead-left">
+            <rect width="24" height="24" transform="rotate(90 12 12)" opacity="0"/>
+            <path d="M11.64 5.23a1 1 0 0 0-1.41.13l-5 6a1 1 0 0 0 0 1.27l4.83 6a1 1 0 0 0 .78.37 1 1 0 0 0 .78-1.63L7.29 12l4.48-5.37a1 1 0 0 0-.13-1.4z"/>
+            <path d="M14.29 12l4.48-5.37a1 1 0 0 0-1.54-1.28l-5 6a1 1 0 0 0 0 1.27l4.83 6a1 1 0 0 0 .78.37 1 1 0 0 0 .78-1.63z"/>
+            </g></g></svg>
+        </div>
+        <div class="glassy card">
+            <h2>GDrive auths</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Email</td>
+                        <td>Status</td>
+                        <td>Last Updated At</td>
+                        <td>Options</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% driveAuths.forEach((auth)=>{ %>
+                        <tr>
+                            <td><%=auth.email%></td>
+                            <td><%=auth.status%></td>
+                            <td><%=auth.updated_at%></td>
+                            <td class="bar">
+                                <svg onclick="editAuth('<%=auth.id%>')" xmlns="http://www.w3.org/2000/svg"  
+                                viewBox="0 0 50 50" width="20px" height="20px">
+                                    <path d="M 43.125 2 C 41.878906 2 40.636719 2.488281 39.6875 3.4375 L 38.875 4.25 L 45.75 11.125 C 45.746094 11.128906 46.5625 10.3125 46.5625 10.3125 C 48.464844 8.410156 48.460938 5.335938 46.5625 3.4375 C 45.609375 2.488281 44.371094 2 43.125 2 Z M 37.34375 6.03125 C 37.117188 6.0625 36.90625 6.175781 36.75 6.34375 L 4.3125 38.8125 C 4.183594 38.929688 4.085938 39.082031 4.03125 39.25 L 2.03125 46.75 C 1.941406 47.09375 2.042969 47.457031 2.292969 47.707031 C 2.542969 47.957031 2.90625 48.058594 3.25 47.96875 L 10.75 45.96875 C 10.917969 45.914063 11.070313 45.816406 11.1875 45.6875 L 43.65625 13.25 C 44.054688 12.863281 44.058594 12.226563 43.671875 11.828125 C 43.285156 11.429688 42.648438 11.425781 42.25 11.8125 L 9.96875 44.09375 L 5.90625 40.03125 L 38.1875 7.75 C 38.488281 7.460938 38.578125 7.011719 38.410156 6.628906 C 38.242188 6.246094 37.855469 6.007813 37.4375 6.03125 C 37.40625 6.03125 37.375 6.03125 37.34375 6.03125 Z"/>
+                                </svg>
+                                <svg onclick="deleteAuth('<%=auth.id%>')" xmlns="http://www.w3.org/2000/svg"  
+                                viewBox="0 0 30 30" width="20px" height="20px">    
+                                    <path d="M 14.984375 2.4863281 A 1.0001 1.0001 0 0 0 14 3.5 L 14 4 L 8.5 4 A 1.0001 1.0001 0 0 0 7.4863281 5 L 6 5 A 1.0001 1.0001 0 1 0 6 7 L 24 7 A 1.0001 1.0001 0 1 0 24 5 L 22.513672 5 A 1.0001 1.0001 0 0 0 21.5 4 L 16 4 L 16 3.5 A 1.0001 1.0001 0 0 0 14.984375 2.4863281 z M 6 9 L 7.7929688 24.234375 C 7.9109687 25.241375 8.7633438 26 9.7773438 26 L 20.222656 26 C 21.236656 26 22.088031 25.241375 22.207031 24.234375 L 24 9 L 6 9 z"/>
+                                </svg>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <div class="glassy card">
+            <h1>Create New Auth</h1>
+            <form class="gauth-form">
+                <span>
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" class="light">
+                </span>
+                <br>
+                <span>
+                    <label for="client-id">Client ID</label>
+                    <input type="text" name="client-id" id="client-id" class="light">
+                </span>
+                <br>
+                <span>
+                    <label for="client-secret">Client Secret</label>
+                    <input type="text" name="client-secret" id="client-secret" class="light">
+                </span>
+                <br>
+                <span>
+                    <label for="client-id">Refresh Token</label>
+                    <input type="text" name="refresh-token" id="refresh-token" class="light">
+                </span>
+                <button onclick="">Submit</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

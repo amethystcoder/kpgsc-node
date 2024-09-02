@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../static/common_styles.css">
+        <link rel="stylesheet" href="./linkCU.css">
+        <title></title>
+        <script>
+            let checkAmount = []
+            //work on this later
+            window.addEventListener("load",(ev)=>{
+                document.querySelectorAll(".checkBoxes").addEventListener("change",()=>{
+                    let checks = document.querySelectorAll(".checkBoxes")
+                    for (let index = 0; index < checks.length; index++) {
+                        if (checks[index].checked) {
+                            checkAmount.push(checks[index])
+                        }
+                    }
+                })
+            })
+            function toggleSelectAll(){
+                let checkAll = document.getElementById("check-all")
+                let checks = document.querySelectorAll(".checkBoxes")
+                for (let index = 0; index < checks.length; index++) {
+                    checks[index].checked = checkAll.checked
+                }
+            }
+            function deleteLink(id){
+                fetch("../api/link/delete/"+id,{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    method:"DELETE"
+                }).then(Response=>Response.json())
+                .then(body=>{
+                    if(body.success){
+                        window.location.reload()
+                    }
+                })
+                .catch(error=>{console.log(error)})
+            }
+            function deleteMultipleLinks(ids){
+                ids = ids.join("-")
+                fetch("../api/link/deleteMult/"+ids,{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    method:"DELETE",
+                }).then(Response=>Response.json())
+                .then(body=>{
+                    if(body.success){
+                        window.location.reload()
+                    }
+                })
+                .catch(error=>{console.log(error)})
+            }
+        </script>
+        <style>
+            .round{
+                padding: 3px;
+                border: hidden;
+                border-radius: 50%;
+                display: flex;
+                width: 5px;
+                height: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="side-div">
+            <%- include('./sections/nav')%>
+        </div>
+        <main>
+            <%- include('./sections/header')%>
+            <button>Delete</button>
+            <div class="bar tab">
+                <a href="./all">
+                    <button>All</button>
+                </a>
+                <a href="./active">
+                    <button>Active</button>
+                </a>
+                <a href="./paused">
+                    <button>Paused</button>
+                </a>
+                <a href="./broken">
+                    <button>Broken</button>
+                </a>
+            </div>
+            <% if(type == "all"){ %>
+                <div>
+                    <h1>All Links</h1>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td><input type="checkbox" name="" id="check-all" onchange="toggleSelectAll()"></td>
+                                <td>ID</td>
+                                <td>Title</td>
+                                <td>Source</td>
+                                <td>Views</td>
+                                <td>Status</td>
+                                <td>Last Updated At</td>
+                                <td>Options</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% linkData.forEach((link)=>{ %>
+                                <tr>
+                                    <td><input type="checkbox" name="" id="" class="checkBoxes"></td>
+                                    <td><%= link.id %></td>
+                                    <td><%= link.title %></td>
+                                    <td><%= link.source %></td>
+                                    <td><%= link.views %></td>
+                                    <td>
+                                        <% if(link.status == "active"){ %>
+                                            <span class="round" 
+                                            style="background-color: green;"></span>
+                                        <% } %>
+                                        <% if(link.status == "broken"){ %>
+                                            <span class="round" 
+                                            style="background-color: red;"></span>
+                                        <% } %>
+                                        <% if(link.status == "paused"){ %>
+                                            <span class="round" 
+                                            style="background-color: rgb(66, 64, 64);"></span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= link.updated_at %></td>
+                                    <td class="bar">
+                                        <a href="<%= link.main_link %>"><svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10 15H12C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3H8C4.68629 3 2 5.68629 2 9C2 10.5367 2.57771 11.9385 3.52779 13M16 21C19.3137 21 22 18.3137 22 15C22 13.4633 21.4223 12.0615 20.4722 11M12 21C8.68629 21 6 18.3137 6 15C6 11.6863 8.68629 9 12 9H14" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg></a>
+                                        <a href="../link/<%= link.id %>"><svg xmlns="http://www.w3.org/2000/svg"  
+                                            viewBox="0 0 50 50" width="20px" height="20px">
+                                                <path d="M 43.125 2 C 41.878906 2 40.636719 2.488281 39.6875 3.4375 L 38.875 4.25 L 45.75 11.125 C 45.746094 11.128906 46.5625 10.3125 46.5625 10.3125 C 48.464844 8.410156 48.460938 5.335938 46.5625 3.4375 C 45.609375 2.488281 44.371094 2 43.125 2 Z M 37.34375 6.03125 C 37.117188 6.0625 36.90625 6.175781 36.75 6.34375 L 4.3125 38.8125 C 4.183594 38.929688 4.085938 39.082031 4.03125 39.25 L 2.03125 46.75 C 1.941406 47.09375 2.042969 47.457031 2.292969 47.707031 C 2.542969 47.957031 2.90625 48.058594 3.25 47.96875 L 10.75 45.96875 C 10.917969 45.914063 11.070313 45.816406 11.1875 45.6875 L 43.65625 13.25 C 44.054688 12.863281 44.058594 12.226563 43.671875 11.828125 C 43.285156 11.429688 42.648438 11.425781 42.25 11.8125 L 9.96875 44.09375 L 5.90625 40.03125 L 38.1875 7.75 C 38.488281 7.460938 38.578125 7.011719 38.410156 6.628906 C 38.242188 6.246094 37.855469 6.007813 37.4375 6.03125 C 37.40625 6.03125 37.375 6.03125 37.34375 6.03125 Z"/>
+                                        </svg></a>
+                                        <svg onclick="deleteLink('<%=link.id%>')" xmlns="http://www.w3.org/2000/svg"  
+                                            viewBox="0 0 30 30" width="20px" height="20px">    
+                                                <path d="M 14.984375 2.4863281 A 1.0001 1.0001 0 0 0 14 3.5 L 14 4 L 8.5 4 A 1.0001 1.0001 0 0 0 7.4863281 5 L 6 5 A 1.0001 1.0001 0 1 0 6 7 L 24 7 A 1.0001 1.0001 0 1 0 24 5 L 22.513672 5 A 1.0001 1.0001 0 0 0 21.5 4 L 16 4 L 16 3.5 A 1.0001 1.0001 0 0 0 14.984375 2.4863281 z M 6 9 L 7.7929688 24.234375 C 7.9109687 25.241375 8.7633438 26 9.7773438 26 L 20.222656 26 C 21.236656 26 22.088031 25.241375 22.207031 24.234375 L 24 9 L 6 9 z"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+            <% if(type == "active"){ %>
+                <div>
+                    <h1>Active Links</h1>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td><input type="checkbox" name="" id="check-all" onchange="toggleSelectAll()"></td>
+                                <td>ID</td>
+                                <td>Title</td>
+                                <td>Source</td>
+                                <td>Views</td>
+                                <td>Status</td>
+                                <td>Last Updated At</td>
+                                <td>Options</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% linkData.forEach((link)=>{ %>
+                                <tr>
+                                    <td><input type="checkbox" name="" id="" class="checkBoxes"></td>
+                                    <td><%= link.id %></td>
+                                    <td><%= link.title %></td>
+                                    <td><%= link.source %></td>
+                                    <td><%= link.views %></td>
+                                    <td>
+                                        <% if(link.status == "active"){ %>
+                                            <span class="round" 
+                                            style="background-color: green;"></span>
+                                        <% } %>
+                                        <% if(link.status == "broken"){ %>
+                                            <span class="round" 
+                                            style="background-color: red;"></span>
+                                        <% } %>
+                                        <% if(link.status == "paused"){ %>
+                                            <span class="round" 
+                                            style="background-color: rgb(66, 64, 64);"></span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= link.updated_at %></td>
+                                    <td class="bar">
+                                        <a href="<%= link.main_link %>"><svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10 15H12C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3H8C4.68629 3 2 5.68629 2 9C2 10.5367 2.57771 11.9385 3.52779 13M16 21C19.3137 21 22 18.3137 22 15C22 13.4633 21.4223 12.0615 20.4722 11M12 21C8.68629 21 6 18.3137 6 15C6 11.6863 8.68629 9 12 9H14" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg></a>
+                                        <a href="../link/<%= link.id %>"><svg xmlns="http://www.w3.org/2000/svg"  
+                                            viewBox="0 0 50 50" width="20px" height="20px">
+                                                <path d="M 43.125 2 C 41.878906 2 40.636719 2.488281 39.6875 3.4375 L 38.875 4.25 L 45.75 11.125 C 45.746094 11.128906 46.5625 10.3125 46.5625 10.3125 C 48.464844 8.410156 48.460938 5.335938 46.5625 3.4375 C 45.609375 2.488281 44.371094 2 43.125 2 Z M 37.34375 6.03125 C 37.117188 6.0625 36.90625 6.175781 36.75 6.34375 L 4.3125 38.8125 C 4.183594 38.929688 4.085938 39.082031 4.03125 39.25 L 2.03125 46.75 C 1.941406 47.09375 2.042969 47.457031 2.292969 47.707031 C 2.542969 47.957031 2.90625 48.058594 3.25 47.96875 L 10.75 45.96875 C 10.917969 45.914063 11.070313 45.816406 11.1875 45.6875 L 43.65625 13.25 C 44.054688 12.863281 44.058594 12.226563 43.671875 11.828125 C 43.285156 11.429688 42.648438 11.425781 42.25 11.8125 L 9.96875 44.09375 L 5.90625 40.03125 L 38.1875 7.75 C 38.488281 7.460938 38.578125 7.011719 38.410156 6.628906 C 38.242188 6.246094 37.855469 6.007813 37.4375 6.03125 C 37.40625 6.03125 37.375 6.03125 37.34375 6.03125 Z"/>
+                                        </svg></a>
+                                        <svg onclick="deleteLink('<%=link.id%>')" xmlns="http://www.w3.org/2000/svg"  
+                                            viewBox="0 0 30 30" width="20px" height="20px">    
+                                                <path d="M 14.984375 2.4863281 A 1.0001 1.0001 0 0 0 14 3.5 L 14 4 L 8.5 4 A 1.0001 1.0001 0 0 0 7.4863281 5 L 6 5 A 1.0001 1.0001 0 1 0 6 7 L 24 7 A 1.0001 1.0001 0 1 0 24 5 L 22.513672 5 A 1.0001 1.0001 0 0 0 21.5 4 L 16 4 L 16 3.5 A 1.0001 1.0001 0 0 0 14.984375 2.4863281 z M 6 9 L 7.7929688 24.234375 C 7.9109687 25.241375 8.7633438 26 9.7773438 26 L 20.222656 26 C 21.236656 26 22.088031 25.241375 22.207031 24.234375 L 24 9 L 6 9 z"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+            <% if(type == "paused"){ %>
+                <div>
+                    <h1>Paused Links</h1>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td><input type="checkbox" name="" id="check-all" onchange="toggleSelectAll()"></td>
+                                <td>ID</td>
+                                <td>Title</td>
+                                <td>Source</td>
+                                <td>Views</td>
+                                <td>Status</td>
+                                <td>Last Updated At</td>
+                                <td>Options</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% linkData.forEach((link)=>{ %>
+                                <tr>
+                                    <td><input type="checkbox" name="" id="" class="checkBoxes"></td>
+                                    <td><%= link.id %></td>
+                                    <td><%= link.title %></td>
+                                    <td><%= link.source %></td>
+                                    <td><%= link.views %></td>
+                                    <td>
+                                        <% if(link.status == "active"){ %>
+                                            <span class="round" 
+                                            style="background-color: green;"></span>
+                                        <% } %>
+                                        <% if(link.status == "broken"){ %>
+                                            <span class="round" 
+                                            style="background-color: red;"></span>
+                                        <% } %>
+                                        <% if(link.status == "paused"){ %>
+                                            <span class="round" 
+                                            style="background-color: rgb(66, 64, 64);"></span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= link.updated_at %></td>
+                                    <td class="bar">
+                                        <a href="<%= link.main_link %>"><svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10 15H12C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3H8C4.68629 3 2 5.68629 2 9C2 10.5367 2.57771 11.9385 3.52779 13M16 21C19.3137 21 22 18.3137 22 15C22 13.4633 21.4223 12.0615 20.4722 11M12 21C8.68629 21 6 18.3137 6 15C6 11.6863 8.68629 9 12 9H14" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg></a>
+                                        <a href="../link/<%= link.id %>"><svg xmlns="http://www.w3.org/2000/svg"  
+                                            viewBox="0 0 50 50" width="20px" height="20px">
+                                                <path d="M 43.125 2 C 41.878906 2 40.636719 2.488281 39.6875 3.4375 L 38.875 4.25 L 45.75 11.125 C 45.746094 11.128906 46.5625 10.3125 46.5625 10.3125 C 48.464844 8.410156 48.460938 5.335938 46.5625 3.4375 C 45.609375 2.488281 44.371094 2 43.125 2 Z M 37.34375 6.03125 C 37.117188 6.0625 36.90625 6.175781 36.75 6.34375 L 4.3125 38.8125 C 4.183594 38.929688 4.085938 39.082031 4.03125 39.25 L 2.03125 46.75 C 1.941406 47.09375 2.042969 47.457031 2.292969 47.707031 C 2.542969 47.957031 2.90625 48.058594 3.25 47.96875 L 10.75 45.96875 C 10.917969 45.914063 11.070313 45.816406 11.1875 45.6875 L 43.65625 13.25 C 44.054688 12.863281 44.058594 12.226563 43.671875 11.828125 C 43.285156 11.429688 42.648438 11.425781 42.25 11.8125 L 9.96875 44.09375 L 5.90625 40.03125 L 38.1875 7.75 C 38.488281 7.460938 38.578125 7.011719 38.410156 6.628906 C 38.242188 6.246094 37.855469 6.007813 37.4375 6.03125 C 37.40625 6.03125 37.375 6.03125 37.34375 6.03125 Z"/>
+                                        </svg></a>
+                                        <svg onclick="deleteLink('<%=link.id%>')" xmlns="http://www.w3.org/2000/svg"  
+                                            viewBox="0 0 30 30" width="20px" height="20px">    
+                                                <path d="M 14.984375 2.4863281 A 1.0001 1.0001 0 0 0 14 3.5 L 14 4 L 8.5 4 A 1.0001 1.0001 0 0 0 7.4863281 5 L 6 5 A 1.0001 1.0001 0 1 0 6 7 L 24 7 A 1.0001 1.0001 0 1 0 24 5 L 22.513672 5 A 1.0001 1.0001 0 0 0 21.5 4 L 16 4 L 16 3.5 A 1.0001 1.0001 0 0 0 14.984375 2.4863281 z M 6 9 L 7.7929688 24.234375 C 7.9109687 25.241375 8.7633438 26 9.7773438 26 L 20.222656 26 C 21.236656 26 22.088031 25.241375 22.207031 24.234375 L 24 9 L 6 9 z"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+            <% if(type == "broken"){ %>
+                <div>
+                    <h1>Broken Links</h1>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td><input type="checkbox" name="" id="check-all" onchange="toggleSelectAll()"></td>
+                                <td>ID</td>
+                                <td>Title</td>
+                                <td>Source</td>
+                                <td>Views</td>
+                                <td>Status</td>
+                                <td>Last Updated At</td>
+                                <td>Options</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% linkData.forEach((link)=>{ %>
+                                <tr>
+                                    <td><input type="checkbox" name="" id="" class="checkBoxes"></td>
+                                    <td><%= link.id %></td>
+                                    <td><%= link.title %></td>
+                                    <td><%= link.source %></td>
+                                    <td><%= link.views %></td>
+                                    <td>
+                                        <% if(link.status == "active"){ %>
+                                            <span class="round" 
+                                            style="background-color: green;"></span>
+                                        <% } %>
+                                        <% if(link.status == "broken"){ %>
+                                            <span class="round" 
+                                            style="background-color: red;"></span>
+                                        <% } %>
+                                        <% if(link.status == "paused"){ %>
+                                            <span class="round" 
+                                            style="background-color: rgb(66, 64, 64);"></span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= link.updated_at %></td>
+                                    <td class="bar">
+                                        <a href="<%= link.main_link %>"><svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10 15H12C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3H8C4.68629 3 2 5.68629 2 9C2 10.5367 2.57771 11.9385 3.52779 13M16 21C19.3137 21 22 18.3137 22 15C22 13.4633 21.4223 12.0615 20.4722 11M12 21C8.68629 21 6 18.3137 6 15C6 11.6863 8.68629 9 12 9H14" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg></a>
+                                        <a href="../link/<%= link.id %>"><svg xmlns="http://www.w3.org/2000/svg"  
+                                            viewBox="0 0 50 50" width="20px" height="20px">
+                                                <path d="M 43.125 2 C 41.878906 2 40.636719 2.488281 39.6875 3.4375 L 38.875 4.25 L 45.75 11.125 C 45.746094 11.128906 46.5625 10.3125 46.5625 10.3125 C 48.464844 8.410156 48.460938 5.335938 46.5625 3.4375 C 45.609375 2.488281 44.371094 2 43.125 2 Z M 37.34375 6.03125 C 37.117188 6.0625 36.90625 6.175781 36.75 6.34375 L 4.3125 38.8125 C 4.183594 38.929688 4.085938 39.082031 4.03125 39.25 L 2.03125 46.75 C 1.941406 47.09375 2.042969 47.457031 2.292969 47.707031 C 2.542969 47.957031 2.90625 48.058594 3.25 47.96875 L 10.75 45.96875 C 10.917969 45.914063 11.070313 45.816406 11.1875 45.6875 L 43.65625 13.25 C 44.054688 12.863281 44.058594 12.226563 43.671875 11.828125 C 43.285156 11.429688 42.648438 11.425781 42.25 11.8125 L 9.96875 44.09375 L 5.90625 40.03125 L 38.1875 7.75 C 38.488281 7.460938 38.578125 7.011719 38.410156 6.628906 C 38.242188 6.246094 37.855469 6.007813 37.4375 6.03125 C 37.40625 6.03125 37.375 6.03125 37.34375 6.03125 Z"/>
+                                        </svg></a>
+                                        <svg onclick="deleteLink('<%=link.id%>')" xmlns="http://www.w3.org/2000/svg"  
+                                            viewBox="0 0 30 30" width="20px" height="20px">    
+                                                <path d="M 14.984375 2.4863281 A 1.0001 1.0001 0 0 0 14 3.5 L 14 4 L 8.5 4 A 1.0001 1.0001 0 0 0 7.4863281 5 L 6 5 A 1.0001 1.0001 0 1 0 6 7 L 24 7 A 1.0001 1.0001 0 1 0 24 5 L 22.513672 5 A 1.0001 1.0001 0 0 0 21.5 4 L 16 4 L 16 3.5 A 1.0001 1.0001 0 0 0 14.984375 2.4863281 z M 6 9 L 7.7929688 24.234375 C 7.9109687 25.241375 8.7633438 26 9.7773438 26 L 20.222656 26 C 21.236656 26 22.088031 25.241375 22.207031 24.234375 L 24 9 L 6 9 z"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+        </main>
+    </body>
+</html>
