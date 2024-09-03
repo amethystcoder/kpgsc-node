@@ -8,6 +8,7 @@
         <title><%=title%></title>
         <script>
             window.addEventListener("DOMContentLoaded",(ev)=>{
+                changeVideoInputType()
                 let linkForm = document.querySelector(".main-link-form")
                 linkForm.addEventListener("submit",(ev)=>{
                     ev.preventDefault()
@@ -33,6 +34,15 @@
                 .then(body=>{console.log(body)})
                 .catch(error=>{console.log(error)})
             }
+            function changeVideoInputType() {
+                const linkTypeSelect = document.getElementById("link-select")
+                let inputs = [document.getElementById("contains-link-inputs"),document.getElementById("contains-file-inputs"),document.getElementById("contains-ftp-inputs")]
+                const SelectTypeValue = linkTypeSelect.value
+                for (let index = 0; index < inputs.length; index++) {
+                    if(inputs[index].getAttribute("data-name") === SelectTypeValue) inputs[index].style.display = "block"
+                    else inputs[index].style.display = "none"
+                }
+            }
         </script>
     </head>
     <body>
@@ -51,13 +61,14 @@
                 <br>
                 <div class="link-section">
                     <div>
-                        <select name="link_select" id="link-select">
+                        <label for="link-select">How do you want to upload your link?</label>
+                        <select name="link_select" id="link-select" class="light" onchange="changeVideoInputType()">
                             <option value="link">Link</option>
                             <option value="upload">Upload</option>
                             <option value="ftp">FTP</option>
                         </select>
                     </div>
-                    <div>
+                    <div id="contains-link-inputs" data-name="link">
                         <span>
                             <label for="main_link">Main Link</label>
                             <br>
@@ -70,12 +81,28 @@
                             <input type="text" class="light" placeholder="Enter File Alternate Links" name="alt_link" id="alt_link">
                         </span>
                     </div>
-                    <div>
+                    <div id="contains-file-inputs" data-name="upload">
                         <label for="main_link">Upload Video File</label>
                         <br>
                         <input type="file" class="light" accept=".mp4" name="preview_img" id="preview_img">
                     </div>
-                    <div></div>
+                    <div id="contains-ftp-inputs" data-name="ftp">
+                        <label for="ip_address">IP Address</label>
+                        <br>
+                        <input type="text" class="light" placeholder="Ip Address" name="ip_address" id="ip_address">
+                        <br>
+                        <label for="username">Username</label>
+                        <br>
+                        <input type="text" class="light" placeholder="Username" name="username" id="username">
+                        <br>
+                        <label for="password">Password</label>
+                        <br>
+                        <input type="text" class="light" placeholder="Password" name="password" id="password">
+                        <br>
+                        <label for="file_name">File Name</label>
+                        <br>
+                        <input type="text" class="light" placeholder="File Name" name="file_name" id="file_name">
+                    </div>
                 </div>
                 <br>
                 <span>

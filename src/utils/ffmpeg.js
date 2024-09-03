@@ -9,7 +9,6 @@ fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 function createHlsFiles(filePath,fileName) {
     let result = ""
     try {
-        //TODO: create a folder for the files so they can be made seperate
         fs.mkdirSync(`./uploads/videos/${fileName}`)
         //check if file exists in server
         if (!fs.existsSync(filePath)) throw Error("file could not be found")
