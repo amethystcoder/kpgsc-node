@@ -88,31 +88,36 @@ const downloadStreamFile = async (driveInstance,fileId,access_token,res) =>{
         console.log(err);
         return process.exit();
     }).pipe(dest);
-    /* driveInstance.files.get(
-        
-        (err, data) => {
-          if (err) {
-            console.log(err);
-            return;
-          }
-          data.data
-            .on("end", () => console.log("Done."))
-            .on("error", (err) => {
-            console.log(err);
-            return process.exit();
-            })
-            .pipe(dest);
-          /* let buf = [];
-          data.on("data", (e) => buf.push(e));
-          data.on("end", () => {
-            const buffer = Buffer.concat(buf);
-            console.log(buffer);
-          });
-        }
-      ); */
-
-    //let destination = fs.createWriteStream('../upload')
 }
+
+
+/**
+ * 
+ * @param {undefined | {}} authData 
+ * @param {string} fileId 
+ * @param {string} DestinationName 
+ * @returns {Promise<string>}
+ */
+const downloadGdriveVideo = async (authData,fileId,DestinationName) =>{
+    DestinationName = DestinationName ? DestinationName : "file"
+    let destination = fs.createWriteStream(`./uploads/${DestinationName}.mp4`)
+    const refresh_data = await axios.post("https://oauth2.googleapis.com/token",{
+        client_id:authData.client_id,
+        client_secret:authData.client_secret,
+        grant_type:"refresh_token",
+        refresh_token:authData.refresh_token
+    })
+    
+    const data = await axios.get(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,{
+    headers:{
+        "Authorization" : "Bearer " + refresh_data.data.access_token
+    },responseType:"stream"
+    }) 
+    data.data.pipe(destination)
+    return destination
+}
+
+
 
 /**
  * gets the source of the 
@@ -125,6 +130,6 @@ const getSource = async (url,id) =>{
 }
 
 module.exports = {
-    getSource,downloadFile,getFileData,generateGoogleAuthUrl,downloadStreamFile,initiateDrive,generateOauth,getFiles
+    getSource,downloadFile,getFileData,generateGoogleAuthUrl,downloadStreamFile,initiateDrive,generateOauth,getFiles,downloadGdriveVideo
 }
 

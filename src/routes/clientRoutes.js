@@ -226,12 +226,15 @@ router.get('/link/new',(req,res)=>{
 router.get('/link/:linkid',async (req,res)=>{
     try {
         if (req.session.username) {
+            let accounts = await DBs.driveAuthDB.getAlldrive_auth()
+            accounts = accounts.map(account => account.email)
             const linkId = req.params.linkid
             const linkData = await DBs.linksDB.getLinkUsingId(linkId)
             let title = `Edit link ${linkId}`
             res.render('../template/linkedit',{
                 title:title,
-                data:linkData[0]
+                data:linkData[0],
+                emails:accounts
             })
         } else{
             res.redirect('../login')
@@ -320,30 +323,6 @@ router.get('/bulk',async (req,res)=>{
         } else{
             res.redirect('./login')
         }
-    } catch (error) {
-        res.render('../template/error',{
-            error
-        })
-    }
-})
-
-router.get('/filedownload',async (req,res)=>{
-    try {
-           let destination = fs.createWriteStream('../uploads/file.mp4')
-           const authdata = await DBs.driveAuthDB.getAuthUsingEmail("amethystguitaristj@gmail.com")
-           const refresh_data = await axios.post("https://oauth2.googleapis.com/token",{
-            client_id:authdata[0].client_id,
-            client_secret:authdata[0].client_secret,
-            grant_type:"refresh_token",
-            refresh_token:authdata[0].refresh_token
-           })
-           
-           const data = await axios.get("https://www.googleapis.com/drive/v3/files/1-InJbovTBSHcPflctTJIx4bVjW31UCmY?alt=media",{
-            headers:{
-                "Authorization" : "Bearer " + refresh_data.data.access_token
-            },responseType:"stream"
-           }) 
-           data.data.pipe(destination)
     } catch (error) {
         res.render('../template/error',{
             error

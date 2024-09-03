@@ -35,14 +35,21 @@ router.get("/health",(req,res)=>{
     }
 })
 
-router.post("/convert/hls",(req,res)=>{
+router.post("/convert/hls",async (req,res)=>{
     try {
+        //needs email, needs linkdata that could be gotten from the id
         if (req.session.username) {
-            let link = req.body.link
-            let linkSource = getSourceName(link)
+            let {email,linkId} = req.body
+            let linkData = await DB.linksDB.getLinkUsingId(linkId)
+            let authData = await DB.driveAuthDB.getAuthUsingEmail(email)
+            let linkSource = getSourceName(linkData[0].main_link)
             if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
-            const convert = HlsConverter.createHlsFiles(link)
-            let result = DB.hlsLinksDB.createNewHlsLink()//generateHlsLinkData
+            const sourceId = getIdFromUrl(linkData[0].main_link,linkSource)
+            const downloadFile = await sources.GoogleDrive.downloadGdriveVideo(authData[0],sourceId,linkData[0].slug)
+            const convert = HlsConverter.createHlsFiles(downloadFile)
+            let result = DB.hlsLinksDB.createNewHlsLink({
+                link_id:linkId,server_id:"",file_id:linkData[0].slug,status:true,file_size:"123Mb"
+            })//get server id later and the file size
             res.status(202).send({success:true,message:"successful"})
         } else {
             res.status(401).send({success:false,message:"unauthorized"})
