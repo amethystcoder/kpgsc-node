@@ -19,8 +19,11 @@
             function convertHLS(){
                 let email = document.getElementById("email").value
                 let paths = window.location.pathname.split("/")
-                let linkId = paths[paths.length]
+                let linkId = paths[paths.length - 1]
                 fetch("../api/convert/hls",{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
                     method:"POST",
                     body:JSON.stringify({
                         email:email,

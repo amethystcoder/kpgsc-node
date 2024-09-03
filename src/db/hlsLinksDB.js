@@ -117,8 +117,8 @@ let createNewHlsLink = async (hls_linkData)=>{
     //TODO some other checks here to be strict with the type of data coming in
     let date = new Date()
     hls_linkData.status = true
-    let result = await dbInstance.query(`INSERT INTO ${table} (link_id,server_id,file_id,file_size,updated_at,created_at,status) VALUES (?,?,?,?,?,?,?)`, 
-    [hls_linkData.link_id,hls_linkData.server_id,hls_linkData.file_id,hls_linkData.file_size,date.toISOString(),date.toISOString(),hls_linkData.status])
+    let result = await dbInstance.query(`INSERT INTO ${table} (link_id,server_id,file_id,file_size,status) VALUES (?,?,?,?,?)`, 
+    [hls_linkData.link_id,hls_linkData.server_id,hls_linkData.file_id,hls_linkData.file_size,hls_linkData.status])
     return result;
 }
 

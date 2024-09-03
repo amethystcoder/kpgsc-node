@@ -114,7 +114,7 @@ const downloadGdriveVideo = async (authData,fileId,DestinationName) =>{
     },responseType:"stream"
     }) 
     data.data.pipe(destination)
-    return destination
+    return `./uploads/${DestinationName}.mp4`
 }
 
 

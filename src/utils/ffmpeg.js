@@ -5,14 +5,16 @@ const fs = require('fs')
 fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 
 //Alot of work to be done on this funtion
-//fileName could/should be a link 
-function createHlsFiles(fileName) {
-    const result = ""
+//filePath could/should be a link 
+function createHlsFiles(filePath,fileName) {
+    let result = ""
     try {
+        console.log(filePath)
         //check if file exists in server
+        if (!fs.existsSync(filePath)) throw Error("file could not be found")
 
         //attempt to convert file to m3u8
-        fluentFfmpeg(`${fileName}`, {timeout: 43200}).addOptions([
+        fluentFfmpeg(`${filePath}`, {timeout: 43200}).addOptions([
             '-profile:v baseline',
             '-level 3.0',
             '-start_number 0',
@@ -30,9 +32,14 @@ function createHlsFiles(fileName) {
             result = "successful"
         }).run()   
     } catch (error) {
+        console.log(error)
         result = error
     }
+
+    return result
 }
+
+//createHlsFiles("../uploads/WKim6lktPmBanpLzxBjQxYmwvRaNL4JeNBE6Q8B5kqIxd1VSBX.mp4","WKim6lktPmBanpLzxBjQxYmwvRaNL4JeNBE6Q8B5kqIxd1VSBX")
 
 module.exports = {
     createHlsFiles

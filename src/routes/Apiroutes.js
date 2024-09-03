@@ -2,7 +2,7 @@ let express = require('express')
 const router = express.Router()
 const multer = require('multer')
 const fs = require('fs');
-const HlsConverter = require("../utils/split_vid/ffmpeg")
+const HlsConverter = require("../utils/ffmpeg")
 const sources = require("../sources/sources")
 const getSourceName = require("../utils/getSourceName")
 const DB = require('../db/DBs')
@@ -35,7 +35,7 @@ router.get("/health",(req,res)=>{
     }
 })
 
-router.post("/convert/hls",async (req,res)=>{
+router.post("/convert/hls", async (req,res)=>{
     try {
         //needs email, needs linkdata that could be gotten from the id
         if (req.session.username) {
@@ -46,11 +46,11 @@ router.post("/convert/hls",async (req,res)=>{
             if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
             const sourceId = getIdFromUrl(linkData[0].main_link,linkSource)
             const downloadFile = await sources.GoogleDrive.downloadGdriveVideo(authData[0],sourceId,linkData[0].slug)
-            const convert = HlsConverter.createHlsFiles(downloadFile)
-            let result = DB.hlsLinksDB.createNewHlsLink({
+            const convert = HlsConverter.createHlsFiles(downloadFile,linkData[0].slug)
+            /* let result = DB.hlsLinksDB.createNewHlsLink({
                 link_id:linkId,server_id:"",file_id:linkData[0].slug,status:true,file_size:"123Mb"
-            })//get server id later and the file size
-            res.status(202).send({success:true,message:"successful"})
+            })//get server id later and the file size */
+            res.status(202).send({success:true,message:"successful",data:convert})
         } else {
             res.status(401).send({success:false,message:"unauthorized"})
         }
