@@ -9,7 +9,8 @@ fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 function createHlsFiles(filePath,fileName) {
     let result = ""
     try {
-        console.log(filePath)
+        //TODO: create a folder for the files so they can be made seperate
+        fs.mkdirSync(`./uploads/videos/${fileName}`)
         //check if file exists in server
         if (!fs.existsSync(filePath)) throw Error("file could not be found")
 
@@ -18,14 +19,17 @@ function createHlsFiles(filePath,fileName) {
             '-profile:v baseline',
             '-level 3.0',
             '-start_number 0',
-            '-hls_time 10',
+            '-hls_time 20',
             '-hls_list_size 0',
             '-f hls'
-        ]).output(`videos/${fileName}.m3u8`)
-        .on('error', (err) => {
-            console.log('an error occured processing the file.\n err:',err)
-            result = err
+        ]).output(`./uploads/videos/${fileName}/${fileName}.m3u8`)
+        .on('error', (err, stdout, stderr) => {
+            if (err) {
+                console.log(err.message);
+                console.log("stderr:\n" + stderr);
+            }
         }).on('progress', (progress) => {
+            //TODO: find a way to send the progress back to the client (through websockets or another way)
             console.log(`progress: ${progress.frames } frames`)
         }).on('end', () => {
             console.log('processing completed')

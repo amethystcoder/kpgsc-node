@@ -2,6 +2,8 @@ const googleApis = require('googleapis')
 const axios = require('axios')
 const env = require('dotenv').config()
 const fs = require('fs')
+const { promisify } = require('util')
+const stream = require('stream')
 
 const email = "";
 const clientId = "";
@@ -96,10 +98,12 @@ const downloadStreamFile = async (driveInstance,fileId,access_token,res) =>{
  * @param {undefined | {}} authData 
  * @param {string} fileId 
  * @param {string} DestinationName 
- * @returns {Promise<string>}
+ * @returns {Promise<any>}
  */
 const downloadGdriveVideo = async (authData,fileId,DestinationName) =>{
+    //we need to check if the video file already exists in order not to redownload and waste resources
     DestinationName = DestinationName ? DestinationName : "file"
+    const finished = promisify(stream.finished)
     let destination = fs.createWriteStream(`./uploads/${DestinationName}.mp4`)
     const refresh_data = await axios.post("https://oauth2.googleapis.com/token",{
         client_id:authData.client_id,
@@ -114,7 +118,7 @@ const downloadGdriveVideo = async (authData,fileId,DestinationName) =>{
     },responseType:"stream"
     }) 
     data.data.pipe(destination)
-    return `./uploads/${DestinationName}.mp4`
+    return finished(destination)
 }
 
 

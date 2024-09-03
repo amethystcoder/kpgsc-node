@@ -46,11 +46,11 @@ router.post("/convert/hls", async (req,res)=>{
             if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
             const sourceId = getIdFromUrl(linkData[0].main_link,linkSource)
             const downloadFile = await sources.GoogleDrive.downloadGdriveVideo(authData[0],sourceId,linkData[0].slug)
-            const convert = HlsConverter.createHlsFiles(downloadFile,linkData[0].slug)
+            const convert = HlsConverter.createHlsFiles(`./uploads/${linkData[0].slug}.mp4`,linkData[0].slug)
+            res.status(202).send({success:true,message:"successful",data:convert})
             /* let result = DB.hlsLinksDB.createNewHlsLink({
                 link_id:linkId,server_id:"",file_id:linkData[0].slug,status:true,file_size:"123Mb"
             })//get server id later and the file size */
-            res.status(202).send({success:true,message:"successful",data:convert})
         } else {
             res.status(401).send({success:false,message:"unauthorized"})
         }
