@@ -5,3 +5,4 @@
 - make all video players work with p2p and hls
 - make the video route get all the required video data using the slug
 - make the option to switch from main to hls
+- add video preview to both upload video and edit

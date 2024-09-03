@@ -124,6 +124,14 @@ thead>tr>td{
 .light-control>.light-mode,.dark-control>.dark-mode{
     display: none;
 }
+.ItemEditable{
+    outline: none;
+    border: none;
+    background-color: transparent;
+}
+.ItemEditable:focus{
+    border-bottom: solid thin;
+}
 @media screen and (max-width:800px) {
     .side-div{
         left: 10px;

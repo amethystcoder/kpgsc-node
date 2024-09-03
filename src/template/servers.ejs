@@ -50,7 +50,7 @@
                 .catch(error=>{console.log(error)})
         }
         function editSpecific(id,section){
-            let value = document.getElementById(id+section).innerText
+            let value = document.getElementById(id+section).value
             console.log(value)
             fetch("../api/server/edit/"+id,{
                     headers:{
@@ -96,10 +96,10 @@
                 <tbody>
                     <% servers.forEach((server)=>{ %>
                         <tr>
-                            <td contenteditable="true" oninput="editSpecific('<%= server.id %>','name')" id="<%= server.id %>name"><%= server.name %></td>
-                            <td contenteditable="true" oninput="editSpecific('<%= server.id %>','domain')" id="<%= server.id %>domain"><%= server.domain %></td>
-                            <td contenteditable="true" oninput="editSpecific('<%= server.id %>','type')" id="<%= server.id %>type"><%= server.type %></td>
-                            <td contenteditable="true" oninput="editSpecific('<%= server.id %>','playbacks')" id="<%= server.id %>playbacks"><%= server.playbacks %></td>
+                            <td><input class="ItemEditable" onchange="editSpecific('<%= server.id %>','name')" id="<%= server.id %>name" type="text" value="<%= server.name %>"></td>
+                            <td><input class="ItemEditable" onchange="editSpecific('<%= server.id %>','domain')" id="<%= server.id %>domain" type="text" value="<%= server.domain %>"></td>
+                            <td><input class="ItemEditable" onchange="editSpecific('<%= server.id %>','type')" id="<%= server.id %>type" type="text" value="<%= server.type %>"></td>
+                            <td><input class="ItemEditable" onchange="editSpecific('<%= server.id %>','playbacks')" id="<%= server.id %>playbacks" type="text" value="<%= server.playbacks %>"></td>
                             <td><%= server.status %></td>
                             <td class="bar">
                                 <svg onclick="deleteServer('<%=server.id%>')" xmlns="http://www.w3.org/2000/svg"  
