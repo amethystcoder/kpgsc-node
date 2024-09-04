@@ -1,0 +1,20 @@
+input[type="file"]{
+    visibility: hidden;
+}
+label[for="preview_img"],label[for="subtitles"],label[for="video_file"]{
+    display: flex;
+    flex-direction: column;
+    border:dashed thick rgb(142, 142, 142);
+    color: rgb(142, 142, 142);
+    background-color: rgb(219, 219, 219);
+    padding: 10px;
+    margin: 10px;
+    border-radius: 20px;
+    text-align: center;
+}
+label>p,label>h2{
+    margin: 0;
+}
+label>h2{
+    font-size: 2rem;
+}

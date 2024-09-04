@@ -59,11 +59,13 @@ router.post("/convert/hls", async (req,res)=>{
     }
 })
 
-router.post("/link/create",upload.fields([
+router.post("/link/create",upload.fields([{name:'video_file',maxCount:1},
     {name:'subtitles',maxCount:1},{name:'preview_img',maxCount:1}]),async (req,res)=>{
     try {
         if (req.session.username) {
-            const {title,main_link,alt_link} = req.body
+            console.log(req.body)
+            console.log(req.files)
+            /* const {title,main_link,alt_link} = req.body
             const subtitles = req.files.subtitles ? req.files.subtitles[0].path : ""
             const preview_img = req.files.preview_img ? req.files.preview_img[0].path : ""
             //Write code to save files to upload folder
@@ -77,8 +79,9 @@ router.post("/link/create",upload.fields([
             }
             let linkdata = {title,main_link,alt_link,subtitles:subtitles,preview_img:preview_img,type,slug,data:JSON.stringify(data)}
             if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
-            let newLinkCreate = await DB.linksDB.createNewLink(linkdata)
-            res.status(201).json({success:true,message:newLinkCreate})
+            let newLinkCreate = await DB.linksDB.createNewLink(linkdata) 
+            res.status(201).json({success:true,message:newLinkCreate}) */
+            res.send("yay")
         } else {
             res.status(401).send({success:false,message:"unauthorized"})
         }

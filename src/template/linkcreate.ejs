@@ -43,6 +43,41 @@
                     else inputs[index].style.display = "none"
                 }
             }
+            function setLabelImage(inputId,labelId) {
+                const input = document.getElementById(inputId)
+                const label = document.getElementById(labelId)
+                const imageMimes = ["jpg","jpeg","png","webp"]
+                const splitImageName = input.files[0].name.split(".")
+                if (splitImageName[splitImageName.length - 1] == "mp4") {
+                    let videoElement = document.getElementById("uploaded-vid")
+                    if (!videoElement){
+                        videoElement = document.createElement("video")
+                        videoElement.id = "uploaded-vid"
+                        label.appendChild(videoElement)
+                    } 
+                    videoElement.load()
+                    videoElement.src = URL.createObjectURL(input.files[0])
+                    videoElement.muted = true
+                    videoElement.play()
+                }
+                else{
+                    if (imageMimes.includes(splitImageName[splitImageName.length - 1])) {
+                        let inputsource = URL.createObjectURL(input.files[0])
+                        label.style.backgroundImage = `url(${inputsource})`
+                    }
+                    else{
+                        const fileReader = new FileReader()
+                        fileReader.readAsText(input.files[0])
+                        fileReader.onload = (ev) =>{
+                            label.innerHTML = `
+                            <h2>+</h2>
+                            <p>Subtitle File</p>
+                            <h3>${input.files[0].name}</h3>
+                            ${ev.target.result.slice(0,100)}`
+                        }
+                    }
+                }
+            }
         </script>
     </head>
     <body>
@@ -82,14 +117,17 @@
                         </span>
                     </div>
                     <div id="contains-file-inputs" data-name="upload">
-                        <label for="main_link">Upload Video File</label>
+                        <label for="video_file" id="video_file_label">
+                            <h2>+</h2>
+                            <p>Upload Video File</p>
+                        </label>
                         <br>
-                        <input type="file" class="light" accept=".mp4" name="preview_img" id="preview_img">
+                        <input type="file" class="light" accept=".mp4" name="video_file" id="video_file" onchange="setLabelImage('video_file','video_file_label')">
                     </div>
                     <div id="contains-ftp-inputs" data-name="ftp">
                         <label for="ip_address">IP Address</label>
                         <br>
-                        <input type="text" class="light" placeholder="Ip Address" name="ip_address" id="ip_address">
+                        <input type="text" class="light" placeholder="i.e ftp://example.com or ftp://<ip_address>" name="ip_address" id="ip_address">
                         <br>
                         <label for="username">Username</label>
                         <br>
@@ -106,15 +144,21 @@
                 </div>
                 <br>
                 <span>
-                    <label for="subtitles">Subtitle File</label>
+                    <label for="subtitles" id="subtitles_label">
+                        <h2>+</h2>
+                        <p>Subtitle File</p>
+                    </label>
                     <br>
-                    <input type="file" class="light" accept=".srt,.ttml,.xml,.vtt" id="subtitles" name="subtitles">
+                    <input type="file" class="light" accept=".srt,.ttml,.xml,.vtt" id="subtitles" name="subtitles" onchange="setLabelImage('subtitles','subtitles_label')">
                 </span>
                 <br>
                 <span>
-                    <label for="preview_img">Preview Image</label>
+                    <label for="preview_img" id="preview_img_label">
+                        <h2>+</h2>
+                        <p>Preview Image</p>
+                    </label>
                     <br>
-                    <input type="file" class="light" accept=".png,.jpg" name="preview_img" id="preview_img">
+                    <input type="file" class="light" accept=".png,.jpg" name="preview_img" id="preview_img" onchange="setLabelImage('preview_img','preview_img_label')">
                 </span>
                 <button>Submit</button>
             </form>
