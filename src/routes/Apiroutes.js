@@ -51,18 +51,19 @@ router.post("/convert/hls", async (req,res)=>{
         if (req.session.username) {
             let {email,linkId} = req.body
             let linkData = await DB.linksDB.getLinkUsingId(linkId)
-            let authData = await DB.driveAuthDB.getAuthUsingEmail(email)
             let linkSource = getSourceName(linkData[0].main_link)
             if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
             const sourceId = getIdFromUrl(linkData[0].main_link,linkSource)
             // from the source type, determine how to convert it to hls
             let downloadFile;
-            if(linkSource == "GoogleDrive") downloadFile = await sources.GoogleDrive.downloadGdriveVideo(authData[0],sourceId,linkData[0].slug)
+            if(linkSource == "GoogleDrive"){
+                let authData = await DB.driveAuthDB.getAuthUsingEmail(email)
+                downloadFile = await sources.GoogleDrive.downloadGdriveVideo(authData[0],sourceId,linkData[0].slug)} 
             if(linkSource == "Direct") downloadFile = await sources.Direct.downloadFile(linkData[0].main_link,linkData[0].slug)
             const convert = HlsConverter.createHlsFiles(`./uploads/${linkData[0].slug}.mp4`,linkData[0].slug)
-            let fileSize = parseFileSizeToReadable((await fs.promises.stat(file)).size)
+            let fileSize = parseFileSizeToReadable((await fs.promises.stat(`./uploads/${linkData[0].slug}.mp4`)).size)
             let result = DB.hlsLinksDB.createNewHlsLink({
-                link_id:linkId,server_id:"",file_id:linkData[0].slug,status:true,file_size:fileSize
+                link_id:linkId,server_id:'35',file_id:linkData[0].slug,status:true,file_size:fileSize
             })//get server id later
             //servers would be selected randomly for the first part
             res.status(202).send({success:true,message:"successful",data:convert})
@@ -70,6 +71,7 @@ router.post("/convert/hls", async (req,res)=>{
             res.status(401).send({success:false,message:"unauthorized"})
         }
     } catch (error) {
+        console.log(error);
         res.json({error})
     }
 })
@@ -94,10 +96,10 @@ router.post("/link/create",upload.fields([{name:'video_file',maxCount:1},
                 const {video_file} = req.files
                 const allowedMimes = ["video/mp4"]
                 if (!video_file || video_file.length == 0) throw EvalError("Please Upload a video and try again")
-                main_link = req.headers.host+"/"+video_file[0].path
+                main_link = req.protocol+"://"+req.headers.host+"/"+video_file[0].filename
             }
-            const subtitles = req.files.subtitles ? req.files.subtitles[0].path : ""
-            const preview_img = req.files.preview_img ? req.files.preview_img[0].path : ""
+            const subtitles = req.files.subtitles ? req.protocol+"://"+req.headers.host+"/"+req.files.subtitles[0].filename : ""
+            const preview_img = req.files.preview_img ? req.protocol+"://"+req.headers.host+"/"+req.files.preview_img[0].filename : ""
             //Write code to save files to upload folder
             let linkSource = getSourceName(main_link)
             let type = linkSource
