@@ -10,15 +10,15 @@
     <script>jwplayer.key="AIzaSyCCd7R6tUAGAwFNlq0hV_C7GWNEZNhzxa4";</script>
     <title></title>
     <script>
-        let isHls = true
-        let videoPath = 'http://localhost:3000/api/hls/<%=slug%>' //depends on isHls
+        let isHls = '<%=isHls%>';
+        let videoPath = '<%=videoLink%>' //depends on isHls
         let jwConfig = {
             file: videoPath,
             width: 640,
             height: 360,
             controls:true
         }
-        if(isHls){
+        if(isHls == "true"){
             jwConfig.type = "hls"
             jwConfig.androidhls = true
         }

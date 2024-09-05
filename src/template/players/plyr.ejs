@@ -11,13 +11,13 @@
     <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-core@latest/build/p2p-media-loader-core.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@latest/build/p2p-media-loader-hlsjs.min.js"></script>
     <script>
-        let isHls = true
+        let isHls = '<%=isHls%>';
 
         window.addEventListener("DOMContentLoaded",()=>{
             let player = document.getElementById("video")
-            let videoPath = 'http://localhost:3000/api/hls/<%=slug%>'
+            let videoPath = '<%=videoLink%>'
             //let engine = new p2pml.hlsjs.Engine()
-            if(isHls){
+            if(isHls == "true"){
                 let hls = new Hls({
                     liveSyncDurationCount: 7,
                     //loader: engine.createLoaderClass()
@@ -37,6 +37,6 @@
     </script>
 </head>
 <body>
-    <video src="http://localhost:3000/api/hls/<%=slug%>" id="video"></video>
+    <video src='<%=videoLink%>' id="video" type="<%=videoMime%>"></video>
 </body>
 </html>

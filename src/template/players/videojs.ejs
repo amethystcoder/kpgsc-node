@@ -11,32 +11,33 @@
     <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-core@latest/build/p2p-media-loader-core.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@latest/build/p2p-media-loader-hlsjs.min.js"></script>
     <script>
-        let isHls = true
+        let isHls = '<%=isHls%>';
         let options = {
             autoplay: true,
             controls:true,
             sources : [{
-                src:"http://localhost:3000/api/hls/<%=slug%>",
-                type:"application/x-mpegURL"//change to 'video/mp4' for normal mp4 files
+                src:'<%=videoLink%>',
+                type:"<%=videoMime%>"
             }]
         }
         window.addEventListener("DOMContentLoaded",()=>{
             let player = videojs("video",options)
             let engine = new p2pml.hlsjs.Engine()
-            if(isHls && engine){
+            if(isHls == "true" && engine){
                 let hls = new Hls({
                     liveSyncDurationCount: 7,
                     loader: engine.createLoaderClass()
                 })
-                hls.loadSource('http://localhost:3000/api/hls/<%=slug%>')
+                hls.loadSource('<%=videoLink%>')
                 hls.attachMedia(player.el())
             }
+
         })
     </script>
 </head>
 <body>
     <video id="video" class="video-js vjs-default-skin" controls playsinline>
-        <source src="http://localhost:3000/api/hls/<%=slug%>" type="application\x-mpegURL">
+        <source src="<%=videoLink%>" type="<%=videoMime%>">
     </video>
 </body>
 </html>
