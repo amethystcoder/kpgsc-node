@@ -9,10 +9,21 @@ const DB = require('../db/DBs')
 const generateUniqueId = require('../utils/generateUniqueId')
 const Streamer = require('../services/streamer')
 const bcrypt = require('bcryptjs')
-const getGdriveData = require("../utils/getGdriveData");
+const getGdriveData = require("../services/getGdriveData");
 const getIdFromUrl = require('../utils/getIdFromUrl');
+const ftp = require('ftp-client')
+const path = require('path');
+const parseFileSizeToReadable = require('../utils/parseFileSizesToReadable');
 
-const upload = multer({dest: "/uploads/"})
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './uploads');  // 'uploads/' is the directory
+    },
+    filename: function (req, file, cb) {
+      cb(null, generateUniqueId(25) + path.extname(file.originalname));
+    }
+  });
+const upload = multer({storage:storage})
 
 //auth middleware
 const auth = (req,res,next) => {
@@ -37,7 +48,6 @@ router.get("/health",(req,res)=>{
 
 router.post("/convert/hls", async (req,res)=>{
     try {
-        //needs email, needs linkdata that could be gotten from the id
         if (req.session.username) {
             let {email,linkId} = req.body
             let linkData = await DB.linksDB.getLinkUsingId(linkId)
@@ -45,12 +55,17 @@ router.post("/convert/hls", async (req,res)=>{
             let linkSource = getSourceName(linkData[0].main_link)
             if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
             const sourceId = getIdFromUrl(linkData[0].main_link,linkSource)
-            const downloadFile = await sources.GoogleDrive.downloadGdriveVideo(authData[0],sourceId,linkData[0].slug)
+            // from the source type, determine how to convert it to hls
+            let downloadFile;
+            if(linkSource == "GoogleDrive") downloadFile = await sources.GoogleDrive.downloadGdriveVideo(authData[0],sourceId,linkData[0].slug)
+            if(linkSource == "Direct") downloadFile = await sources.Direct.downloadFile(linkData[0].main_link,linkData[0].slug)
             const convert = HlsConverter.createHlsFiles(`./uploads/${linkData[0].slug}.mp4`,linkData[0].slug)
+            let fileSize = parseFileSizeToReadable((await fs.promises.stat(file)).size)
+            let result = DB.hlsLinksDB.createNewHlsLink({
+                link_id:linkId,server_id:"",file_id:linkData[0].slug,status:true,file_size:fileSize
+            })//get server id later
+            //servers would be selected randomly for the first part
             res.status(202).send({success:true,message:"successful",data:convert})
-            /* let result = DB.hlsLinksDB.createNewHlsLink({
-                link_id:linkId,server_id:"",file_id:linkData[0].slug,status:true,file_size:"123Mb"
-            })//get server id later and the file size */
         } else {
             res.status(401).send({success:false,message:"unauthorized"})
         }
@@ -63,9 +78,24 @@ router.post("/link/create",upload.fields([{name:'video_file',maxCount:1},
     {name:'subtitles',maxCount:1},{name:'preview_img',maxCount:1}]),async (req,res)=>{
     try {
         if (req.session.username) {
-            console.log(req.body)
-            console.log(req.files)
-            /* const {title,main_link,alt_link} = req.body
+            let main_link = ""
+            const {title,alt_link} = req.body
+            if(req.body.link_select == "link"){
+                main_link = req.body.main_link
+                if (!main_link || main_link == '') throw EvalError("Main Link was not provided. Please provide main Link")
+            }
+            if (req.body.link_select == "ftp") {
+                const {ip_address,username,password,file_name} = req.body
+                const Client = new ftp({host: ip_address,port: 21,user: username, password: password},{logging: 'basic'})//assumes port is 21
+                Client.ftp.connect()
+                main_link = "https://ftp_link.com"
+            }
+            if (req.body.link_select == "upload") {
+                const {video_file} = req.files
+                const allowedMimes = ["video/mp4"]
+                if (!video_file || video_file.length == 0) throw EvalError("Please Upload a video and try again")
+                main_link = req.headers.host+"/"+video_file[0].path
+            }
             const subtitles = req.files.subtitles ? req.files.subtitles[0].path : ""
             const preview_img = req.files.preview_img ? req.files.preview_img[0].path : ""
             //Write code to save files to upload folder
@@ -80,12 +110,12 @@ router.post("/link/create",upload.fields([{name:'video_file',maxCount:1},
             let linkdata = {title,main_link,alt_link,subtitles:subtitles,preview_img:preview_img,type,slug,data:JSON.stringify(data)}
             if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
             let newLinkCreate = await DB.linksDB.createNewLink(linkdata) 
-            res.status(201).json({success:true,message:newLinkCreate}) */
-            res.send("yay")
+            res.status(201).json({success:true,message:newLinkCreate})
         } else {
             res.status(401).send({success:false,message:"unauthorized"})
         }
     } catch (error) {
+        console.log(error)
         res.json({error})
     }
 })

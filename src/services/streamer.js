@@ -4,6 +4,14 @@ const path = require('path')
 const sources = require("../sources/sources")
 const getIdFromUrl = require("../utils/getIdFromUrl")
 
+
+/**
+ * 
+ * @param {string} fileId 
+ * @param {*} type 
+ * @param {number} start 
+ * @returns 
+ */
 const streamVideoFile = (fileId,type,start)=>{
     //parse the start argument if not done already
     const chunkSize = 1024 * 1000 * 1000 //Take 1mb from the videofile

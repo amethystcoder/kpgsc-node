@@ -6,3 +6,4 @@
 - make the video route get all the required video data using the slug
 - make the option to switch from main to hls
 - add video preview to both upload video and edit
+- set a day aside for commenting and cleaning code. And also for seperation of concerns
