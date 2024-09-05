@@ -97,6 +97,13 @@ let getLinkUsingId = async (linkId)=>{
 }
 
 /**
+ * @argument {string} slug
+ */
+let getLinkUsingSlug = async (slug)=>{
+    return await get(`slug = ${dbInstance.escape(slug)}`)
+}
+
+/**
  * create a new link in the database
  * @argument {Object} linkData object containing link data to be stored... properties include
  * acc_id,title,main_link,alt_link,preview_img,data,type,subtitles,views,downloads,is_alt,slug
@@ -188,5 +195,6 @@ module.exports = {
     deleteUsingId,
     customDelete,
     getBrokenLinks,
-    getPausedLinks
+    getPausedLinks,
+    getLinkUsingSlug
 }

@@ -14,11 +14,17 @@
         let isHls = true
         window.addEventListener("DOMContentLoaded",()=>{
             const player = new GDPlyr("video",{sources:[
-                //{src:"https://b.kpgsc.xyz/boku.mp4",title:"My Hero Academia Episode 165"},
-                //{src:"https://e.kpgsc.xyz/index.php/s/ob4AqL1tqnX3Um1/download",title:"Solo Levelling"},
-                //{src:"https://b.kpgsc.xyz/boku.mp4",title:"My Hero Academia Episode 165"},
-                {src:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).mp4",title:"Despicable Me 4",subtitle:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).srt"},
+                {src:"http://localhost:3000/api/hls/<%=slug%>",title:"Despicable Me 4",subtitle:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).srt"},
             ]})
+            let engine = new p2pml.hlsjs.Engine()
+            if(isHls && engine){
+                let hls = new Hls({
+                    liveSyncDurationCount: 7,
+                    loader: engine.createLoaderClass()
+                })
+                hls.loadSource('http://localhost:3000/api/hls/<%=slug%>')
+                hls.attachMedia(player.videoElement)
+            }
             let vastAds = [{"tag":"http://localhost:3000/advast.xml","offset":"123","type":"nonlinear"}];
             let adplayer = new AdLoader('video',vastAds)
         })

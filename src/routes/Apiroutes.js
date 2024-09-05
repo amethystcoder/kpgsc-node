@@ -207,22 +207,22 @@ router.get("/logout",async (req,res)=>{
     }
 })
 
-router.get("/stream/:videoid",async (req,res)=>{
+router.get("/stream/:slug",async (req,res)=>{
     try {
         if (req.session.username) {
             //get all required data from headers and check if they are correct
             let range = req.headers.range
-            const videoId = req.params.videoid
+            const slug = req.params.slug
             if (!range) res.status(400).send("Cannot Stream. Range not included in headers")
 
             //get link for streaming using id
-            const linkData = await DB.linksDB.getLinkUsingId(videoId)
+            const linkData = await DB.linksDB.getLinkUsingSlug(slug)
             let source = getSourceName(linkData[0].main_link)
             
             //set headers
             range = Number(range.replace(/\D/g,""));
 
-            let streamingData = Streamer.streamVideoFile(req,res,videoId,source,range)//we need to be able to determine the kind of source
+            let streamingData = Streamer.streamVideoFile(req,res,slug,source,range)//we need to be able to determine the kind of source
             res.writeHead(206,streamingData.headers)
             streamingData.videoStream.pipe(res)
         } else {
@@ -233,18 +233,18 @@ router.get("/stream/:videoid",async (req,res)=>{
     }
 })
 
-router.get("/hls/:videoid",async (req,res)=>{
+router.get("/hls/:slug",async (req,res)=>{
     try {
         if (req.session.username) {
-            let videoid = req.params.videoid
-            let splitVid = videoid.split(".")
+            let slug = req.params.slug
+            let splitVid = slug.split(".")
             let vidExt = splitVid[splitVid.length - 1]
             let hlsStreamData;
             if (vidExt && vidExt == "ts") {
-                hlsStreamData = await Streamer.getHlsDataFile(videoid,true)
+                hlsStreamData = await Streamer.getHlsDataFile(slug,true)
             }
             else{
-                hlsStreamData = await Streamer.getHlsDataFile(videoid)
+                hlsStreamData = await Streamer.getHlsDataFile(slug)
             }
             res.status(200).send(hlsStreamData)
         } else {

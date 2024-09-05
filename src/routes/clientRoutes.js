@@ -169,10 +169,12 @@ router.get('/video/:slug',async (req,res)=>{
     try {
         if (req.session.username) {
             let routeData = {}
-            let player = await DBs.settingsDB.getConfig("player")
+            const type = req.query.type || ""
             let slug = req.params.slug
+            let videoLink = type == "hls" ? `./api/hls/${slug}` : `./api/stream/${slug}`
+            let player = await DBs.settingsDB.getConfig("player")
             res.render(`../template/players/${player[0].var}`,{
-                slug:slug
+                slug:slug,videoLink:videoLink
             })
         } else{
             res.redirect('../login')

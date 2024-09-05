@@ -42,15 +42,24 @@ const getHlsDataFile = async (id,part = false)=>{
     //write code to get file name.
     let fileName;
 
+
     //check if the file exists
     if (!part) {
         //read contents of the m3u8 file and return
-        let fileContents = await fsPromises.readFile(path.join(__dirname,`../utils/split_vid/videos/${id}.m3u8`))
+        let fileContents = await fsPromises.readFile(path.join(__dirname,`../uploads/videos/${id}/${id}.m3u8`))
         fileContents = fileContents.toString("utf-8")
         return fileContents
     }
-    //read contents of the m3u8 file and return
-    let fileContents = await fsPromises.readFile(path.join(__dirname,`../utils/split_vid/videos/${id}`))
+    //read contents of the ts file and return
+    const folderList = fs.readdirSync(path.join(__dirname,`../uploads/videos`))
+    let folderName = ""
+    for (let index = 0; index < folderList.length; index++) {
+        if(id.includes(folderList[index])){
+            folderName = folderList[index]
+            break
+        }
+    }
+    let fileContents = await fsPromises.readFile(path.join(__dirname,`../uploads/videos/${folderName}/${id}`))
     return fileContents
     
 }
