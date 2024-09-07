@@ -14,14 +14,11 @@ const getIdFromUrl = require("../utils/getIdFromUrl")
  */
 const streamVideoFile = (fileId,type,start)=>{
     //parse the start argument if not done already
-    const chunkSize = 1024 * 1000 * 1000 //Take 1mb from the videofile
+    const chunkSize = 1024 * 1000 //Take 1mb from the videofile
     const videoSize = fs.statSync(path.join(__dirname,`../uploads/${fileId}.mp4`)).size
 
     //start and end: ranges of the video file to cut out
     const end = Math.min(start + chunkSize, videoSize) 
-
-    console.log(start)
-    console.log(end)
 
     let videoStream = fs.createReadStream(path.join(__dirname,`../uploads/${fileId}.mp4`),{
         start:start,end:end
