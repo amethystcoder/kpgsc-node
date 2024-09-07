@@ -222,13 +222,14 @@ router.get("/stream/:slug",async (req,res)=>{
             //set headers
             range = Number(range.replace(/\D/g,""));
 
-            let streamingData = Streamer.streamVideoFile(req,res,slug,source,range)//we need to be able to determine the kind of source
+            let streamingData = Streamer.streamVideoFile(slug,source,range)//we need to be able to determine the kind of source
             res.writeHead(206,streamingData.headers)
             streamingData.videoStream.pipe(res)
         } else {
             res.status(401).send({success:false,message:"unauthorized"})
         }
     } catch (error) {
+        console.log(error)
         res.json({error})
     }
 })
