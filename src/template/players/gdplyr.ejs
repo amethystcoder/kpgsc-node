@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title><%=title%></title>
     <script src="../static/videoPlayer.js"></script>
     <script src="../static/adplayer.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -14,7 +14,7 @@
         let isHls = true
         window.addEventListener("DOMContentLoaded",()=>{
             const player = new GDPlyr("video",{sources:[
-                {src:"http://localhost:3000/api/hls/<%=slug%>",title:"Despicable Me 4",subtitle:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).srt"},
+                {src:"<%=videoLink%>",title:"Despicable Me 4",subtitle:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).srt"},
             ]})
             let engine = new p2pml.hlsjs.Engine()
             if(isHls && engine){
@@ -22,7 +22,7 @@
                     liveSyncDurationCount: 7,
                     loader: engine.createLoaderClass()
                 })
-                hls.loadSource('http://localhost:3000/api/hls/<%=slug%>')
+                hls.loadSource('<%=videoLink%>')
                 hls.attachMedia(player.videoElement)
             }
             let vastAds = [{"tag":"http://localhost:3000/advast.xml","offset":"123","type":"nonlinear"}];

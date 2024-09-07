@@ -174,9 +174,11 @@ router.get('/video/:slug',async (req,res)=>{
             let isHls = (type == "hls")
             let videoLink = type == "hls" ? `../api/hls/${slug}` : `../api/stream/${slug}`
             let videoMime = type == "hls" ? `application/x-mpegURL` : `video/mp4`
+            //get all available link Data
+            let linkData = (await DBs.linksDB.getLinkUsingSlug(slug))[0]
             let player = await DBs.settingsDB.getConfig("player")
             res.render(`../template/players/${player[0].var}`,{
-                slug:slug,videoLink:videoLink,isHls:isHls,videoMime:videoMime
+                slug:slug,videoLink:videoLink,isHls:isHls,videoMime:videoMime,subtitles:linkData.subtitles,preview_img:linkData.preview_img,title:linkData.title
             })
         } else{
             res.redirect('../login')
