@@ -29,7 +29,7 @@ function createHlsFiles(filePath,fileName) {
             }
         }).on('progress', (progress) => {
             //TODO: find a way to send the progress back to the client (through websockets or another way)
-            console.log(`progress: ${progress.frames } frames`)
+            console.log(`progress: ${progress.percent }%`)
         }).on('end', () => {
             console.log('processing completed')
             result = "successful"

@@ -19,6 +19,7 @@ const streamVideoFile = (fileId,type,start)=>{
 
     //start and end: ranges of the video file to cut out
     const end = Math.min(start + chunkSize, videoSize) 
+    console.log(end)
 
     let videoStream = fs.createReadStream(path.join(__dirname,`../uploads/${fileId}.mp4`),{
         start:start,end:end
@@ -43,8 +44,10 @@ const getHlsDataFile = async (id,part = false)=>{
     //write code to get file name.
     let fileName;
 
-
     //check if the file exists
+
+    //if file exists move it to a new folder called video launchpad
+
     if (!part) {
         //read contents of the m3u8 file and return
         let fileContents = await fsPromises.readFile(path.join(__dirname,`../uploads/videos/${id}/${id}.m3u8`))
