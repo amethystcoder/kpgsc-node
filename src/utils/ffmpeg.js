@@ -1,6 +1,7 @@
 const fluentFfmpeg = require('fluent-ffmpeg')
 const Ffmpeg = require('@ffmpeg-installer/ffmpeg')
 const fs = require('fs')
+const websocketConnection = require("../routes/websocket")
 
 fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 
@@ -31,6 +32,11 @@ function createHlsFiles(filePath,fileName) {
             }
         }).on('progress', (progress) => {
             //TODO: find a way to send the progress back to the client (through websockets or another way)
+            websocketConnection.clients.forEach((client)=>{
+                if(client.readyState === websocket.OPEN){
+                    client.send(`progress: ${progress.frames} frames`)
+                }
+            })
             console.log(`progress: ${progress.frames} frames`)
         }).on('end', () => {
             console.log('processing completed')

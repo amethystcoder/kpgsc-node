@@ -10,7 +10,7 @@ webSocketServer.on("connection",(websock)=>{
     websock.on("message",(data,isBinary)=>{
         webSocketServer.clients.forEach((client)=>{
             if(client.readyState === websocket.OPEN){
-                client.send(data.toString())
+                //client.send(data.toString())
             }
         })
     })
@@ -24,3 +24,5 @@ webSocketServer.on("connection",(websock)=>{
     })
 
 })
+
+module.exports = webSocketServer
