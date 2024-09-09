@@ -9,7 +9,9 @@ fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 function createHlsFiles(filePath,fileName) {
     let result = ""
     try {
-        fs.mkdirSync(`./uploads/videos/${fileName}`)
+        if (!fs.existsSync(`./uploads/videos/${fileName}`)) {
+            fs.mkdirSync(`./uploads/videos/${fileName}`)   
+        }
         //check if file exists in server
         if (!fs.existsSync(filePath)) throw Error("file could not be found")
 
@@ -29,7 +31,7 @@ function createHlsFiles(filePath,fileName) {
             }
         }).on('progress', (progress) => {
             //TODO: find a way to send the progress back to the client (through websockets or another way)
-            console.log(`progress: ${progress.percent }%`)
+            console.log(`progress: ${progress.frames} frames`)
         }).on('end', () => {
             console.log('processing completed')
             result = "successful"
