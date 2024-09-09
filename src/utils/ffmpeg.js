@@ -1,7 +1,7 @@
 const fluentFfmpeg = require('fluent-ffmpeg')
 const Ffmpeg = require('@ffmpeg-installer/ffmpeg')
 const fs = require('fs')
-const websocketConnection = require("../routes/websocket")
+const {webSocketServer} = require("../routes/websocket")
 
 fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 
@@ -11,7 +11,7 @@ function createHlsFiles(filePath,fileName) {
     let result = ""
     try {
         if (!fs.existsSync(`./uploads/videos/${fileName}`)) {
-            fs.mkdirSync(`./uploads/videos/${fileName}`)   
+            fs.mkdirSync(`./uploads/videos/${fileName}`)
         }
         //check if file exists in server
         if (!fs.existsSync(filePath)) throw Error("file could not be found")
@@ -32,8 +32,8 @@ function createHlsFiles(filePath,fileName) {
             }
         }).on('progress', (progress) => {
             //TODO: find a way to send the progress back to the client (through websockets or another way)
-            websocketConnection.clients.forEach((client)=>{
-                if(client.readyState === websocket.OPEN){
+            webSocketServer.clients.forEach((client)=>{
+                if(client.readyState === 1){
                     client.send(`progress: ${progress.frames} frames`)
                 }
             })
