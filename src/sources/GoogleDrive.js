@@ -101,7 +101,7 @@ const downloadStreamFile = async (driveInstance,fileId,access_token,res) =>{
  * @returns {Promise<any>}
  */
 const downloadGdriveVideo = async (authData,fileId,DestinationName) =>{
-    //we need to check if the video file already exists in order not to redownload and waste resources
+    //check if the video file already exists in order not to redownload and waste resources
     DestinationName = DestinationName ? DestinationName : "file"
     const finished = promisify(stream.finished)
     if (!fs.existsSync(`./uploads/${DestinationName}.mp4`)) {
@@ -121,6 +121,7 @@ const downloadGdriveVideo = async (authData,fileId,DestinationName) =>{
         data.data.pipe(destination)
         return finished(destination)
     }
+    return "File already exists"
 }
 
 

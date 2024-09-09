@@ -39,15 +39,18 @@ const downloadStream = async (url,res)=>{
  */
 const downloadFile = async (url,destinationName)=>{
     //check if file already exists
-    let destination = fs.createWriteStream(`./uploads/${destinationName}.mp4`)
-    const response = await axios({
-        method: 'GET',
-        url,
-        responseType: 'stream'
-    })
-    const finished = promisify(stream.finished)
-    response.data.pipe(destination)
-    return finished(destination)
+    if (!fs.existsSync(`./uploads/${destinationName}.mp4`)) {
+        let destination = fs.createWriteStream(`./uploads/${destinationName}.mp4`)
+        const response = await axios({
+            method: 'GET',
+            url,
+            responseType: 'stream'
+        })
+        const finished = promisify(stream.finished)
+        response.data.pipe(destination)
+        return finished(destination)
+    }
+    return "File already exists"
 }
 
 
