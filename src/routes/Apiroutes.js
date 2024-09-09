@@ -11,7 +11,6 @@ const Streamer = require('../services/streamer')
 const bcrypt = require('bcryptjs')
 const getGdriveData = require("../services/getGdriveData");
 const getIdFromUrl = require('../utils/getIdFromUrl');
-const ftp = require('ftp-client')
 const path = require('path');
 const parseFileSizeToReadable = require('../utils/parseFileSizesToReadable');
 
@@ -88,8 +87,6 @@ router.post("/link/create",upload.fields([{name:'video_file',maxCount:1},
             }
             if (req.body.link_select == "ftp") {
                 const {ip_address,username,password,file_name} = req.body
-                const Client = new ftp({host: ip_address,port: 21,user: username, password: password},{logging: 'basic'})//assumes port is 21
-                Client.ftp.connect()
                 main_link = "https://ftp_link.com"
             }
             if (req.body.link_select == "upload") {
