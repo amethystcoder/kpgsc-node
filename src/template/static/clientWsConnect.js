@@ -1,5 +1,5 @@
 window.addEventListener("DOMContentLoaded",(ev)=>{
-    const websocketConnection = new WebSocket("ws://localhost:000")
+    const websocketConnection = new WebSocket("ws://localhost:3200")
 
     websocketConnection.addEventListener("open",(ev)=>{
         console.log("connected")

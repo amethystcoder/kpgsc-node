@@ -3,7 +3,7 @@ const generateUniqueId = require("../utils/generateUniqueId")
 
 //add the websocket connection to send ffmpeg conversion process
 const webSocketServer = new websocket.Server({
-    noServer:true
+    port:3200
 })
 
 const clients = new Map()

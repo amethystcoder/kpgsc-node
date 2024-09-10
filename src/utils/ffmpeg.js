@@ -1,7 +1,7 @@
 const fluentFfmpeg = require('fluent-ffmpeg')
 const Ffmpeg = require('@ffmpeg-installer/ffmpeg')
 const fs = require('fs')
-const {webSocketServer} = require("../routes/websocket")
+const {webSocketServer,clients} = require("../routes/websocket")
 
 fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 
