@@ -21,6 +21,7 @@
                 let email = document.getElementById("email").value
                 let paths = window.location.pathname.split("/")
                 let linkId = paths[paths.length - 1]
+                let persistenceId = sessionStorage.getItem("persistenceId")
                 fetch("../api/convert/hls",{
                     headers:{
                         "Content-Type":"application/json"
@@ -28,7 +29,8 @@
                     method:"POST",
                     body:JSON.stringify({
                         email:email,
-                        linkId:linkId
+                        linkId:linkId,
+                        persistenceId:persistenceId
                     })
                 }).then(Response=>Response.json())
                 .then(body=>{console.log(body)})

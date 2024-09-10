@@ -48,7 +48,7 @@ router.get("/health",(req,res)=>{
 router.post("/convert/hls", async (req,res)=>{
     try {
         if (req.session.username) {
-            let {email,linkId} = req.body
+            let {email,linkId, persistenceId} = req.body
             let linkData = await DB.linksDB.getLinkUsingId(linkId)
             let linkSource = getSourceName(linkData[0].main_link)
             if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
@@ -59,7 +59,7 @@ router.post("/convert/hls", async (req,res)=>{
                 let authData = await DB.driveAuthDB.getAuthUsingEmail(email)
                 downloadFile = await sources.GoogleDrive.downloadGdriveVideo(authData[0],sourceId,linkData[0].slug)} 
             if(linkSource == "Direct") downloadFile = await sources.Direct.downloadFile(linkData[0].main_link,linkData[0].slug)
-            const convert = await HlsConverter.createHlsFiles(`./uploads/${linkData[0].slug}.mp4`,linkData[0].slug,linkData[0].title)
+            const convert = await HlsConverter.createHlsFiles(`./uploads/${linkData[0].slug}.mp4`,linkData[0].slug,linkData[0].title,persistenceId)
             let fileSize = parseFileSizeToReadable((await fs.promises.stat(`./uploads/${linkData[0].slug}.mp4`)).size)
             let result = DB.hlsLinksDB.createNewHlsLink({
                 link_id:linkId,server_id:'35',file_id:linkData[0].slug,status:true,file_size:fileSize

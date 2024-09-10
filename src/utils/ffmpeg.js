@@ -7,7 +7,7 @@ const {convertTimeStampToSeconds} = require("./timeStamps")
 
 fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 
-async function createHlsFiles(filePath,fileName,LinkTitle) {
+async function createHlsFiles(filePath,fileName,LinkTitle,persistenceId) {
     let result = ""
     try {
         if (!fs.existsSync(`./uploads/videos/${fileName}`)) {
@@ -40,27 +40,29 @@ async function createHlsFiles(filePath,fileName,LinkTitle) {
 
             //send the progress back to the client (through websockets or another way)
             webSocketServer.clients.forEach((client)=>{
-                if(client.readyState === 1){
-                    client.send({
+                if(client.readyState === 1 && clients.get(client).persistenceId === persistenceId){
+                    client.send(JSON.stringify({
                         progress:progressInPercent,
                         message:`progress: ${progressInPercent}%`,
                         completed:false,
                         fileId:fileName,
-                        name:LinkTitle
-                    })
+                        name:LinkTitle,
+                        persistenceId:persistenceId
+                    }))
                 }
             })
         }).on('end', () => {
             //send the progress back to the client (through websockets or another way)
             webSocketServer.clients.forEach((client)=>{
-                if(client.readyState === 1){
-                    client.send({
+                if(client.readyState === 1 && clients.get(client).persistenceId === persistenceId){
+                    client.send(JSON.stringify({
                         progress:100,
                         message:`progress: 100%`,
                         completed:true,
                         fileId:fileName,
-                        name:LinkTitle
-                    })
+                        name:LinkTitle,
+                        persistenceId:persistenceId
+                    }))
                 }
             })
             console.log('processing completed')
@@ -73,8 +75,6 @@ async function createHlsFiles(filePath,fileName,LinkTitle) {
 
     return result
 }
-
-//createHlsFiles("../uploads/WKim6lktPmBanpLzxBjQxYmwvRaNL4JeNBE6Q8B5kqIxd1VSBX.mp4","WKim6lktPmBanpLzxBjQxYmwvRaNL4JeNBE6Q8B5kqIxd1VSBX")
 
 module.exports = {
     createHlsFiles
