@@ -18,6 +18,8 @@ window.addEventListener("DOMContentLoaded",(ev)=>{
         console.log("connection closed")
     })
     websocketConnection.addEventListener("message",(ev)=>{
+        const data = JSON.parse(ev.data)
+        //create a container to show this data
         console.log(ev.data)
     })
     websocketConnection.addEventListener("error",(ev)=>{

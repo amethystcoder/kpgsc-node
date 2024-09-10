@@ -40,7 +40,8 @@ async function createHlsFiles(filePath,fileName,LinkTitle,persistenceId) {
 
             //send the progress back to the client (through websockets or another way)
             webSocketServer.clients.forEach((client)=>{
-                if(client.readyState === 1 && clients.get(client).persistenceId === persistenceId){
+                let clientPersistentId = clients.get(client) ? clients.get(client).persistenceId : ""
+                if(client.readyState === 1 &&  clientPersistentId === persistenceId){
                     client.send(JSON.stringify({
                         progress:progressInPercent,
                         message:`progress: ${progressInPercent}%`,
@@ -54,7 +55,8 @@ async function createHlsFiles(filePath,fileName,LinkTitle,persistenceId) {
         }).on('end', () => {
             //send the progress back to the client (through websockets or another way)
             webSocketServer.clients.forEach((client)=>{
-                if(client.readyState === 1 && clients.get(client).persistenceId === persistenceId){
+                let clientPersistentId = clients.get(client) ? clients.get(client).persistenceId : ""
+                if(client.readyState === 1 && clientPersistentId === persistenceId){
                     client.send(JSON.stringify({
                         progress:100,
                         message:`progress: 100%`,
