@@ -1,6 +1,11 @@
 const fs = require('fs')
 
-//gets video duration in (seconds)
+/**
+ * gets the duration of a video in (seconds)
+ * 
+ * @param { string } filepath 
+ * @returns { number }
+ */
 const getVideoDuration = async (filepath)=>{
     const fsp = fs.promises
 

@@ -7,9 +7,7 @@ const {convertTimeStampToSeconds} = require("./timeStamps")
 
 fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 
-//Alot of work to be done on this funtion
-//filePath could/should be a link 
-async function createHlsFiles(filePath,fileName) {
+async function createHlsFiles(filePath,fileName,LinkTitle) {
     let result = ""
     try {
         if (!fs.existsSync(`./uploads/videos/${fileName}`)) {
@@ -43,11 +41,28 @@ async function createHlsFiles(filePath,fileName) {
             //send the progress back to the client (through websockets or another way)
             webSocketServer.clients.forEach((client)=>{
                 if(client.readyState === 1){
-                    client.send(`progress: ${progressInPercent}%`)
+                    client.send({
+                        progress:progressInPercent,
+                        message:`progress: ${progressInPercent}%`,
+                        completed:false,
+                        fileId:fileName,
+                        name:LinkTitle
+                    })
                 }
             })
-            console.log(`progress: ${progressInPercent}%`)
         }).on('end', () => {
+            //send the progress back to the client (through websockets or another way)
+            webSocketServer.clients.forEach((client)=>{
+                if(client.readyState === 1){
+                    client.send({
+                        progress:100,
+                        message:`progress: 100%`,
+                        completed:true,
+                        fileId:fileName,
+                        name:LinkTitle
+                    })
+                }
+            })
             console.log('processing completed')
             result = "successful"
         }).run()   

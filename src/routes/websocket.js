@@ -9,16 +9,13 @@ const webSocketServer = new websocket.Server({
 const clients = new Map()
 
 webSocketServer.on("connection",(websock)=>{
-    const id = generateUniqueId();
-    const metadata = { id }
 
     //add the client to a map to store for later
-    clients.set(websock, metadata)
-    console.log("websocket connected")
     websock.on("message",(data,isBinary)=>{
-        webSocketServer.clients.forEach((client)=>{
-            clients.get(client)
-        })
+        //only messages to come through here are messages to persist connection to a particular client using their persistence id
+        const id = generateUniqueId();
+        const metadata = { id, persistenceId: data.toString() }
+        clients.set(websock, metadata)
     })
 
     websock.on("close",(code,reason)=>{
