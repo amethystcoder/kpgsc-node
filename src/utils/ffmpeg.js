@@ -2,6 +2,7 @@ const fluentFfmpeg = require('fluent-ffmpeg')
 const Ffmpeg = require('@ffmpeg-installer/ffmpeg')
 const fs = require('fs')
 const {webSocketServer,clients} = require("../routes/websocket")
+const getVideoDuration = require("./getVideoDuration")
 
 fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 
@@ -15,6 +16,9 @@ function createHlsFiles(filePath,fileName) {
         }
         //check if file exists in server
         if (!fs.existsSync(filePath)) throw Error("file could not be found")
+
+        //get the total timemark of the video to create the percentage
+        const VideoDurationInSeconds = getVideoDuration(`${filePath}`)
 
         //attempt to convert file to m3u8
         fluentFfmpeg(`${filePath}`, {timeout: 43200}).addOptions([
@@ -31,13 +35,13 @@ function createHlsFiles(filePath,fileName) {
                 console.log("stderr:\n" + stderr);
             }
         }).on('progress', (progress) => {
-            //TODO: find a way to send the progress back to the client (through websockets or another way)
+            //send the progress back to the client (through websockets or another way)
             webSocketServer.clients.forEach((client)=>{
                 if(client.readyState === 1){
                     client.send(`progress: ${progress.frames} frames`)
                 }
             })
-            console.log(`progress: ${progress.frames} frames`)
+            console.log(`progress: ${progress.timemark} timemark`)
         }).on('end', () => {
             console.log('processing completed')
             result = "successful"

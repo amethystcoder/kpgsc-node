@@ -22,7 +22,7 @@ webSocketServer.on("connection",(websock)=>{
     })
 
     websock.on("close",(code,reason)=>{
-        console.log(reason)
+        console.log("connection closed")
     })
     
     websock.on("error",(err)=>{
