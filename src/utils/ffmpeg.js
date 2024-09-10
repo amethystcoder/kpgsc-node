@@ -3,12 +3,13 @@ const Ffmpeg = require('@ffmpeg-installer/ffmpeg')
 const fs = require('fs')
 const {webSocketServer,clients} = require("../routes/websocket")
 const getVideoDuration = require("./getVideoDuration")
+const {convertTimeStampToSeconds} = require("./timeStamps")
 
 fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 
 //Alot of work to be done on this funtion
 //filePath could/should be a link 
-function createHlsFiles(filePath,fileName) {
+async function createHlsFiles(filePath,fileName) {
     let result = ""
     try {
         if (!fs.existsSync(`./uploads/videos/${fileName}`)) {
@@ -18,7 +19,7 @@ function createHlsFiles(filePath,fileName) {
         if (!fs.existsSync(filePath)) throw Error("file could not be found")
 
         //get the total timemark of the video to create the percentage
-        const VideoDurationInSeconds = getVideoDuration(`${filePath}`)
+        const VideoDurationInSeconds = await getVideoDuration(`${filePath}`)
 
         //attempt to convert file to m3u8
         fluentFfmpeg(`${filePath}`, {timeout: 43200}).addOptions([
@@ -35,13 +36,17 @@ function createHlsFiles(filePath,fileName) {
                 console.log("stderr:\n" + stderr);
             }
         }).on('progress', (progress) => {
+            //convert the timeMark to seconds and calculate the percent if progress.percent is undefined
+            const timeStampConvertedToSeconds = convertTimeStampToSeconds(progress.timemark)
+            const progressInPercent = (timeStampConvertedToSeconds/VideoDurationInSeconds) * 100
+
             //send the progress back to the client (through websockets or another way)
             webSocketServer.clients.forEach((client)=>{
                 if(client.readyState === 1){
-                    client.send(`progress: ${progress.frames} frames`)
+                    client.send(`progress: ${progressInPercent}%`)
                 }
             })
-            console.log(`progress: ${progress.timemark} timemark`)
+            console.log(`progress: ${progressInPercent}%`)
         }).on('end', () => {
             console.log('processing completed')
             result = "successful"

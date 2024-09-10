@@ -59,7 +59,7 @@ router.post("/convert/hls", async (req,res)=>{
                 let authData = await DB.driveAuthDB.getAuthUsingEmail(email)
                 downloadFile = await sources.GoogleDrive.downloadGdriveVideo(authData[0],sourceId,linkData[0].slug)} 
             if(linkSource == "Direct") downloadFile = await sources.Direct.downloadFile(linkData[0].main_link,linkData[0].slug)
-            const convert = HlsConverter.createHlsFiles(`./uploads/${linkData[0].slug}.mp4`,linkData[0].slug)
+            const convert = await HlsConverter.createHlsFiles(`./uploads/${linkData[0].slug}.mp4`,linkData[0].slug)
             let fileSize = parseFileSizeToReadable((await fs.promises.stat(`./uploads/${linkData[0].slug}.mp4`)).size)
             let result = DB.hlsLinksDB.createNewHlsLink({
                 link_id:linkId,server_id:'35',file_id:linkData[0].slug,status:true,file_size:fileSize

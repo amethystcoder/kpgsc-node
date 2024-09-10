@@ -1,7 +1,9 @@
 
 /**
+ * Converts a timestamp in the format `HH:MM:SS.MS` or `HH:MM:SS` to seconds
  * 
  * @param {string} timeStamp 
+ * @returns {number} the timestamp/timemark converted to seconds
  */
 const convertTimeStampToSeconds = (timeStamp)=>{
     //get time in seconds
@@ -21,8 +23,10 @@ const convertTimeStampToSeconds = (timeStamp)=>{
 }
 
 /**
+ * Converts a timestamp in the format `HH:MM:SS.MS` or `HH:MM:SS` to minutes
  * 
  * @param {string} timeStamp 
+ * @returns {number} the timestamp/timemark converted to minutes
  */
 const convertTimeStampToMinutes = (timeStamp)=>{
     //get time in seconds
@@ -42,8 +46,10 @@ const convertTimeStampToMinutes = (timeStamp)=>{
 }
 
 /**
+ * Converts a timestamp in the format `HH:MM:SS.MS` or `HH:MM:SS` to hours
  * 
  * @param {string} timeStamp 
+ * @returns {number} the timestamp/timemark converted to hours
  */
 const convertTimeStampToHours = (timeStamp)=>{
     //get time in seconds
@@ -61,3 +67,5 @@ const convertTimeStampToHours = (timeStamp)=>{
     
     return timeStampInHours
 }
+
+module.exports = {convertTimeStampToHours,convertTimeStampToMinutes,convertTimeStampToSeconds}
