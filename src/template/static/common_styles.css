@@ -132,6 +132,47 @@ thead>tr>td{
 .ItemEditable:focus{
     border-bottom: solid thin;
 }
+.hls-progress-cont{
+    position: fixed;
+    top: 80px;
+    right: 50px;
+    padding: 10px;
+    border: hidden;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    width: 500px;
+    z-index: 30;
+}
+.progress-box{
+    padding: 10px;
+    border-bottom: solid rgb(145, 145, 145) thin;
+}
+.progress-title{
+    font-weight: 600;
+}
+/* .progress-slug{} */
+.barr{
+    display: flex;
+    flex-wrap: wrap;
+    width:100%;
+}
+.progress-bar-container{
+    height: 5px;
+    background-color: rgb(225, 225, 225);
+    border: hidden;
+    border-radius: 50px;
+    width: 100%;
+    position: relative;
+}
+.progress-bar{
+    height: 5px;
+    background-color: rgb(27, 27, 148);
+    border: hidden;
+    border-radius: 50px;
+    position: absolute;
+}
+/* .percent{} */
 @media screen and (max-width:800px) {
     .side-div{
         left: 10px;
