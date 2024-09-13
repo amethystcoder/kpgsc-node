@@ -32,15 +32,19 @@ router.get("/initialize",async (req,res)=>{
     try {
         const newDb = await initializeDB();
         console.log(newDb)
-        res.status(202).send('Database created successfully')
+        res.status(202).send({message:'Database created successfully',data:newDb})
     } catch (error) {
         res.json({error})
     }
 })
 
-router.get('/login',(req,res)=>{
+router.get('/login',async (req,res)=>{
     try {
-        res.render('../template/login')
+        let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
+        let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
+        res.render('../template/login',{
+            logo,favicon
+        })
     } catch (error) {
         res.render('../template/error',{
             error
@@ -58,6 +62,8 @@ router.get('/dashboard',async (req,res)=>{
             let proxies = await DBs.proxyStore.getProxies()
             let brokenproxies = await DBs.proxyStore.getBrokenProxies()
             let linkviews = 0
+            let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
+            let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
             for (let index = 0; index < Links.length; index++) {
                 linkviews += Links[index].views
             }
@@ -87,7 +93,7 @@ router.get('/dashboard',async (req,res)=>{
             analytics.totalViews = totalViews
             res.render('../template/dashboard',{
                 analytics:analytics,
-                links:links
+                links:links,logo,favicon
             })
         } else{
             res.redirect('./login')
@@ -99,10 +105,12 @@ router.get('/dashboard',async (req,res)=>{
     }
 })
 
-router.get('/settings',(req,res)=>{
+router.get('/settings',async (req,res)=>{
     try {
+        let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
+        let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
         if (req.session.username) {
-            res.render('../template/settings')
+            res.render('../template/settings',{logo,favicon})
         } else{
             res.redirect('./login')
         }
@@ -168,6 +176,8 @@ router.get('/settings/:section',async (req,res)=>{
 router.get('/video/:slug',async (req,res)=>{
     try {
         if (req.session.username) {
+            let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
+            let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
             let routeData = {}
             const type = req.query.type || ""
             let slug = req.params.slug
@@ -178,7 +188,10 @@ router.get('/video/:slug',async (req,res)=>{
             let linkData = (await DBs.linksDB.getLinkUsingSlug(slug))[0]
             let player = await DBs.settingsDB.getConfig("player")
             res.render(`../template/players/${player[0].var}`,{
-                slug:slug,videoLink:videoLink,isHls:isHls,videoMime:videoMime,subtitles:linkData.subtitles,preview_img:linkData.preview_img,title:linkData.title
+                slug:slug,videoLink:videoLink,isHls:isHls,
+                videoMime:videoMime,subtitles:linkData.subtitles,
+                preview_img:linkData.preview_img,title:linkData.title,
+                logo:logo,favicon:favicon
             })
         } else{
             res.redirect('../login')
@@ -193,6 +206,8 @@ router.get('/video/:slug',async (req,res)=>{
 router.get('/links/:type',async (req,res)=>{
     try {
         if (req.session.username) {
+            let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
+            let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
             let type = req.params.type
             let linkData = []
             if (type == "all") linkData = await DBs.linksDB.getAllLinks()
@@ -200,7 +215,7 @@ router.get('/links/:type',async (req,res)=>{
             if (type == "paused") linkData = await DBs.linksDB.getPausedLinks()
             if (type == "broken") linkData = await DBs.linksDB.getBrokenLinks()
             res.render('../template/links',{
-                type:type,linkData:linkData
+                type:type,linkData:linkData,logo,favicon
             })
         } else{
             res.redirect('../login')
@@ -212,12 +227,14 @@ router.get('/links/:type',async (req,res)=>{
     }
 })
 
-router.get('/link/new',(req,res)=>{
+router.get('/link/new',async (req,res)=>{
     try {
         if (req.session.username) {
+            let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
+            let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
             let title = "New Link"
             res.render('../template/linkcreate',{
-                title:title
+                title:title,logo,favicon
             })
         } else{
             res.redirect('../login')
@@ -232,6 +249,8 @@ router.get('/link/new',(req,res)=>{
 router.get('/link/:linkid',async (req,res)=>{
     try {
         if (req.session.username) {
+            let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
+            let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
             let accounts = await DBs.driveAuthDB.getAlldrive_auth()
             accounts = accounts.map(account => account.email)
             const linkId = req.params.linkid
@@ -240,7 +259,7 @@ router.get('/link/:linkid',async (req,res)=>{
             res.render('../template/linkedit',{
                 title:title,
                 data:linkData[0],
-                emails:accounts
+                emails:accounts,logo,favicon
             })
         } else{
             res.redirect('../login')
@@ -255,9 +274,11 @@ router.get('/link/:linkid',async (req,res)=>{
 router.get('/servers',async (req,res)=>{
     try {
         if (req.session.username) {
+            let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
+            let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
             let serverData = await DBs.serversDB.getAllservers()
             res.render('../template/servers',{
-                servers:serverData
+                servers:serverData,logo,favicon
             })
         } else{
             res.redirect('./login')
@@ -272,9 +293,11 @@ router.get('/servers',async (req,res)=>{
 router.get('/ads', async (req,res)=>{
     try {
         if (req.session.username) {
+            let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
+            let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
             let ads = await DBs.adsDB.getAllads();
             res.render('../template/ads',{
-                ads
+                ads,logo,favicon
             })
         } else{
             res.redirect('./login')
@@ -289,6 +312,8 @@ router.get('/ads', async (req,res)=>{
 router.get('/hls/:type',async (req,res)=>{
     try {
         if (req.session.username) {
+            let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
+            let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
             let hlsData = [];
             let type = req.params.type
             if (type == "all") hlsData = await DBs.hlsLinksDB.getAllhls_links(false,true)
@@ -306,7 +331,7 @@ router.get('/hls/:type',async (req,res)=>{
                 hlsData = links.filter(link=>linkIds.includes(link.id))
             }
             res.render('../template/hls',{
-                type,hlsData
+                type,hlsData,logo,favicon
             })
         } else{
             res.redirect('../login')
@@ -321,10 +346,12 @@ router.get('/hls/:type',async (req,res)=>{
 router.get('/bulk',async (req,res)=>{
     try {
         if (req.session.username) {
+            let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
+            let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
             //get the emails of all active auths
             let driveEmails = await DBs.driveAuthDB.getDistinct("email","status=true")
             res.render('../template/bulk',{
-                driveEmails
+                driveEmails,logo,favicon
             })
         } else{
             res.redirect('./login')
