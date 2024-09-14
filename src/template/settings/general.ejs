@@ -27,6 +27,22 @@
             })
             .catch(error=>{console.log(error)})
         }
+        function editUpload(id,section){
+            let value = document.getElementById(id).files[0]
+            let formdata = new FormData()
+            formdata.append("filename",value)
+            formdata.append("name",section)
+            fetch(`../api/settings/upload_edit`,{
+                body:formdata,
+                method:"PATCH"
+            }).then(Response=>Response.json())
+            .then(body=>{
+                if(body.success){
+                    window.location.reload()
+                }
+            })
+            .catch(error=>{console.log(error)})
+        }
     </script>
     <style>
         .go-prev {
@@ -56,6 +72,18 @@
         .gen-sect>span {
             margin-right: 20px;
         }
+        input[type=file]{
+            visibility: hidden;
+        }
+        .file-labels{
+            width: 50px;
+            height: 50px;
+            padding: 20px;
+            background-size: cover;
+        }
+        .file-labels::after{
+            content: "Click to change";
+        }
     </style>
 </head>
 
@@ -80,6 +108,22 @@
         <div class="contains-settings">
             <h1>General Settings</h1>
             <div>
+                <span class="gen-sect">
+                    <span>
+                        <h3>Logo</h3>
+                        <p>Upload a logo you want the app to use</p>
+                    </span>
+                    <label for="logo" class="file-labels" style="background-image: url('<%=settings.logo%>');"></label>
+                    <input type="file" class="light" placeholder="Enter Subtitle here" id="logo" onchange="editUpload('logo','logo')" accept=".png,.jpg,.webp">
+                </span>
+                <span class="gen-sect">
+                    <span>
+                        <h3>Favicon</h3>
+                        <p>Enter a favicon for the application</p>
+                    </span>
+                    <label for="favicon" class="file-labels" style="background-image: url('<%=settings.favicon%>');"></label>
+                    <input type="file" class="light" placeholder="Enter Subtitle here" id="favicon" onchange="editUpload('favicon','favicon')" accept=".png,.ico">
+                </span>
                 <span class="gen-sect">
                     <span>
                         <h3>Subtitle Languages</h3>

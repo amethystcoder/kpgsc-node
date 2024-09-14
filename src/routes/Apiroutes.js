@@ -589,6 +589,21 @@ router.patch("/settings/edit",async (req,res)=>{
     }
 })
 
+router.patch("/settings/upload_edit",upload.single("filename"),async (req,res)=>{
+    try {
+        if (req.session.username) {
+            let {name} = req.body
+            const video_file = req.protocol+"://"+req.headers.host+"/"+req.file.filename
+            const result = await DB.settingsDB.updateSettings(name,video_file)
+            res.status(202).send({success:true})
+        } else {
+            res.status(401).send({success:false,message:"unauthorized"})
+        }
+    } catch (error) {
+        res.json({error})
+    }
+})
+
 
 
 module.exports = router;
