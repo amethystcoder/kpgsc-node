@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,159 +10,189 @@
     <link rel="stylesheet" href="./static/ads.css">
     <script src="../static/clientWsConnect.js"></script>
     <script>
-        window.addEventListener("DOMContentLoaded",(ev)=>{
+        window.addEventListener("DOMContentLoaded", (ev) => {
             const popAdCreate = document.querySelector(".pop-ad-create")
-            popAdCreate.addEventListener("submit",async (ev)=>{
+            popAdCreate.addEventListener("submit", async (ev) => {
                 ev.preventDefault()
-                let formdata = new FormData(popAdCreate)                
+                let formdata = new FormData(popAdCreate)
                 let data = {
-                    title:Date.now().toString(),
-                    type:"popads",
-                    xml_file:formdata.get("ad"),
-                    start_offset:0,
+                    title: Date.now().toString(),
+                    type: "popads",
+                    xml_file: formdata.get("ad"),
+                    start_offset: 0,
                 }
-                try{
-                    let dataResult = await fetch("../api/vast_ads/create",{
-                        method:"POST",
-                        body:JSON.stringify(data)
+                try {
+                    let dataResult = await fetch("../api/vast_ads/create", {
+                        method: "POST",
+                        body: JSON.stringify(data)
                     })
                 }
-                catch(error){
+                catch (error) {
                     console.log(error)
                 }
             })
             const vastAdCreate = document.querySelector(".vast-ad-create")
-            vastAdCreate.addEventListener("submit",async (ev)=>{
+            vastAdCreate.addEventListener("submit", async (ev) => {
                 ev.preventDefault()
                 let formdata = new FormData(vastAdCreate)
                 let data = {
-                    title:formdata.get("title"),
-                    type:formdata.get("type"),
-                    xml_file:formdata.get("xml-file"),
-                    start_offset:formdata.get("start-offset"),
+                    title: formdata.get("title"),
+                    type: formdata.get("type"),
+                    xml_file: formdata.get("xml-file"),
+                    start_offset: formdata.get("start-offset"),
                 }
-                try{
-                    let dataResult = await fetch("../api/vast_ads/create",{
-                        headers:{
-                            "Content-Type":"application/json"
+                try {
+                    let dataResult = await fetch("../api/vast_ads/create", {
+                        headers: {
+                            "Content-Type": "application/json"
                         },
-                        method:"POST",
-                        body:JSON.stringify(data)
+                        method: "POST",
+                        body: JSON.stringify(data)
                     })
                     location.reload()
                 }
-                catch(error){
+                catch (error) {
                     console.log(error)
                 }
             })
         })
-        async function deleteAd(id){
+        async function deleteAd(id) {
             try {
-                    let result = await fetch(`../api/ads/${id}`,{
-                    headers:{
-                        "Content-Type":"application/json"
+                let result = await fetch(`../api/ads/${id}`, {
+                    headers: {
+                        "Content-Type": "application/json"
                     },
-                    method:"DELETE"
-                }) 
+                    method: "DELETE"
+                })
                 location.reload()
             } catch (error) {
                 console.log(error)
             }
         }
-        function editSpecific(id,section){
-            let value = document.getElementById(id+section).value
+        function editSpecific(id, section) {
+            let value = document.getElementById(id + section).value
             console.log(value)
-            fetch(`../api/ads/edit/${id}`,{
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:JSON.stringify({
-                        name:section,
-                        value:value
-                    }),
-                    method:"PATCH"
-                }).then(Response=>Response.json())
-                .then(body=>{
-                    if(body.success){
+            fetch(`../api/ads/edit/${id}`, {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: section,
+                    value: value
+                }),
+                method: "PATCH"
+            }).then(Response => Response.json())
+                .then(body => {
+                    if (body.success) {
                         window.location.reload()
                     }
                 })
-                .catch(error=>{console.log(error)})
+                .catch(error => { console.log(error) })
         }
-        function editAd(id){}
+        function editAd(id) { }
     </script>
 </head>
+
 <body>
     <div class="side-div">
         <%- include('./sections/nav')%>
     </div>
     <main>
         <%- include('./sections/header')%>
-        <div class="contains-ad-list">
-            <h2>ad List</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <td>Title</td>
-                        <td>Type</td>
-                        <td>XML File Link</td>
-                        <td>Offset</td>
-                        <td>Options</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% ads.forEach((ad)=>{ %>
+            <div class="contains-ad-list">
+                <h2>ad List</h2>
+                <table>
+                    <thead>
                         <tr>
-                            <td><input type="text" onchange="editSpecific('<%= ad.id %>','title')" id="<%= ad.id %>title" class="ItemEditable" value="<%=ad.title%>"></td>
-                            <td><input type="text" onchange="editSpecific('<%= ad.id %>','type')" id="<%= ad.id %>type" class="ItemEditable" value="<%=ad.type%>"></td>
-                            <td><input type="text" onchange="editSpecific('<%= ad.id %>','xml_file')" id="<%= ad.id %>xml_file" class="ItemEditable" value="<%=ad.xml_file%>"></td>
-                            <td><input type="text" onchange="editSpecific('<%= ad.id %>','start_offset')" id="<%= ad.id %>start_offset" class="ItemEditable" value="<%=ad.start_offset%>"></td>
-                            <td class="bar">
-                                <svg onclick="deleteAd('<%=ad.id%>')" xmlns="http://www.w3.org/2000/svg"  
-                                viewBox="0 0 30 30" width="20px" height="20px">    
-                                    <path d="M 14.984375 2.4863281 A 1.0001 1.0001 0 0 0 14 3.5 L 14 4 L 8.5 4 A 1.0001 1.0001 0 0 0 7.4863281 5 L 6 5 A 1.0001 1.0001 0 1 0 6 7 L 24 7 A 1.0001 1.0001 0 1 0 24 5 L 22.513672 5 A 1.0001 1.0001 0 0 0 21.5 4 L 16 4 L 16 3.5 A 1.0001 1.0001 0 0 0 14.984375 2.4863281 z M 6 9 L 7.7929688 24.234375 C 7.9109687 25.241375 8.7633438 26 9.7773438 26 L 20.222656 26 C 21.236656 26 22.088031 25.241375 22.207031 24.234375 L 24 9 L 6 9 z"/>
-                                </svg>
-                            </td>
+                            <td>Title</td>
+                            <td>Type</td>
+                            <td>XML File Link</td>
+                            <td>Offset</td>
+                            <td>Options</td>
                         </tr>
-                    <% }); %>
-                </tbody>
-            </table>
-        </div>
-        <form class="pop-ad-create glassy">
-            <h2>Pop Ads</h2>
-            <textarea name="ad" id="ad" required>
-                
-            </textarea>
-            <button>Save popad</button>
-        </form>
-        <form class="vast-ad-create glassy">
-            <h2>Add/Edit Vast ad</h2>
-            <div>
+                    </thead>
+                    <tbody>
+                        <% ads.forEach((ad)=>{ %>
+                            <tr>
+                                <td><input type="text" onchange="editSpecific('<%= ad.id %>','title')"
+                                        id="<%= ad.id %>title" class="ItemEditable" value="<%=ad.title%>"></td>
+                                <td><input type="text" onchange="editSpecific('<%= ad.id %>','type')"
+                                        id="<%= ad.id %>type" class="ItemEditable" value="<%=ad.type%>"></td>
+                                <td><input type="text" onchange="editSpecific('<%= ad.id %>','xml_file')"
+                                        id="<%= ad.id %>xml_file" class="ItemEditable" value="<%=ad.xml_file%>"></td>
+                                <td><input type="text" onchange="editSpecific('<%= ad.id %>','start_offset')"
+                                        id="<%= ad.id %>start_offset" class="ItemEditable" value="<%=ad.start_offset%>">
+                                </td>
+                                <td class="bar">
+                                    <svg onclick="deleteAd('<%=ad.id%>')" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 30 30" width="20px" height="20px">
+                                        <path
+                                            d="M 14.984375 2.4863281 A 1.0001 1.0001 0 0 0 14 3.5 L 14 4 L 8.5 4 A 1.0001 1.0001 0 0 0 7.4863281 5 L 6 5 A 1.0001 1.0001 0 1 0 6 7 L 24 7 A 1.0001 1.0001 0 1 0 24 5 L 22.513672 5 A 1.0001 1.0001 0 0 0 21.5 4 L 16 4 L 16 3.5 A 1.0001 1.0001 0 0 0 14.984375 2.4863281 z M 6 9 L 7.7929688 24.234375 C 7.9109687 25.241375 8.7633438 26 9.7773438 26 L 20.222656 26 C 21.236656 26 22.088031 25.241375 22.207031 24.234375 L 24 9 L 6 9 z" />
+                                    </svg>
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+            </div>
+            <form class="pop-ad-create glassy">
+                <h2>Pop Ads</h2>
                 <span>
-                    <label for="title">Title</label>
-                    <input type="text" name="title" id="title" class="light" required>
+                    <label for="">Title</label>
+                    <input type="text" class="light" required>
                 </span>
                 <br>
                 <span>
-                    <label for="type">Ad Type</label>
-                    <select name="type" id="type" class="light" required>
-                        <option value="banner">Banner</option>
-                        <option value="video">Video</option>
-                    </select>
+                    <label for="">Ad Link</label>
+                    <input type="url" title="where should the ad link to when clicked" class="light" required>
                 </span>
                 <br>
                 <span>
-                    <label for="xml-file">XML File</label>
-                    <input type="url" name="xml-file" id="xml-file" class="light" required>
+                    <label for="">Ad Image</label>
+                    <input type="file" accept=".jpg,.png,.webp" class="light">
+                </span>
+                <br>
+                <span>
+                    <label for="">Ad Content</label>
+                    <textarea name="ad" id="ad" required class="light"></textarea>
                 </span>
                 <br>
                 <span>
                     <label for="start-offset">Start Offset</label>
                     <input type="text" name="start-offset" id="start-offset" class="light" required>
                 </span>
-                <button>Save</button>
-            </div>
-        </form>
+                <br>
+                <button>Save popad</button>
+            </form>
+            <form class="vast-ad-create glassy">
+                <h2>Add/Edit Vast ad</h2>
+                <div>
+                    <span>
+                        <label for="title">Title</label>
+                        <input type="text" name="title" id="title" class="light" required>
+                    </span>
+                    <br>
+                    <span>
+                        <label for="type">Ad Type</label>
+                        <select name="type" id="type" class="light" required>
+                            <option value="banner">Banner</option>
+                            <option value="video">Video</option>
+                        </select>
+                    </span>
+                    <br>
+                    <span>
+                        <label for="xml-file">XML File</label>
+                        <input type="url" name="xml-file" id="xml-file" class="light" required>
+                    </span>
+                    <br>
+                    <span>
+                        <label for="start-offset">Start Offset</label>
+                        <input type="text" name="start-offset" id="start-offset" class="light" required>
+                    </span>
+                    <button>Save</button>
+                </div>
+            </form>
     </main>
 </body>
+
 </html>

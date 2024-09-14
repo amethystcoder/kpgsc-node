@@ -147,6 +147,21 @@ CREATE TABLE `servers` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `ads`
+--
+
+CREATE TABLE `popups` (
+  `id` int(5) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `content` text DEFAULT NULL,
+  `link` varchar(255) NOT NULL,
+  `start_offset` bigint(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `settings`
 --
 
@@ -193,9 +208,6 @@ CREATE TABLE `p2p_stats` (
 --
 -- Indexes for dumped tables
 --
-
-INSERT INTO `ads` (`id`, `title`, `type`, `code`) VALUES
-(20, 'popad', 'popad', '');
 
 --
 -- Dumping data for table `settings`
@@ -282,6 +294,12 @@ ALTER TABLE `links`
   ADD UNIQUE KEY `slug` (`slug`);
 
 --
+-- Indexes for table `popup ads`
+--
+ALTER TABLE `popups`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `servers`
 --
 ALTER TABLE `servers`
@@ -332,6 +350,12 @@ ALTER TABLE `hls_links`
 --
 ALTER TABLE `links`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=317;
+
+--
+-- AUTO_INCREMENT for table `ads`
+--
+ALTER TABLE `popups`
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `servers`
