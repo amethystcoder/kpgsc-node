@@ -130,34 +130,36 @@ router.get('/settings/:section',async (req,res)=>{
             for (let index = 0; index < acquiredSettings.length; index++) {
                 settings[acquiredSettings[index].config] = acquiredSettings[index].var
             }
+            let logo = settings.logo
+            let favicon = settings.favicon
             settings.sublist = JSON.parse(settings.sublist).join(",")
             switch (section) {
                 case "video":
                     res.render('../template/settings/video',{
-                        settings
+                        settings,logo,favicon
                     })
                     break;
                 case "general":
                     res.render('../template/settings/general',{
-                        settings
+                        settings,logo,favicon
                     })
                     break;
                 case "proxy":
                     let proxies = (await DBs.proxyStore.getProxies()).map(proxy => proxy.trim())
                     let brokenProxies = (await DBs.proxyStore.getBrokenProxies()).map(proxy => proxy.trim())
                     res.render('../template/settings/proxy',{
-                        settings,proxies,brokenProxies
+                        settings,proxies,brokenProxies,logo,favicon
                     })
                     break;
                 case "gdriveAuth":
                     let driveAuths = await DBs.driveAuthDB.getAlldrive_auth()
                     res.render('../template/settings/gdriveAuth',{
-                        settings,driveAuths
+                        settings,driveAuths,logo,favicon
                     })
                     break;
                 default:
                     res.render('../template/settings',{
-                        settings
+                        settings,logo,favicon
                     })
                     break;
             }
