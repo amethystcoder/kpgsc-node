@@ -15,17 +15,12 @@
             popAdCreate.addEventListener("submit", async (ev) => {
                 ev.preventDefault()
                 let formdata = new FormData(popAdCreate)
-                let data = {
-                    title: Date.now().toString(),
-                    type: "popads",
-                    xml_file: formdata.get("ad"),
-                    start_offset: 0,
-                }
                 try {
-                    let dataResult = await fetch("../api/vast_ads/create", {
+                    let dataResult = await fetch("../api/pop_ads/create", {
                         method: "POST",
-                        body: JSON.stringify(data)
+                        body: formdata
                     })
+                    location.reload()
                 }
                 catch (error) {
                     console.log(error)
@@ -135,31 +130,65 @@
                     </tbody>
                 </table>
             </div>
+            <div class="contains-pop-ad-list">
+                <h2>PopUp ad List</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <td>Title</td>
+                            <td>Image</td>
+                            <td>Content</td>
+                            <td>Link</td>
+                            <td>Offset</td>
+                            <td>Options</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% popups.forEach((ad)=>{ %>
+                            <tr>
+                                <td><input type="text" id="<%= ad.id %>title" class="ItemEditable" value="<%=ad.title%>"></td>
+                                <td><input type="text" id="<%= ad.id %>image" class="ItemEditable" value="<%=ad.image%>"></td>
+                                <td><input type="text" id="<%= ad.id %>content" class="ItemEditable" value="<%=ad.content%>"></td>
+                                <td><input type="text" id="<%= ad.id %>link" class="ItemEditable" value="<%=ad.link%>"></td>
+                                <td><input type="text" id="<%= ad.id %>start_offset" class="ItemEditable" value="<%=ad.start_offset%>">
+                                </td>
+                                <td class="bar">
+                                    <svg onclick="deletePopUp('<%=ad.id%>')" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 30 30" width="20px" height="20px">
+                                        <path
+                                            d="M 14.984375 2.4863281 A 1.0001 1.0001 0 0 0 14 3.5 L 14 4 L 8.5 4 A 1.0001 1.0001 0 0 0 7.4863281 5 L 6 5 A 1.0001 1.0001 0 1 0 6 7 L 24 7 A 1.0001 1.0001 0 1 0 24 5 L 22.513672 5 A 1.0001 1.0001 0 0 0 21.5 4 L 16 4 L 16 3.5 A 1.0001 1.0001 0 0 0 14.984375 2.4863281 z M 6 9 L 7.7929688 24.234375 C 7.9109687 25.241375 8.7633438 26 9.7773438 26 L 20.222656 26 C 21.236656 26 22.088031 25.241375 22.207031 24.234375 L 24 9 L 6 9 z" />
+                                    </svg>
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+            </div>
             <form class="pop-ad-create glassy">
                 <h2>Pop Ads</h2>
                 <span>
-                    <label for="">Title</label>
-                    <input type="text" class="light" required>
+                    <label for="title">Title</label>
+                    <input type="text" id="link" name="title" class="light" required>
                 </span>
                 <br>
                 <span>
-                    <label for="">Ad Link</label>
-                    <input type="url" title="where should the ad link to when clicked" class="light" required>
+                    <label for="link">Ad Link</label>
+                    <input type="url" id="link" name="link" title="where should the ad link to when clicked" class="light" required>
                 </span>
                 <br>
                 <span>
-                    <label for="">Ad Image</label>
-                    <input type="file" accept=".jpg,.png,.webp" class="light">
+                    <label for="pop_img">Ad Image</label>
+                    <input type="file" name="pop_img" id="pop_img" accept=".jpg,.png,.webp" class="light">
                 </span>
                 <br>
                 <span>
-                    <label for="">Ad Content</label>
-                    <textarea name="ad" id="ad" required class="light"></textarea>
+                    <label for="content">Ad Content</label>
+                    <textarea name="content" id="content" required class="light"></textarea>
                 </span>
                 <br>
                 <span>
                     <label for="start-offset">Start Offset</label>
-                    <input type="text" name="start-offset" id="start-offset" class="light" required>
+                    <input type="text" name="start_offset" id="start-offset" class="light" required>
                 </span>
                 <br>
                 <button>Save popad</button>

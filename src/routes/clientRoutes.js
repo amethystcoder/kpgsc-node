@@ -298,8 +298,9 @@ router.get('/ads', async (req,res)=>{
             let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
             let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
             let ads = await DBs.adsDB.getAllads();
+            let popups = await DBs.popupsDB.getAllPopUpAds();
             res.render('../template/ads',{
-                ads,logo,favicon
+                ads,logo,favicon,popups
             })
         } else{
             res.redirect('./login')

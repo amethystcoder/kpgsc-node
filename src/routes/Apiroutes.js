@@ -419,6 +419,35 @@ router.delete("/ads/:id",async (req,res)=>{
     }
 })
 
+router.post("/pop_ads/create",upload.single("pop_img"),async (req,res)=>{
+    try {
+        if (req.session.username) {
+            const {title,content,link,start_offset} = req.body
+            const pop_img = req.file ? req.protocol+"://"+req.headers.host+"/"+req.file.filename : ""
+            DB.popupsDB.createNewAd({title,content,link,start_offset,image:pop_img})
+            res.status(201).send({success:true,message:"successful"})
+        } else {
+            res.status(401).send({success:false,message:"unauthorized"})
+        }
+    } catch (error) {
+        res.json({error})
+    }
+})
+
+router.delete("/pop_ads/:id",async (req,res)=>{
+    try {
+        if (req.session.username) {
+            const id = req.params.id
+            let deleteAd = await DB.popupsDB.deleteUsingId(id);
+            res.status(201).send({success:true,message:"successful"})
+        } else {
+            res.status(401).send({success:false,message:"unauthorized"})
+        }
+    } catch (error) {
+        res.json({error})
+    }
+})
+
 router.post("/vast_ads/create",async (req,res)=>{
     try {
         if (req.session.username) {

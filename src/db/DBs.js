@@ -5,6 +5,7 @@ let driveAuthDB = require("./driveAuthDB")
 let hlsLinksDB = require("./hlsLinksDB")
 let linksDB = require("./linksDB")
 let p2pStatsDB = require("./p2pStatsDB")
+let popupsDB = require("./popAdsDB")
 let serversDB = require("./serversDB")
 let settingsDB = require("./settingsDB")
 let usersDB = require("./usersDB")
@@ -21,5 +22,6 @@ module.exports = {
     serversDB,
     settingsDB,
     usersDB,
-    proxyStore
+    proxyStore,
+    popupsDB
 }
