@@ -317,6 +317,8 @@ router.get('/hls/:type',async (req,res)=>{
         if (req.session.username) {
             let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
             let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
+            let accounts = await DBs.driveAuthDB.getAlldrive_auth()
+            accounts = accounts.map(account => account.email)
             let hlsData = [];
             let type = req.params.type
             if (type == "all") hlsData = await DBs.hlsLinksDB.getAllhls_links(false,true)
@@ -334,7 +336,7 @@ router.get('/hls/:type',async (req,res)=>{
                 hlsData = links.filter(link=>linkIds.includes(link.id))
             }
             res.render('../template/hls',{
-                type,hlsData,logo,favicon
+                type,hlsData,logo,favicon,emails:accounts
             })
         } else{
             res.redirect('../login')

@@ -75,6 +75,41 @@ router.post("/convert/hls", async (req,res)=>{
     }
 })
 
+router.post("/hls/bulkconvert",async (req,res)=>{
+    try {
+        if (req.session.username) {
+            //Attempt to finish up later
+            let {email, persistenceId} = req.body
+            let authData = await DB.driveAuthDB.getAuthUsingEmail(email)
+            let servers = req.body.serverIds.split(',')
+            let links = req.body.links.split(',')
+            let availableServers = await DB.serversDB.getServerUsingType("hls")
+            for (let index = 0; index < links.length; index++) {
+                let linkData = await DB.linksDB.getLinkUsingId(links[index])
+                let linkSource = getSourceName(linkData[0].main_link)
+                if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
+                const sourceId = getIdFromUrl(linkData[0].main_link,linkSource)
+                // from the source type, determine how to convert it to hls
+                let downloadFile;
+                if(linkSource == "GoogleDrive"){
+                    downloadFile = await sources.GoogleDrive.downloadGdriveVideo(authData[0],sourceId,linkData[0].slug)}
+                if(linkSource == "Direct") downloadFile = await sources.Direct.downloadFile(linkData[0].main_link,linkData[0].slug)
+                const convert = await HlsConverter.createHlsFiles(`./uploads/${linkData[0].slug}.mp4`,linkData[0].slug,linkData[0].title,persistenceId)
+                let fileSize = parseFileSizeToReadable((await fs.promises.stat(`./uploads/${linkData[0].slug}.mp4`)).size)
+                let result = DB.hlsLinksDB.createNewHlsLink({
+                    link_id:links[index],server_id:'35',file_id:linkData[0].slug,status:true,file_size:fileSize
+                })//get server id later
+            }
+            res.status(202).send({message:"successful"})
+        } else {
+            res.status(401).send({success:false,message:"unauthorized"})
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({error})
+    }
+})
+
 router.post("/link/create",upload.fields([{name:'video_file',maxCount:1},
     {name:'subtitles',maxCount:1},{name:'preview_img',maxCount:1}]),async (req,res)=>{
     try {
@@ -322,37 +357,6 @@ router.post("/p2pstats/create",(req,res)=>{
             const device = "";//get from client
             const date = new Date().toUTCString();
             DB.p2pStatsDB.createNewP2PData({upload,download,peers,country,date,device,ipAddress})
-        } else {
-            res.status(401).send({success:false,message:"unauthorized"})
-        }
-    } catch (error) {
-        res.json({error})
-    }
-})
-
-router.post("/video/upload",async (req,res)=>{
-    try {
-        
-    } catch (error) {
-        res.json({error})
-    }
-}) 
-
-router.post("/hls/bulkconvert",async (req,res)=>{
-    try {
-        if (req.session.username) {
-            //Attempt to finish up later
-            let servers = req.body.serverIds.split(',')
-            let links = req.body.links.split(',')
-            let availableServers = await DB.serversDB.getServerUsingType("hls")
-            availableServers
-            for (let index = 0; index < servers.length; index++) {
-                let linkSource = getSourceName(link)
-                if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
-                const convert = HlsConverter.createHlsFiles(link)
-                let result = DB.hlsLinksDB.createNewHlsLink()//generateHlsLinkData
-            }
-            res.status(202).send({message:"successful"})
         } else {
             res.status(401).send({success:false,message:"unauthorized"})
         }

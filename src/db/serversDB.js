@@ -85,28 +85,28 @@ let getActiveservers = async (number=false)=>{
  * @argument {string} id
  */
 let getServerUsingId = async (Id)=>{
-    return await get(`id = '${dbInstance.escape(Id)}'`)
+    return await get(`id = ${dbInstance.escape(Id)}`)
 }
 
 /**
  * @argument {string} type
  */
 let getServerUsingType = async (type)=>{
-    return await get(`type = '${dbInstance.escape(type)}'`)
+    return await get(`type = ${dbInstance.escape(type)}`)
 }
 
 /**
  * @argument {string} name
  */
 let getServerUsingName = async (name)=>{
-    return await get(`name = '${dbInstance.escape(name)}'`)
+    return await get(`name = ${dbInstance.escape(name)}`)
 }
 
 /**
  * @argument {string} domain
  */
 let getServerUsingDomain = async (domain)=>{
-    return await get(`domain = '${dbInstance.escape(domain)}'`)
+    return await get(`domain = ${dbInstance.escape(domain)}`)
 }
 
 /**
