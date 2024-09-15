@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="./static/common_styles.css">
     <link rel="stylesheet" href="./static/login.css">
     <script src="./static/lightSwitch.js"></script>
+    <script src="./static/reCaptchaCreator.js"></script>
     <link rel="shortcut icon" href="<%=favicon%>" type="image/x-icon">
     <title>Login Admin</title>
     <script>
@@ -13,12 +14,13 @@
             const error = document.getElementById("error")
             const username = document.getElementById("username").value
             const password = document.getElementById("password").value
+            const captcha = document.getElementById("captcha").value
             fetch("../api/login",{//change later
                 headers:{
                     "Content-Type":"application/json"
                 },
                 method:'POST',
-                body:JSON.stringify({username,password}),
+                body:JSON.stringify({username,password,captcha}),
             }).then(Response => Response.json())
             .then(data=>{
                 if(data.success){
@@ -70,6 +72,9 @@
             <br>
             <input class="light" type="password" id="password" placeholder="password" required>
             <br>
+            <input class="light" type="text" id="captcha" placeholder="captcha" required>
+            <br>
+            <span class="container-for-captcha"></span>
             <button onclick="login()" style="width: 100%;">Login</button>
         </div>
     </div>

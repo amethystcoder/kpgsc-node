@@ -24,6 +24,8 @@ const storage = multer.diskStorage({
   });
 const upload = multer({storage:storage})
 
+let captchas = []
+
 //auth middleware
 const auth = (req,res,next) => {
     try {
@@ -208,9 +210,12 @@ router.post("/login", async (req,res)=>{
     try {
         const username = req.body.username.toLowerCase()
         const password = req.body.password
+        const captcha = req.body.captcha
         let loggedIn = false
         let userExists = false
         let users = await DB.usersDB.getAllusers()
+        if (!captchas.includes(captcha)) throw Error("captcha is not valid")
+        captchas.splice(captchas.indexOf(captcha))
         for (let index = 0; index < users.length; index++) {
             if (users[index].username == username) {
                 userExists = true
@@ -224,9 +229,9 @@ router.post("/login", async (req,res)=>{
                 }
             }
         }
-        res.json({success:true,userExists:userExists,loggedIn:loggedIn})
+        res.json({success:true,userExists:userExists,loggedIn:loggedIn})   
     } catch (error) {
-        res.json({error})
+        res.json({error:error})
     }
 })
 
@@ -234,6 +239,20 @@ router.get("/logout",async (req,res)=>{
     try {
         req.session.destroy()
         res.status(200).json({message:"successfully logged out",success:true})
+    } catch (error) {
+        res.json({error})
+    }
+})
+
+router.get("/captcha/code",async (req,res)=>{
+    try {
+        let captchaCode = generateUniqueId(5)
+        captchas.push(captchaCode)
+        //set expiry for captcha after 6mins
+        setTimeout(()=>{
+            captchas.splice(captchas.indexOf(captchaCode))
+        },360000)
+        res.status(200).json({message:captchaCode,success:true})
     } catch (error) {
         res.json({error})
     }
