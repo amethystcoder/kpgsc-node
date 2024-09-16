@@ -182,7 +182,7 @@ router.post("/login",firewall, async (req,res)=>{
         let loggedIn = false
         let userExists = false
         let users = await DB.usersDB.getAllusers()
-        let iscaptcha = (await DBs.settingsDB.getConfig("allowCaptcha"))[0].var
+        let iscaptcha = (await DB.settingsDB.getConfig("allowCaptcha"))[0].var
         if (iscaptcha == "1") {
             if (!captchas.includes(captcha)) throw Error("captcha is not valid")
             captchas.splice(captchas.indexOf(captcha))   

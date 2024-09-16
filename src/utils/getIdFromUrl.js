@@ -11,15 +11,20 @@ function getIdFromUrl(url,linkSourceType) {
             let splitUrl = url.split("/")
             return splitUrl[splitUrl.length - 2];
         case "OkRu":
-            return url.split("/")[splitUrl.length - 1];
+            let OkRusplitUrl = url.split("/")
+            return OkRusplitUrl[OkRusplitUrl.length - 1];
         case "Yandex":
-            return url.split("/")[splitUrl.length - 1];
+            let YandexsplitUrl = url.split("/")
+            return YandexsplitUrl[YandexsplitUrl.length - 1];
         case "BOX":
-            return url.split("/")[splitUrl.length - 1];
+            let BOXsplitUrl = url.split("/")
+            return BOXsplitUrl[BOXsplitUrl.length - 1];
         case "GooglePhotos":
-            return url.split("/")[splitUrl.length - 1];
+            let GooglePhotossplitUrl = url.split("/")
+            return GooglePhotossplitUrl[GooglePhotossplitUrl.length - 1];
         case "OneDrive":
-            const lastItem = url.split("/")[splitUrl.length - 1];
+            let OneDrivesplitUrl = url.split("/")
+            const lastItem = OneDrivesplitUrl[OneDrivesplitUrl.length - 1];
             let ids = lastItem.split("?")
             const idSeperated = ids[0]
             const e = ids[1].split("=")[1]
