@@ -1,3 +1,5 @@
+const { settingsDB } = require("../db/DBs")
+
 //auth middleware
 const auth = (req,res,next) => {
     try {
@@ -12,9 +14,11 @@ const auth = (req,res,next) => {
 }
 
 //firewall middleware
-const firewall = (req,res,next) => {
+const firewall = async (req,res,next) => {
     try {
-        if (req) {
+        const allowedDomains = (await settingsDB.getConfig("acceptedDomains"))[0].var
+        let acceptedDomainList = allowedDomains.split(",")
+        if (acceptedDomainList.includes(req.protocol+"://"+req.headers.host)) {
             next()
         } else {
             res.status(401).send({success:false,message:"unauthorized"})

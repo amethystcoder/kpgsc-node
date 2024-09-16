@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/common_styles.css">
+    <script src="../static/clientWsConnect.js"></script>
+    <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool'></script>
+    <link rel="shortcut icon" href="<%=favicon%>" type="image/x-icon">
+    <!-- <link rel="stylesheet" href="../static/bootstrap.min.css"> -->
+    <title>Video Settings</title>
+    <script>
+        function editSpecific(id,section){
+            let value = document.getElementById(id).value
+            fetch(`../api/settings/edit`,{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        name:section,
+                        value:value
+                    }),
+                    method:"PATCH"
+                }).then(Response=>Response.json())
+                .then(body=>{
+                    if(body.success){
+                        window.location.reload()
+                    }
+                })
+                .catch(error=>{console.log(error)})
+        }
+    </script>
+    <style>
+        .go-prev{
+            margin-top: 35px;
+            margin-bottom: 4px;
+        }
+        .contains-settings{
+            padding-left: 15px;
+        }
+        h1{
+            margin: 0;
+            margin-bottom: 15px;
+        }
+        p,h3{
+            margin: 0;
+        }
+        .gen-sect{
+            margin-bottom: 20px;
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="side-div">
+        <%- include('../sections/nav')%>
+    </div>
+    <main>
+        <div class="go-prev" onclick="history.go(-1)" title="Back">
+            <svg fill="#000000" width="30px" height="30px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <g data-name="Layer 2"><g data-name="arrowhead-left">
+            <rect width="24" height="24" transform="rotate(90 12 12)" opacity="0"/>
+            <path d="M11.64 5.23a1 1 0 0 0-1.41.13l-5 6a1 1 0 0 0 0 1.27l4.83 6a1 1 0 0 0 .78.37 1 1 0 0 0 .78-1.63L7.29 12l4.48-5.37a1 1 0 0 0-.13-1.4z"/>
+            <path d="M14.29 12l4.48-5.37a1 1 0 0 0-1.54-1.28l-5 6a1 1 0 0 0 0 1.27l4.83 6a1 1 0 0 0 .78.37 1 1 0 0 0 .78-1.63z"/>
+            </g></g></svg>
+        </div>
+        <div class="contains-settings">
+            <h1>Video Settings</h1>
+            <div>
+                <span class="gen-sect">
+                    <span>
+                        <h3>Video Player</h3>
+                        <p>Select your default player</p>
+                    </span>
+                    <select name="default-player" id="default-player" value="<%=settings.player%>" onchange="editSpecific('default-player','player')" class="light">
+                        <option value=""></option>
+                        <option value="jwplayer">JW Player</option>
+                        <option value="plyr">Plyr.io</option>
+                        <option value="videojs">VideoJS</option>
+                        <option value="gdplyr">GDPlayer</option>
+                    </select>
+                </span>
+                <p>default player: <b><%=settings.player%></b></p>
+                <span class="gen-sect">
+                    <span>
+                        <h3>JW Player License</h3>
+                        <p>Add your jw player license</p>
+                    </span>
+                    <input type="text" class="light" placeholder="Add your jw player license" onchange="editSpecific('jw-license','jw_license')" value="<%=settings.jw_license%>" id="jw-license" name="jw-license">
+                </span>
+                <!-- More to add here, check back later -->
+                <span class="gen-sect">
+                    <span>
+                        <h3>Default Video</h3>
+                        <p>If the video link is broken, this video would play instead automatically</p>
+                    </span>
+                    <input type="text" class="light" placeholder="Enter default video link" onchange="editSpecific('def-video','default_video')"  value="<%=settings.default_video%>" id="def-video" name="def-video">
+                </span>
+                <span class="gen-sect">
+                    <span>
+                        <h3>Default Banner</h3>
+                        <p>The Default poster image to show in player</p>
+                    </span>
+                    <input type="text" class="light" placeholder="Enter default banner link" onchange="editSpecific('def-banner','default_banner')"  value="<%=settings.default_banner%>" id="def-banner" name="def-banner">
+                </span>
+                <span class="gen-sect">
+                    <span>
+                        <h3>Ice Server</h3>
+                        <p>Add a list of Ice servers to use for peer-to-peer in the video</p>
+                    </span>
+                    <input type="text" class="light" placeholder="Enter p2p servers seperated by ','" onchange="editSpecific('ice-server','stun_servers')"  value="<%=settings.stun_servers%>" id="ice-server" name="ice-server">
+                </span>
+                <span class="gen-sect">
+                    <span>
+                        <h3>P2P Tracker Server</h3>
+                        <p>Add a list of Tracker Servers to use for peer-to-peer in the video</p>
+                    </span>
+                    <input type="text" class="light" placeholder="Enter p2p tracker server seperated by ','" onchange="editSpecific('tracker-server','tracker_servers')"  value="<%=settings.tracker_servers%>" id="tracker-server" name="tracker-server">
+                </span>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

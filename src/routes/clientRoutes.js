@@ -131,6 +131,11 @@ router.get('/settings/:section',firewall,authClient,async (req,res)=>{
                     settings,logo,favicon
                 })
                 break;
+            case "security":
+                res.render('../template/settings/security',{
+                    settings,logo,favicon
+                })
+                break;
             case "proxy":
                 let proxies = (await DBs.proxyStore.getProxies()).map(proxy => proxy.trim())
                 let brokenProxies = (await DBs.proxyStore.getBrokenProxies()).map(proxy => proxy.trim())

@@ -243,7 +243,9 @@ INSERT INTO `settings` (`config`, `var`) VALUES
 ('autoPlay', '0'),
 ('streamRand', '1'),
 ('altR', '{\"onedrive\":{\"n\":\"\"},\"okru\":{\"n\":\"\"},\"gphoto\":{\"n\":\"\"},\"direct\":{\"n\":\"\"}}'),
-('isActivated', '1');
+('isActivated', '1'),
+('acceptedDomains', 'https://localhost:3000'),
+('allowCaptcha', '1');
 
 --
 -- Dumping data for table `users`
