@@ -17,6 +17,24 @@
                 checks[index].checked = checkAll.checked
             }
         }
+        function DeleteMultiple() {
+            let checks = document.querySelectorAll(".checkBoxes")
+            let selectedLinkIds = []
+            checks.forEach((check)=>{
+                if(check.checked)selectedLinkIds.push(check.value)
+            })
+            selectedLinkIds = selectedLinkIds.join("-")
+            fetch("../api/hls/Multidelete/"+selectedLinkIds,{
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                method:"DELETE"
+            }).then(Response=>Response.json())
+            .then(body=>{
+                location.reload()
+            })
+            .catch(error=>{console.log(error)})
+        }
         function convertMultiple() {
             let email = document.getElementById("email").value
             let persistenceId = sessionStorage.getItem("persistenceId")
@@ -69,6 +87,7 @@
         </div>
         <% if(type == "all"){ %>
             <div>
+                <button onclick="DeleteMultiple()">Delete</button>
                 <h1>HLS Links</h1>
                 <table>
                     <thead>
@@ -86,7 +105,7 @@
                     <tbody>
                         <% hlsData.forEach((hls)=>{ %>
                             <tr>
-                                <td><input type="checkbox" name="" id="" value="<%= hls.id %>" class="checkBoxes"></td>
+                                <td><input type="checkbox" name="" id="" value="<%= hls.hls_id %>" class="checkBoxes"></td>
                                 <td><%= hls.id %></td>
                                 <td><%= hls.title %></td>
                                 <td>Main</td><!-- Will add server later after seperating duties -->

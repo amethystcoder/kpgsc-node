@@ -37,7 +37,7 @@ let get = async (restOfQuery = '',joinMainLink = false)=>{
     let joiner = ""
     if (joinMainLink) joiner = "JOIN links ON hls_links.link_id = links.id"
     let where = restOfQuery && restOfQuery != '' ? 'WHERE' : ''
-    let [result] = await dbInstance.query(`SELECT * FROM ${table} ${where} ${restOfQuery} ${joiner}`)
+    let [result] = await dbInstance.query(`SELECT * FROM ${table} ${joiner} ${where} ${restOfQuery}`)
     return result;
 }
 
@@ -89,21 +89,21 @@ let getFailedhls_links = async (number=false,joinMainLink = false)=>{
  * @argument {string} id
  */
 let getHlsLinkUsingId = async (Id)=>{
-    return await get(`id = '${dbInstance.escape(Id)}'`)
+    return await get(`id = ${dbInstance.escape(Id)}`)
 }
 
 /**
  * @argument {string} linkId
  */
 let getHlsLinkUsinglinkId = async (linkId)=>{
-    return await get(`link_id = '${dbInstance.escape(linkId)}'`)
+    return await get(`link_id = ${dbInstance.escape(linkId)}`)
 }
 
 /**
  * @argument {string} linkId
  */
 let getHlsLinkUsingServerId = async (serverId)=>{
-    return await get(`server_id = '${dbInstance.escape(serverId)}'`)
+    return await get(`server_id = ${dbInstance.escape(serverId)}`)
 }
 
 

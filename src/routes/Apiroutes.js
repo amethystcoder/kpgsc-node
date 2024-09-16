@@ -92,6 +92,45 @@ router.post("/hls/bulkconvert",firewall,auth,async (req,res)=>{
     }
 })
 
+router.delete("/hls/delete/:id",firewall,auth,async (req,res)=>{
+    try {
+        //get the id of the item to delete
+        let getHLSLink = await DB.hlsLinksDB.getHlsLinkUsingId(req.params.id)
+        let getLink = await DB.linksDB.getLinkUsingId(getHLSLink[0].link_id)
+        //use the id to get the slug
+        const fileSlug = getLink[0].slug
+        //check for the slug hls file and delete
+        if (fs.existsSync(`./uploads/videos/${fileSlug}`)) fs.rmdir(`./uploads/videos/${fileSlug}`)
+        //check for the hls in db and delete
+        let deleteHls = await DB.hlsLinksDB.deleteUsingId(req.params.id)
+        res.status(202).send({message:"successful"})
+    } catch (error) {
+        console.log(error)
+        res.json({error})
+    }
+})
+
+router.delete("/hls/Multidelete/:ids",firewall,auth,async (req,res)=>{
+    try {
+        let ids = req.params.ids.split("-")
+        ids.forEach(async (id)=>{
+            //get the id of the item to delete
+            let getHLSLink = await DB.hlsLinksDB.getHlsLinkUsingId(id)
+            let getLink = await DB.linksDB.getLinkUsingId(getHLSLink[0].link_id)
+            //use the id to get the slug
+            const fileSlug = getLink[0].slug
+            //check for the slug hls file and delete
+            if (fs.existsSync(`./uploads/videos/${fileSlug}`)) fs.rmdir(`./uploads/videos/${fileSlug}`,(err)=>{console.log(err)})
+            //check for the hls in db and delete
+            let deleteHls = await DB.hlsLinksDB.deleteUsingId(id)
+        })
+        res.status(202).send({message:"successful"})
+    } catch (error) {
+        console.log(error)
+        res.json({error})
+    }
+})
+
 router.post("/link/create",firewall,auth,upload.fields([{name:'video_file',maxCount:1},
     {name:'subtitles',maxCount:1},{name:'preview_img',maxCount:1}]),async (req,res)=>{
     try {
@@ -258,12 +297,7 @@ router.get("/hls/:slug",firewall,auth,async (req,res)=>{
         let splitVid = slug.split(".")
         let vidExt = splitVid[splitVid.length - 1]
         let hlsStreamData;
-        if (vidExt && vidExt == "ts") {
-            hlsStreamData = await Streamer.getHlsDataFile(slug,true)
-        }
-        else{
-            hlsStreamData = await Streamer.getHlsDataFile(slug)
-        }
+        hlsStreamData = await Streamer.getHlsDataFile(slug,(vidExt && vidExt == "ts"))
         res.status(200).send(hlsStreamData)
     } catch (error) {
         res.json({error})

@@ -234,6 +234,7 @@ router.get('/link/:linkid',firewall,authClient,async (req,res)=>{
         accounts = accounts.map(account => account.email)
         const linkId = req.params.linkid
         const linkData = await DBs.linksDB.getLinkUsingId(linkId)
+        const hlsData = await DBs.hlsLinksDB.getHlsLinkUsinglinkId(linkId)
         let title = `Edit link ${linkId}`
         res.render('../template/linkedit',{
             title:title,
@@ -286,7 +287,16 @@ router.get('/hls/:type',firewall,authClient,async (req,res)=>{
         accounts = accounts.map(account => account.email)
         let hlsData = [];
         let type = req.params.type
-        if (type == "all") hlsData = await DBs.hlsLinksDB.getAllhls_links(false,true)
+        if (type == "all"){
+            hlsData = await DBs.hlsLinksDB.getAllhls_links()
+            for (let index = 0; index < hlsData.length; index++) {
+                let linkData = await DBs.linksDB.getLinkUsingId(hlsData[index].link_id)
+                linkData[0].hls_id = hlsData[index].id
+                linkData[0].serverId = hlsData[index].server_id
+                linkData[0].file_size = hlsData[index].file_size
+                hlsData[index] = linkData[0]
+            }
+        }
         if (type == "bulk") {
             let links = await DBs.linksDB.getAllLinks()
             let hlsLinks = await DBs.hlsLinksDB.getAllhls_links()
