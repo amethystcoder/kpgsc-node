@@ -38,8 +38,9 @@ router.get('/login',firewall,async (req,res)=>{
     try {
         let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
         let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
+        let iscaptcha = (await DBs.settingsDB.getConfig("allowCaptcha"))[0].var
         res.render('../template/login',{
-            logo,favicon
+            logo,favicon,iscaptcha
         })
     } catch (error) {
         res.render('../template/error',{

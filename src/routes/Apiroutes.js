@@ -182,8 +182,11 @@ router.post("/login",firewall, async (req,res)=>{
         let loggedIn = false
         let userExists = false
         let users = await DB.usersDB.getAllusers()
-        if (!captchas.includes(captcha)) throw Error("captcha is not valid")
-        captchas.splice(captchas.indexOf(captcha))
+        let iscaptcha = (await DBs.settingsDB.getConfig("allowCaptcha"))[0].var
+        if (iscaptcha == "1") {
+            if (!captchas.includes(captcha)) throw Error("captcha is not valid")
+            captchas.splice(captchas.indexOf(captcha))   
+        }
         for (let index = 0; index < users.length; index++) {
             if (users[index].username == username) {
                 userExists = true
