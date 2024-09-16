@@ -244,7 +244,7 @@ INSERT INTO `settings` (`config`, `var`) VALUES
 ('streamRand', '1'),
 ('altR', '{\"onedrive\":{\"n\":\"\"},\"okru\":{\"n\":\"\"},\"gphoto\":{\"n\":\"\"},\"direct\":{\"n\":\"\"}}'),
 ('isActivated', '1'),
-('acceptedDomains', 'https://localhost:3000'),
+('acceptedDomains', 'http://localhost:3000'),
 ('allowCaptcha', '1');
 
 --

@@ -24,6 +24,7 @@ const firewall = async (req,res,next) => {
             res.status(401).send({success:false,message:"unauthorized"})
         }
     } catch (error) {
+        console.log(error)
         res.status(401).send({success:false,message:"unauthorized"})
     }
 }

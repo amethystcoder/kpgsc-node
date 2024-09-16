@@ -65,57 +65,25 @@
             </g></g></svg>
         </div>
         <div class="contains-settings">
-            <h1>Video Settings</h1>
+            <h1>Security Settings</h1>
             <div>
                 <span class="gen-sect">
                     <span>
-                        <h3>Video Player</h3>
-                        <p>Select your default player</p>
+                        <h3>Accepted Domains</h3>
+                        <p>Any Domain that tries to make requests from the server would be blocked if it is not included</p>
                     </span>
-                    <select name="default-player" id="default-player" value="<%=settings.player%>" onchange="editSpecific('default-player','player')" class="light">
+                    <input type="text" class="light" placeholder="Add a domain" onchange="editSpecific('acceptedDomains','acceptedDomains')" value="<%=settings.acceptedDomains%>" id="acceptedDomains" name="acceptedDomains">
+                </span>
+                <span class="gen-sect">
+                    <span>
+                        <h3>Captcha</h3>
+                        <p>Turn Captcha validation on or off</p>
+                    </span>
+                    <select name="allowCaptcha" id="allowCaptcha" value="<%=settings.allowCaptcha%>" onchange="editSpecific('allowCaptcha','allowCaptcha')" class="light">
                         <option value=""></option>
-                        <option value="jwplayer">JW Player</option>
-                        <option value="plyr">Plyr.io</option>
-                        <option value="videojs">VideoJS</option>
-                        <option value="gdplyr">GDPlayer</option>
+                        <option value="0">off</option>
+                        <option value="1">on</option>
                     </select>
-                </span>
-                <p>default player: <b><%=settings.player%></b></p>
-                <span class="gen-sect">
-                    <span>
-                        <h3>JW Player License</h3>
-                        <p>Add your jw player license</p>
-                    </span>
-                    <input type="text" class="light" placeholder="Add your jw player license" onchange="editSpecific('jw-license','jw_license')" value="<%=settings.jw_license%>" id="jw-license" name="jw-license">
-                </span>
-                <!-- More to add here, check back later -->
-                <span class="gen-sect">
-                    <span>
-                        <h3>Default Video</h3>
-                        <p>If the video link is broken, this video would play instead automatically</p>
-                    </span>
-                    <input type="text" class="light" placeholder="Enter default video link" onchange="editSpecific('def-video','default_video')"  value="<%=settings.default_video%>" id="def-video" name="def-video">
-                </span>
-                <span class="gen-sect">
-                    <span>
-                        <h3>Default Banner</h3>
-                        <p>The Default poster image to show in player</p>
-                    </span>
-                    <input type="text" class="light" placeholder="Enter default banner link" onchange="editSpecific('def-banner','default_banner')"  value="<%=settings.default_banner%>" id="def-banner" name="def-banner">
-                </span>
-                <span class="gen-sect">
-                    <span>
-                        <h3>Ice Server</h3>
-                        <p>Add a list of Ice servers to use for peer-to-peer in the video</p>
-                    </span>
-                    <input type="text" class="light" placeholder="Enter p2p servers seperated by ','" onchange="editSpecific('ice-server','stun_servers')"  value="<%=settings.stun_servers%>" id="ice-server" name="ice-server">
-                </span>
-                <span class="gen-sect">
-                    <span>
-                        <h3>P2P Tracker Server</h3>
-                        <p>Add a list of Tracker Servers to use for peer-to-peer in the video</p>
-                    </span>
-                    <input type="text" class="light" placeholder="Enter p2p tracker server seperated by ','" onchange="editSpecific('tracker-server','tracker_servers')"  value="<%=settings.tracker_servers%>" id="tracker-server" name="tracker-server">
                 </span>
             </div>
         </div>
