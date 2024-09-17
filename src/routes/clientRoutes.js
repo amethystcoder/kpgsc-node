@@ -169,11 +169,15 @@ router.get('/video/:slug',firewall,authClient,async (req,res)=>{
     try {
         let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
         let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
+        let drm = (await DBs.settingsDB.getConfig("drm"))[0].var
         let routeData = {}
         const type = req.query.type || ""
         let slug = req.params.slug
         let isHls = (type == "hls")
-        let videoLink = type == "hls" ? `../api/hls/${slug}` : `../api/stream/${slug}`
+        let videoLink = type == "hls" ? `../api/hls/${slug}` : `../api/stream/${slug}` //check if `drm` is on, then use direct m3u8 link
+        if (isHls && drm == "0") {
+            videoLink = `../videos/${slug}/${slug}.m3u8`
+        }
         let videoMime = type == "hls" ? `application/x-mpegURL` : `video/mp4`
         //get all available link Data
         let linkData = (await DBs.linksDB.getLinkUsingSlug(slug))[0]

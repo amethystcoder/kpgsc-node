@@ -85,6 +85,19 @@
                         <option value="1">on</option>
                     </select>
                 </span>
+                <p>Captcha Validation is currently: <b><%=settings.allowCaptcha  == '0' ? 'off' : 'on'%></b></p>
+                <span class="gen-sect">
+                    <span>
+                        <h3>DRM</h3>
+                        <p>if turned off allows users to have access to the direct hls (m3u8) file</p>
+                    </span>
+                    <select name="drm" id="drm" value="<%=settings.drm%>" onchange="editSpecific('drm','drm')" class="light">
+                        <option value=""></option>
+                        <option value="0">off</option>
+                        <option value="1">on</option>
+                    </select>
+                </span>
+                <p>DRM currently set to: <b><%=settings.drm == '0' ? 'off' : 'on'%></b></p>
             </div>
         </div>
     </main>

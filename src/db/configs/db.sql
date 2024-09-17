@@ -245,6 +245,7 @@ INSERT INTO `settings` (`config`, `var`) VALUES
 ('altR', '{\"onedrive\":{\"n\":\"\"},\"okru\":{\"n\":\"\"},\"gphoto\":{\"n\":\"\"},\"direct\":{\"n\":\"\"}}'),
 ('isActivated', '1'),
 ('acceptedDomains', 'http://localhost:3000'),
+('drm', '0'),
 ('allowCaptcha', '1');
 
 --
