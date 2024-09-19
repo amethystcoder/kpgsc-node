@@ -246,6 +246,7 @@ INSERT INTO `settings` (`config`, `var`) VALUES
 ('isActivated', '1'),
 ('acceptedDomains', 'http://localhost:3000'),
 ('drm', '0'),
+('rateLimit', '10'),
 ('allowCaptcha', '1');
 
 --

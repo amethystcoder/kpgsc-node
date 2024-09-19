@@ -1,6 +1,5 @@
 let express = require('express')
 const router = express.Router()
-const multer = require('multer')
 const fs = require('fs');
 const HlsConverter = require("../utils/ffmpeg")
 const sources = require("../sources/sources")
@@ -13,17 +12,7 @@ const getGdriveData = require("../services/getGdriveData");
 const getIdFromUrl = require('../utils/getIdFromUrl');
 const path = require('path');
 const parseFileSizeToReadable = require('../utils/parseFileSizesToReadable');
-const {auth,firewall} = require("./middlewares")
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, './uploads');  // 'uploads/' is the directory
-    },
-    filename: function (req, file, cb) {
-      cb(null, generateUniqueId(25) + path.extname(file.originalname));
-    }
-  });
-const upload = multer({storage:storage})
+const {auth,firewall,upload,rateLimit} = require("./middlewares")
 
 let captchas = []
 
@@ -35,7 +24,7 @@ router.get("/health",(req,res)=>{
     }
 })
 
-router.post("/convert/hls",firewall, auth,async (req,res)=>{
+router.post("/convert/hls",firewall, auth, rateLimit, async (req,res)=>{
     try {
         let {email,linkId, persistenceId} = req.body
         let linkData = await DB.linksDB.getLinkUsingId(linkId)
@@ -50,6 +39,7 @@ router.post("/convert/hls",firewall, auth,async (req,res)=>{
         if(linkSource == "Direct") downloadFile = await sources.Direct.downloadFile(linkData[0].main_link,linkData[0].slug)
         const convert = await HlsConverter.createHlsFiles(`./uploads/${linkData[0].slug}.mp4`,linkData[0].slug,linkData[0].title,persistenceId)
         let fileSize = parseFileSizeToReadable((await fs.promises.stat(`./uploads/${linkData[0].slug}.mp4`)).size)
+        req.session.rateLimit++
         let result = DB.hlsLinksDB.createNewHlsLink({
             link_id:linkId,server_id:'35',file_id:linkData[0].slug,status:true,file_size:fileSize
         })//get server id later
@@ -61,7 +51,7 @@ router.post("/convert/hls",firewall, auth,async (req,res)=>{
     }
 })
 
-router.post("/hls/bulkconvert",firewall,auth,async (req,res)=>{
+router.post("/hls/bulkconvert",firewall, auth, rateLimit,async (req,res)=>{
     try {
         //Attempt to finish up later
         let {email, persistenceId} = req.body
@@ -69,7 +59,11 @@ router.post("/hls/bulkconvert",firewall,auth,async (req,res)=>{
         let servers = req.body.serverIds.split(',')
         let links = req.body.links.split(',')
         let availableServers = await DB.serversDB.getServerUsingType("hls")
+        let rateLimitSize = (await DB.settingsDB("rateLimit"))[0].var
+        rateLimitSize = parseInt(rateLimitSize)
         for (let index = 0; index < links.length; index++) {
+            //incase a user tries to overconvert in a single go, a rate checker is added to the loop
+            if (rateLimitSize < (req.session.rateLimit + index) ) break;
             let linkData = await DB.linksDB.getLinkUsingId(links[index])
             let linkSource = getSourceName(linkData[0].main_link)
             if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
@@ -85,6 +79,7 @@ router.post("/hls/bulkconvert",firewall,auth,async (req,res)=>{
                 link_id:links[index],server_id:'35',file_id:linkData[0].slug,status:true,file_size:fileSize
             })//get server id later
         }
+        req.session.rateLimit += links.length
         res.status(202).send({message:"successful"})
     } catch (error) {
         console.log(error)
@@ -553,6 +548,15 @@ router.patch("/settings/edit",firewall,auth,async (req,res)=>{
 router.patch("/settings/upload_edit",firewall,auth,upload.single("filename"),async (req,res)=>{
     try {
         let {name} = req.body
+        //we have to check if there is any already in the database and delete it if it is not the default
+        const existingFileLocationInDB = (await DB.settingsDB.getConfig(name))[0].var
+        //get the file location from the database
+        //check if it is the default file i.e from static, if not, delete the existing logo
+        if(!existingFileLocationInDB.includes("/static/icons")){
+            let fileNameFromDBSplit = existingFileLocationInDB.split("/")
+            let fileNameFromDB = fileNameFromDBSplit[fileNameFromDBSplit.length - 1]
+            fs.unlink(`./uploads/${fileNameFromDB}`,(err)=>console.log(err))
+        }
         const video_file = req.protocol+"://"+req.headers.host+"/"+req.file.filename
         const result = await DB.settingsDB.updateSettings(name,video_file)
         res.status(202).send({success:true})

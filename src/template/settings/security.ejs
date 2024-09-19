@@ -98,6 +98,13 @@
                     </select>
                 </span>
                 <p>DRM currently set to: <b><%=settings.drm == '0' ? 'off' : 'on'%></b></p>
+                <span class="gen-sect">
+                    <span>
+                        <h3>Rate Limiting</h3>
+                        <p>For requests that are heavy, i.e HLS conversion, limit the request on a session.</p>
+                    </span>
+                    <input type="text" class="light" placeholder="Please add a number" onchange="editSpecific('rateLimit','rateLimit')" value="<%=settings.rateLimit%>" id="rateLimit" name="rateLimit">
+                </span>
             </div>
         </div>
     </main>
