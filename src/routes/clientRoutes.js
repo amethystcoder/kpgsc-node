@@ -170,6 +170,8 @@ router.get('/video/:slug',firewall,authClient,async (req,res)=>{
         let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
         let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
         let drm = (await DBs.settingsDB.getConfig("drm"))[0].var
+        let popUpAds = await DBs.popupsDB.getAllPopUpAds()
+        let vastAds = await DBs.adsDB.getActiveads()
         let routeData = {}
         const type = req.query.type || ""
         let slug = req.params.slug
@@ -186,7 +188,7 @@ router.get('/video/:slug',firewall,authClient,async (req,res)=>{
             slug:slug,videoLink:videoLink,isHls:isHls,
             videoMime:videoMime,subtitles:linkData.subtitles,
             preview_img:linkData.preview_img,title:linkData.title,
-            logo:logo,favicon:favicon
+            logo:logo,favicon:favicon,popUpAds:popUpAds,vastAds:vastAds
         })
     } catch (error) {
         res.render('../template/error',{
