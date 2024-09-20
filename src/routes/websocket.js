@@ -13,9 +13,14 @@ webSocketServer.on("connection",(websock)=>{
     //add the client to a map to store for later
     websock.on("message",(data,isBinary)=>{
         //only messages to come through here are messages to persist connection to a particular client using their persistence id
-        const id = generateUniqueId();
-        const metadata = { id, persistenceId: data.toString() }
-        clients.set(websock, metadata)
+        let Message = JSON.parse(data.toString())
+
+        if (Message.type == "conversionTrack") {
+            const id = generateUniqueId();
+            const metadata = { id, persistenceId:Message.persistenceId }
+            clients.set(websock, metadata)
+        }
+        if (Message.type == "p2pconnection") {}
     })
 
     websock.on("close",(code,reason)=>{

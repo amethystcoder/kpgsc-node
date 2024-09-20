@@ -35,7 +35,7 @@ const rateLimit = async (req,res,next) => {
         //limit heavy requests in a session to just 10 or as specified
         //make this limit adjustable by the user i.e in settings
         //get the limit from the DB
-        const rateLimit = (await settingsDB.getConfig("rateLimit"))[0].var
+        let rateLimit = (await settingsDB.getConfig("rateLimit"))[0].var
         rateLimit = parseInt(rateLimit)
         if (req.session.requestsMade < rateLimit) {
             next()

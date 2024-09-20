@@ -565,6 +565,8 @@ router.patch("/settings/upload_edit",firewall,auth,upload.single("filename"),asy
     }
 })
 
-
+router.post('signalP2P',async (req,res)=>{
+    
+})
 
 module.exports = router;

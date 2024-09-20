@@ -12,7 +12,7 @@ window.addEventListener("DOMContentLoaded",(ev)=>{
     websocketConnection.addEventListener("open",(ev)=>{
         console.log("connected")
         //create a persistence ID if one does not already exist in local storage
-        websocketConnection.send(persistenceId)
+        websocketConnection.send(JSON.stringify({persistenceId:persistenceId,type:"conversionTrack"}))
     })
     websocketConnection.addEventListener("close",(ev)=>{
         console.log("connection closed")

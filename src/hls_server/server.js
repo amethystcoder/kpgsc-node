@@ -3,7 +3,6 @@ const app = express()
 const bodyParser = require('body-parser')
 const Session = require('express-session')
 require('dotenv').config()
-//We need to also add rate limiting to this app
 
 //set a middleware to redirect on new configuration
 /* app.use((req,res,next)=>{
