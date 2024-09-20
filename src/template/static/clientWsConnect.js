@@ -22,6 +22,7 @@ window.addEventListener("DOMContentLoaded",(ev)=>{
         let getHLSProcesses = sessionStorage.getItem("getHLSProcesses") || "[]"
         let HLSProcesses = JSON.parse(getHLSProcesses)
         let isExistent = false
+        //check if the data coming in is for a hls file already being shown
         for (let index = 0; index < HLSProcesses.length; index++) {
             if (HLSProcesses[index].fileId == data.fileId) {
                 HLSProcesses[index] = data
@@ -31,6 +32,7 @@ window.addEventListener("DOMContentLoaded",(ev)=>{
                 }
             }
         }
+        //if it is not, add it to the array
         if(!isExistent){
             HLSProcesses.push(data)
         }
@@ -59,9 +61,9 @@ window.addEventListener("DOMContentLoaded",(ev)=>{
                     <p class="progress-slug">${hlsprocess.fileId}</p>
                     <span class="barr">
                         <span class="progress-bar-container">
-                            <span class="progress-bar" style="width:${Math.round(hlsprocess.progress)}%"></span>
+                            <span class="progress-bar" style="width:${hlsprocess.progress ? Math.round(hlsprocess.progress) : 100}%;background-color:${hlsprocess.progress ? 'rgb(27, 27, 148)' : 'red'};"></span>
                         </span>
-                        <p class="percent">${Math.round(hlsprocess.progress)}%</p>
+                        <p class="percent">${hlsprocess.progress ? Math.round(hlsprocess.progress) : 'An error occured'}%</p>
                     </span>
                 </div>
                 `

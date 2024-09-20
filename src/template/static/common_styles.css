@@ -167,7 +167,6 @@ thead>tr>td{
 }
 .progress-bar{
     height: 5px;
-    background-color: rgb(27, 27, 148);
     border: hidden;
     border-radius: 50px;
     position: absolute;

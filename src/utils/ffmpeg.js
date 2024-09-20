@@ -5,6 +5,8 @@ const {webSocketServer,clients} = require("../routes/websocket")
 const getVideoDuration = require("./getVideoDuration")
 const {convertTimeStampToSeconds} = require("./timeStamps")
 const generateUniqueId = require("./generateUniqueId")
+const path = require("path")
+
 
 fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 
@@ -42,11 +44,24 @@ async function createHlsFiles(filePath,fileName,LinkTitle,persistenceId) {
             '-hls_list_size 0',
             '-f hls',
             '-hls_playlist_type vod',
-            '-hls_flags independent_segments',
-            `-hls_segment_filename ./uploads/videos/${fileName}/${fileName}_%v_%03d.ts`
-        ]).addOption('-var_stream_map','v:0,a:0 v:1,a:1 v:2,a:2').output(`./uploads/videos/${fileName}/${fileName}_%v_%03d.m3u8`)
+            '-hls_flags temp_file',
+            `-hls_segment_filename ${path.join(__dirname,'../uploads/videos/'+fileName+'/'+fileName+'_%v_%03d.png')}`,
+        ]).addOption('-var_stream_map','v:0,a:0 v:1,a:1 v:2,a:2').output(`${path.join(__dirname,'../uploads/videos/'+fileName+'/'+fileName+'_%v.txt')}`)
         .on('error', (err, stdout, stderr) => {
             if (err) {
+                webSocketServer.clients.forEach((client)=>{
+                    let clientPersistentId = clients.get(client) ? clients.get(client).persistenceId : ""
+                    if(client.readyState === 1 && clientPersistentId === persistenceId){
+                        client.send(JSON.stringify({
+                            progress:false,
+                            message:'an error occured',
+                            completed:false,
+                            fileId:fileName,
+                            name:LinkTitle,
+                            persistenceId:persistenceId
+                        }))
+                    }
+                })
                 console.log(err.message);
                 console.log("stderr:\n" + stderr);
             }
