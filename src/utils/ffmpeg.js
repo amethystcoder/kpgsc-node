@@ -6,6 +6,7 @@ const getVideoDuration = require("./getVideoDuration")
 const {convertTimeStampToSeconds} = require("./timeStamps")
 const generateUniqueId = require("./generateUniqueId")
 const path = require("path")
+/* const createMasterPlayFile = require("./createMasterPlayFile") */
 
 
 fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
@@ -23,6 +24,8 @@ async function createHlsFiles(filePath,fileName,LinkTitle,persistenceId) {
         const VideoDurationInSeconds = await getVideoDuration(`${filePath}`)
 
         let partId = generateUniqueId(20)
+
+        //`-master_pl_name master.txt`,
 
         //attempt to convert file to m3u8
         fluentFfmpeg(`${filePath}`, {timeout: 43200}).complexFilter([
@@ -45,8 +48,8 @@ async function createHlsFiles(filePath,fileName,LinkTitle,persistenceId) {
             '-f hls',
             '-hls_playlist_type vod',
             '-hls_flags temp_file',
-            `-hls_segment_filename ${path.join(__dirname,'../uploads/videos/'+fileName+'/'+fileName+'_%v_%03d.png')}`,
-        ]).addOption('-var_stream_map','v:0,a:0 v:1,a:1 v:2,a:2').output(`${path.join(__dirname,'../uploads/videos/'+fileName+'/'+fileName+'_%v.txt')}`)
+            `-hls_segment_filename ${path.join(__dirname,'../uploads/videos/'+fileName+'/'+fileName+'_%v_%03d.ts')}`,
+        ]).addOption('-var_stream_map','v:0,a:0 v:1,a:1 v:2,a:2').output(`${path.join(__dirname,'../uploads/videos/'+fileName+'/'+fileName+'_%v.m3u8')}`)
         .on('error', (err, stdout, stderr) => {
             if (err) {
                 webSocketServer.clients.forEach((client)=>{
@@ -55,7 +58,7 @@ async function createHlsFiles(filePath,fileName,LinkTitle,persistenceId) {
                         client.send(JSON.stringify({
                             progress:false,
                             message:'an error occured',
-                            completed:false,
+                            completed:true,
                             fileId:fileName,
                             name:LinkTitle,
                             persistenceId:persistenceId
@@ -85,6 +88,8 @@ async function createHlsFiles(filePath,fileName,LinkTitle,persistenceId) {
                 }
             })
         }).on('end', () => {
+/*             //create the master play file since ffmpeg cannnot for some reason
+            createMasterPlayFile(fileName,'m3u8') */
             //send the progress back to the client (through websockets or another way)
             webSocketServer.clients.forEach((client)=>{
                 let clientPersistentId = clients.get(client) ? clients.get(client).persistenceId : ""
@@ -99,7 +104,6 @@ async function createHlsFiles(filePath,fileName,LinkTitle,persistenceId) {
                     }))
                 }
             })
-            console.log('processing completed')
             result = "successful"
         }).run()   
     } catch (error) {

@@ -171,7 +171,7 @@ router.get('/video/:slug',firewall,authClient,async (req,res)=>{
         let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
         let drm = (await DBs.settingsDB.getConfig("drm"))[0].var
         let popUpAds = await DBs.popupsDB.getAllPopUpAds()
-        let vastAds = await DBs.adsDB.getActiveads()
+        let vastAds = await DBs.adsDB.getAllads()
         let routeData = {}
         const type = req.query.type || ""
         let slug = req.params.slug
@@ -191,6 +191,7 @@ router.get('/video/:slug',firewall,authClient,async (req,res)=>{
             logo:logo,favicon:favicon,popUpAds:popUpAds,vastAds:vastAds
         })
     } catch (error) {
+        console.log(error)
         res.render('../template/error',{
             error
         })

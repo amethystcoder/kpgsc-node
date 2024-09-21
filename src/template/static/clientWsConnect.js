@@ -63,7 +63,7 @@ window.addEventListener("DOMContentLoaded",(ev)=>{
                         <span class="progress-bar-container">
                             <span class="progress-bar" style="width:${hlsprocess.progress ? Math.round(hlsprocess.progress) : 100}%;background-color:${hlsprocess.progress ? 'rgb(27, 27, 148)' : 'red'};"></span>
                         </span>
-                        <p class="percent">${hlsprocess.progress ? Math.round(hlsprocess.progress) : 'An error occured'}%</p>
+                        <p class="percent">${hlsprocess.progress ? Math.round(hlsprocess.progress) + '%' : 'An error occured during conversion'}</p>
                     </span>
                 </div>
                 `

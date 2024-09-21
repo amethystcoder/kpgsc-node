@@ -49,7 +49,7 @@ const getHlsDataFile = async (id,part = false)=>{
 
     if (!part) {
         //read contents of the m3u8 file and return
-        let fileContents = await fsPromises.readFile(path.join(__dirname,`../uploads/videos/${id}/${id}.m3u8`))
+        let fileContents = await fsPromises.readFile(path.join(__dirname,`../uploads/videos/${id}/${id}_0.m3u8`))//change back when the ffmpeg is doing the master file properly
         fileContents = fileContents.toString("utf-8")
         return fileContents
     }
