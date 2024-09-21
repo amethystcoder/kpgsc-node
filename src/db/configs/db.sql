@@ -226,7 +226,6 @@ INSERT INTO `settings` (`config`, `var`) VALUES
 ('player', 'jwplayer'),
 ('playerSlug', 'v'),
 ('showServers', '1'),
-('adminId', '29'),
 ('default_video', 'http://localhost/gdplyr/uploads/no-video.mp4'),
 ('default_banner', 'http://localhost/gdplyr/uploads/default-banner.jpg'),
 ('stun_servers', 'stun:stun.l.google.com:19302,stun:global.stun.twilio.com:3478?transport=udp'),
@@ -247,6 +246,8 @@ INSERT INTO `settings` (`config`, `var`) VALUES
 ('acceptedDomains', 'http://localhost:3000'),
 ('drm', '0'),
 ('rateLimit', '10'),
+('hlsSegmentName', 'ts'),
+('m3u8Name', 'm3u8'),
 ('allowCaptcha', '1');
 
 --

@@ -6,6 +6,7 @@ const getVideoDuration = require("./getVideoDuration")
 const {convertTimeStampToSeconds} = require("./timeStamps")
 const generateUniqueId = require("./generateUniqueId")
 const path = require("path")
+const { settingsDB } = require('../db/DBs')
 /* const createMasterPlayFile = require("./createMasterPlayFile") */
 
 
@@ -24,6 +25,10 @@ async function createHlsFiles(filePath,fileName,LinkTitle,persistenceId) {
         const VideoDurationInSeconds = await getVideoDuration(`${filePath}`)
 
         let partId = generateUniqueId(20)
+
+        //get extension of both the segment and master files
+        const SegmentFileExtension = (await settingsDB.getConfig("hlsSegmentName"))[0].var
+        const MasterFileExtension = (await settingsDB.getConfig("m3u8Name"))[0].var
 
         //`-master_pl_name master.txt`,
 
@@ -48,8 +53,8 @@ async function createHlsFiles(filePath,fileName,LinkTitle,persistenceId) {
             '-f hls',
             '-hls_playlist_type vod',
             '-hls_flags temp_file',
-            `-hls_segment_filename ${path.join(__dirname,'../uploads/videos/'+fileName+'/'+fileName+'_%v_%03d.ts')}`,
-        ]).addOption('-var_stream_map','v:0,a:0 v:1,a:1 v:2,a:2').output(`${path.join(__dirname,'../uploads/videos/'+fileName+'/'+fileName+'_%v.m3u8')}`)
+            `-hls_segment_filename ${path.join(__dirname,'../uploads/videos/'+fileName+'/'+fileName+'_%v_%03d.'+SegmentFileExtension)}`
+        ]).addOption('-var_stream_map','v:0,a:0 v:1,a:1 v:2,a:2').output(`${path.join(__dirname,'../uploads/videos/'+fileName+'/'+fileName+'_%v.'+MasterFileExtension)}`)
         .on('error', (err, stdout, stderr) => {
             if (err) {
                 webSocketServer.clients.forEach((client)=>{

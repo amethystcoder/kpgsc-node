@@ -105,6 +105,34 @@
                     </span>
                     <input type="text" class="light" placeholder="Please add a number" onchange="editSpecific('rateLimit','rateLimit')" value="<%=settings.rateLimit%>" id="rateLimit" name="rateLimit">
                 </span>
+                <span class="gen-sect">
+                    <span>
+                        <h3>HLS Master File Extension</h3>
+                        <p>Change what the HLS 'm3u8' file extensions wouls be</p>
+                    </span>
+                    <select name="m3u8Name" id="m3u8Name" value="<%=settings.m3u8Name%>" onchange="editSpecific('m3u8Name','m3u8Name')" class="light">
+                        <option value=""></option>
+                        <option value="m3u8">M3u8</option>
+                        <option value="m38">M38</option>
+                        <option value="txt">TXT</option>
+                        <option value="css">CSS</option>
+                    </select><!-- m3u8Name -->
+                </span>
+                <p>Currently set to: <b><%=settings.m3u8Name%></b></p>
+                <span class="gen-sect">
+                    <span>
+                        <h3>HLS Segment File Extension</h3>
+                        <p>Change what the HLS 'ts' file extensions wouls be </p>
+                    </span>
+                    <select name="hlsSegmentName" id="hlsSegmentName" value="<%=settings.hlsSegmentName%>" onchange="editSpecific('hlsSegmentName','hlsSegmentName')" class="light">
+                        <option value=""></option>
+                        <option value="ts">TS</option>
+                        <option value="js">JS</option>
+                        <option value="png">PNG</option>
+                        <option value="jpg">JPG</option>
+                    </select>
+                </span>
+                <p>Currently set to: <b><%=settings.hlsSegmentName%></b></p>
             </div>
         </div>
     </main>

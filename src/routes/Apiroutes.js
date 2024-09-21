@@ -288,11 +288,13 @@ router.get("/stream/:slug",firewall,auth,async (req,res)=>{
 
 router.get("/hls/:slug",firewall,auth,async (req,res)=>{
     try {
+        const listOfAcceptableMasterExtensions = ["m3u8","m38","txt","css"]
+        const listOfAcceptableSegmentExtensions = ["ts","js","png","jpg"]
         let slug = req.params.slug
         let splitVid = slug.split(".")
         let vidExt = splitVid[splitVid.length - 1]
         let hlsStreamData;
-        hlsStreamData = await Streamer.getHlsDataFile(slug,(vidExt && vidExt == "ts"))
+        hlsStreamData = await Streamer.getHlsDataFile(slug,(vidExt && listOfAcceptableSegmentExtensions.includes(vidExt)),vidExt)
         res.status(200).send(hlsStreamData)
     } catch (error) {
         res.json({error})

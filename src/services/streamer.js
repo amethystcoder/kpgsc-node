@@ -38,18 +38,16 @@ const streamVideoFile = (fileId,type,start)=>{
  * gets the hls files depending on the id and returns their data
  * @param {string} id - the id of the hls file or m3u8 file
  * @param {boolean} part - whether we are sending the main m3u8 file or the ts files
+ * @param {string} extension - the extension of the file
  */
-const getHlsDataFile = async (id,part = false)=>{
-    //write code to get file name.
-    let fileName;
+const getHlsDataFile = async (id,part = false,extension)=>{
 
     //check if the file exists
-
     //if file exists move it to a new folder called video launchpad
 
     if (!part) {
         //read contents of the m3u8 file and return
-        let fileContents = await fsPromises.readFile(path.join(__dirname,`../uploads/videos/${id}/${id}_0.m3u8`))//change back when the ffmpeg is doing the master file properly
+        let fileContents = await fsPromises.readFile(path.join(__dirname,`../uploads/videos/${id}/${id}_0.${extension}`))//change back when the ffmpeg is doing the master file properly
         fileContents = fileContents.toString("utf-8")
         return fileContents
     }
