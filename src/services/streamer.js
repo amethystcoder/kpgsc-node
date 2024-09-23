@@ -69,7 +69,6 @@ const getHlsFileData = async (id,part = false,slugId)=>{
             break
         }
     }
-    console.log(path.join(__dirname,`../uploads/videos/${id}/${folderName}`))
     let fileContents = await fsPromises.readFile(path.join(__dirname,`../uploads/videos/${id}/${folderName}`))
     return fileContents
     
