@@ -286,18 +286,19 @@ router.get("/stream/:slug",firewall,auth,async (req,res)=>{
     }
 })
 
-router.get("/hls/:slug",firewall,auth,async (req,res)=>{
+router.get("/hls/:slug/:slugId",firewall,auth,async (req,res)=>{
     try {
-        const listOfAcceptableMasterExtensions = ["m3u8","m38","txt","css"]
         const listOfAcceptableSegmentExtensions = ["ts","js","png","jpg"]
         let slug = req.params.slug
-        let splitVid = slug.split(".")
+        let slugId = req.params.slugId
+        let splitVid = slugId.split(".")
         let vidExt = splitVid[splitVid.length - 1]
         let hlsStreamData;
-        hlsStreamData = await Streamer.getHlsDataFile(slug,(vidExt && listOfAcceptableSegmentExtensions.includes(vidExt)),vidExt)
+        hlsStreamData = await Streamer.getHlsFileData(slug,listOfAcceptableSegmentExtensions.filter((validExtension)=>validExtension == vidExt).length > 0,slugId)
         res.status(200).send(hlsStreamData)
     } catch (error) {
-        res.json({error})
+        console.log(error)
+        res.send({error:error})
     }
 })
 
