@@ -5,7 +5,7 @@ const dbInstance = require('../db/configs/dbConfig')
 
 const table = "ads";
 
-const tableColumnNames = 'id,title,type,code';
+const tableColumnNames = 'id,title,type,xml_file,start_offset';
 
 /**
  * gets the number of items in the table

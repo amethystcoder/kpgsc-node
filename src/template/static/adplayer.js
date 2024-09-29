@@ -11,6 +11,7 @@ class AdLoader {
         this.skipButtonElement = this.createSkipButton()
         this.skipButtonElement.classList.add("skip-elem")
         this.adList = ads
+        this.randomizeOffsets()
         this.beginAdPlay()
     }
 
@@ -133,6 +134,18 @@ class AdLoader {
         video.classList.add("video-ad-cont")
         body.appendChild(video)
         return video
+    }
+
+    randomizeOffsets(){
+        const videoDuration = this.videoElement.duration
+        let adListLength = this.adList.length
+        let adSpaces = videoDuration / adListLength
+        let presentOffset = 0
+        for(let i = 0; i < this.adList.length; i++){
+            //we also need to make sure that the ad offset is smaller than the video duration
+            this.adList[i].offset = Math.floor(Math.random() * (presentOffset + adSpaces)) + presentOffset
+            presentOffset += adSpaces
+        }
     }
 
     beginAdPlay(){
