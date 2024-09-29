@@ -171,6 +171,15 @@ thead>tr>td{
     border-radius: 50px;
     position: absolute;
 }
+.source-chooser{
+    border: hidden;
+    border-radius: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    position: absolute;
+    right: 40px;
+    top: 30px;
+    padding: 10px;
+}
 /* .percent{} */
 @media screen and (max-width:800px) {
     .side-div{
