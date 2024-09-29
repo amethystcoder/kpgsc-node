@@ -3,19 +3,24 @@ class AdLoader {
      * 
      * @param {string} playerId 
      * @param {Array} ads 
+     * @param {Array} popads 
      */
-    constructor (playerId,ads){
+    constructor (playerId,ads,popads){
         this.videoElement = document.getElementById(playerId)
         this.videoElement.classList.add("vid-elem")
         this.AdElement = this.initializeAdContainer()
+        this.popAdElement = this.initializePopAdContainer()
         this.skipButtonElement = this.createSkipButton()
         this.skipButtonElement.classList.add("skip-elem")
+        //add type of pop to ads
         this.adList = ads
+        this.adList = [...this.adList,...this.initializePopAds(popads)]
         this.randomizeOffsets()
         this.beginAdPlay()
     }
 
     videoElement;
+    popAdElement;
     AdElement;
     skipButtonElement;
 
@@ -43,6 +48,17 @@ class AdLoader {
                 adMediaMime:"video/mp4",
                 adDuration:0
             }
+    }
+
+    /**
+     * 
+     * @param {any[]} popAds 
+     */
+    initializePopAds(popAds){
+        for (let index = 0; index < popAds.length; index++) {
+            popAds[index].type = "popads"
+        }
+        return popAds
     }
 
     /**
@@ -85,6 +101,19 @@ class AdLoader {
         }
     }
 
+    displayPopAd(popad){
+        //get all elements and set their content
+        this.popAdElement.href = link
+        let poptitle = document.querySelector(".pop-ad-title")
+        poptitle.innerHTML = popad.title
+        let popimage = document.querySelector(".pop-ad-image")
+        popimage.src = popad.image
+        let popbody = document.querySelector(".pop-ad-body")
+        popbody.innerHTML = popad.content
+        this.popAdElement.style.display = "block"
+        //add an X button to remove the ad
+    }
+
     createSkipButton(){
         let body = document.querySelector("body")
         let skip = document.createElement("button")
@@ -123,6 +152,11 @@ class AdLoader {
         skipElem.style.display = "none"
     }
 
+    cancelPopAd(){
+        let AdBlock = document.querySelector(".pop-ad-cont")
+        AdBlock.style.display = "none"
+    }
+
     /**
      * 
      * @returns {HTMLVideoElement}
@@ -134,6 +168,31 @@ class AdLoader {
         video.classList.add("video-ad-cont")
         body.appendChild(video)
         return video
+    }
+
+    /**
+     * 
+     * @returns {HTMLAnchorElement}
+     */
+    initializePopAdContainer(){
+        let body = document.querySelector("body")
+        const link = document.createElement("a")
+        link.style.display = "none"
+        link.classList.add("pop-ad-cont")
+        const popCont = document.createElement("div")
+        popCont.classList.add("main-pop-container")
+        const popImg = document.createElement("img")
+        popImg.classList.add("pop-ad-image")
+        const title = document.createElement("h2")
+        title.classList.add("pop-ad-title")
+        const content = document.createElement("p")
+        content.classList.add("pop-ad-body")
+        popCont.appendChild(popImg)
+        popCont.appendChild(title)
+        popCont.appendChild(content)
+        link.appendChild(popCont)
+        body.appendChild(link)
+        return link
     }
 
     randomizeOffsets(){
@@ -153,14 +212,21 @@ class AdLoader {
             let AdcheckInterval = setInterval(async ()=>{
                 for (let index = 0; index < this.adList.length; index++) {
                     if (this.adList[index].offset <= this.videoElement.currentTime) {
-                        let adContent = await this.getAd(this.adList[index].tag)
-                        let adDetails = this.extractvideolink(adContent)
-                        if(adDetails.adMediaLink){
-                            this.playAd(adDetails.adMediaLink)
-                            this.determineSkip(this.adList[index].skipoffset || 5)
+                        if (this.adList[index].type == "popads") {
+                            //display the popads directly
+                            this.displayPopAd(this.adList[index])
+                            this.adList.splice(index,1);
                         }
-                        let indx = this.adList.indexOf(this.adList[index].tag);
-                        this.adList.splice(indx,1);
+                        else{
+                            let adContent = await this.getAd(this.adList[index].tag)
+                            let adDetails = this.extractvideolink(adContent)
+                            if(adDetails.adMediaLink){
+                                this.playAd(adDetails.adMediaLink)
+                                this.determineSkip(this.adList[index].skipoffset || 5)
+                            }
+                            let indx = this.adList.indexOf(this.adList[index].tag);
+                            this.adList.splice(indx,1);   
+                        }
                     }
                 }
             },2000)
