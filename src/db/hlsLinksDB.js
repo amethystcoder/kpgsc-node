@@ -88,15 +88,15 @@ let getFailedhls_links = async (number=false,joinMainLink = false)=>{
 /**
  * @argument {string} id
  */
-let getHlsLinkUsingId = async (Id)=>{
-    return await get(`id = ${dbInstance.escape(Id)}`)
+let getHlsLinkUsingId = async (Id,ids = [])=>{
+    return await get(`id = ${dbInstance.escape(Id)}${ids && ids.length > 0 ? " OR '" : ""}` + ids.join("' OR id = '") + `${ids && ids.length > 0 ? "'" : ""}`)
 }
 
 /**
  * @argument {string} linkId
  */
-let getHlsLinkUsinglinkId = async (linkId)=>{
-    return await get(`link_id = ${dbInstance.escape(linkId)}`)
+let getHlsLinkUsinglinkId = async (linkId,ids = [])=>{
+    return await get(`link_id = ${dbInstance.escape(linkId)}${ids && ids.length > 0 ? " OR '" : ""}` + ids.join("' OR link_id = '") + `${ids && ids.length > 0 ? "'" : ""}`)
 }
 
 /**

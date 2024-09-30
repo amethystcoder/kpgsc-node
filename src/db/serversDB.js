@@ -84,8 +84,8 @@ let getActiveservers = async (number=false)=>{
 /**
  * @argument {string} id
  */
-let getServerUsingId = async (Id)=>{
-    return await get(`id = ${dbInstance.escape(Id)}`)
+let getServerUsingId = async (Id,Ids)=>{
+    return await get(`id = ${dbInstance.escape(Id)}${Ids && Ids.length > 0 ? " OR '" : ""}` + Ids.join("' OR id = '") + `${Ids && Ids.length > 0 ? "'" : ""}`)
 }
 
 /**

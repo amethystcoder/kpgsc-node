@@ -28,23 +28,20 @@ router.get("/health",(req,res)=>{
 router.post("/convert/hls",firewall, auth, rateLimit, async (req,res)=>{
     try {
         let {email,linkId, persistenceId} = req.body
-        let linkData = await DB.linksDB.getLinkUsingId(linkId)
-        let linkSource = getSourceName(linkData[0].main_link)
         if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
-        const sourceId = getIdFromUrl(linkData[0].main_link,linkSource)
-        // from the source type, determine how to convert it to hls
-        let downloadFile;
-        if(linkSource == "GoogleDrive"){
-            let authData = await DB.driveAuthDB.getAuthUsingEmail(email)
-            downloadFile = await sources.GoogleDrive.downloadGdriveVideo(authData[0],sourceId,linkData[0].slug)} 
-        if(linkSource == "Direct") downloadFile = await sources.Direct.downloadFile(linkData[0].main_link,linkData[0].slug)
-        const convert = await HlsConverter.createHlsFiles(`./uploads/${linkData[0].slug}.mp4`,linkData[0].slug,linkData[0].title,persistenceId)
-        let fileSize = parseFileSizeToReadable((await fs.promises.stat(`./uploads/${linkData[0].slug}.mp4`)).size)
+        //select a random server from the database
+        let Activeservers = await DB.serversDB.getActiveservers()
+        //select a random server
+        let chosenServer = Activeservers[Math.floor(Math.random() * Activeservers.length)]
+        const response = await fetch(chosenServer.domain+"/api/convert/hls",{
+            method:"POST",
+            headers: {'Content-Type': 'application/json'},
+            body:{
+                email,persistenceId,linkId:linkId,server_id:chosenServer.id
+            }
+        })
+        const data = await response.json()
         req.session.rateLimit++
-        let result = DB.hlsLinksDB.createNewHlsLink({
-            link_id:linkId,server_id:'35',file_id:linkData[0].slug,status:true,file_size:fileSize
-        })//get server id later
-        //servers would be selected randomly for the first part
         res.status(202).send({success:true,message:"successful",data:convert})
     } catch (error) {
         console.log(error);
@@ -56,31 +53,22 @@ router.post("/hls/bulkconvert",firewall, auth, rateLimit,async (req,res)=>{
     try {
         //Attempt to finish up later
         let {email, persistenceId} = req.body
-        let authData = await DB.driveAuthDB.getAuthUsingEmail(email)
         let servers = req.body.serverIds.split(',')
         let links = req.body.links.split(',')
-        let availableServers = await DB.serversDB.getServerUsingType("hls")
+        let availableServers = await DB.serversDB.getServerUsingId(servers[0],servers.slice(1))
         let rateLimitSize = (await DB.settingsDB("rateLimit"))[0].var
         rateLimitSize = parseInt(rateLimitSize)
-        for (let index = 0; index < links.length; index++) {
-            //incase a user tries to overconvert in a single go, a rate checker is added to the loop
-            if (rateLimitSize < (req.session.rateLimit + index) ) break;
-            let linkData = await DB.linksDB.getLinkUsingId(links[index])
-            let linkSource = getSourceName(linkData[0].main_link)
-            if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
-            const sourceId = getIdFromUrl(linkData[0].main_link,linkSource)
-            // from the source type, determine how to convert it to hls
-            let downloadFile;
-            if(linkSource == "GoogleDrive"){
-                downloadFile = await sources.GoogleDrive.downloadGdriveVideo(authData[0],sourceId,linkData[0].slug)}
-            if(linkSource == "Direct") downloadFile = await sources.Direct.downloadFile(linkData[0].main_link,linkData[0].slug)
-            const convert = await HlsConverter.createHlsFiles(`./uploads/${linkData[0].slug}.mp4`,linkData[0].slug,linkData[0].title,persistenceId)
-            let fileSize = parseFileSizeToReadable((await fs.promises.stat(`./uploads/${linkData[0].slug}.mp4`)).size)
-            let result = DB.hlsLinksDB.createNewHlsLink({
-                link_id:links[index],server_id:'35',file_id:linkData[0].slug,status:true,file_size:fileSize
-            })//get server id later
-        }
         req.session.rateLimit += links.length
+        for (let index = 0; index < availableServers.length; index++) {
+            const response = await fetch(availableServers[index].domain+"/api/hls/bulkconvert/",{
+                method:"POST",
+                headers: {'Content-Type': 'application/json'},
+                body:{
+                    email,persistenceId,links:req.body.links
+                }
+            })
+            const data = await response.json()
+        }
         res.status(202).send({message:"successful"})
     } catch (error) {
         console.log(error)
@@ -108,16 +96,42 @@ router.delete("/hls/delete/:id",firewall,auth,async (req,res)=>{
     }
 })
 
-router.delete("/hls/Multidelete/:ids",firewall,auth,async (req,res)=>{
+router.delete("/hls/Multidelete/:ids",async (req,res)=>{
     try {
         let ids = req.params.ids.split("-")
         //get the respective ids of the server and server data for each hls Link
-        const allServers = (await DB.serversDB.getAllservers())[0]
+        let allServers = await DB.serversDB.getAllservers()
         //for each server id, pack the hls id for them and send all to the hls
+        const hlsDatas = await DB.hlsLinksDB.getHlsLinkUsingId(ids[0],ids.slice(1))
+        let serverWTData = allServers.map((server)=>{
+            return {
+                hlsData: hlsDatas.filter((hlsdata)=>hlsdata.server_id == server.id).map((hlsdata)=> hlsdata.id),
+                domain: server.domain,
+                id: server.id
+            }
+        })
+        for (let index = 0; index < serverWTData.length; index++) {
+            if (serverWTData[index].hlsData.length > 0) {
+                const response = await fetch(serverWTData[index].domain+"/api/hls/Multidelete/"+serverWTData[index].hlsData.join("-"),{
+                    method:"DELETE",
+                    headers: {'Content-Type': 'application/json'}
+                })
+                const data = await response.json()
+            }
+        }
         res.status(202).send({message:"successful"})
     } catch (error) {
         console.log(error)
         res.json({error})
+    }
+})
+
+router.get("/tester",async(req,res)=>{
+    try {
+        let availableServers = await DB.serversDB.getServerUsingId("35",["36"])
+        console.log(availableServers)
+    } catch (error) {
+        console.log(error)
     }
 })
 
