@@ -1,4 +1,4 @@
-const dbInstance = require('../db/configs/dbConfig')
+const {dbInstance} = require('../db/configs/dbConfig')
 
 //A list of common functions for CRUD on the popPopUpAds database
 //Feel free to add more as needed

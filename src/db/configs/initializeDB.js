@@ -5,6 +5,7 @@ const DBPool = require('./dbConfig')
 
 const initializeDatabase = ()=>{
     try {
+        const newPool = DBPool("localhost","root","","videodb")//change later
         //create tables
         fs.readFile('./db.sql',async (err,data)=>{
             if(err) return err
@@ -13,11 +14,11 @@ const initializeDatabase = ()=>{
             for (let index = 0; index < file.length; index++) {
                 SQLcommand += file[index];
                 if (file[index] === ";") {
-                    await DBPool.query(SQLcommand)
+                    newPool.query(SQLcommand)
                     SQLcommand = ''
                 }
             }  
-            await DBPool.end()
+            newPool.end()
         })
         return {success:true}
     } catch (error) {

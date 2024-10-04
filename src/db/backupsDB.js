@@ -1,4 +1,4 @@
-const dbInstance = require('../db/configs/dbConfig')
+const {dbInstance} = require('../db/configs/dbConfig')
 
 //A list of common functions for CRUD on the backup_drives database
 //Feel free to include more as needed

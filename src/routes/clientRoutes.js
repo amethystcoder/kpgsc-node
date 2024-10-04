@@ -26,9 +26,8 @@ router.get('/',firewall,authClient,(req,res)=>{
 
 router.get("/initialize",async (req,res)=>{
     try {
-        const newDb = await initializeDB();
-        console.log(newDb)
-        res.status(202).send({message:'Database created successfully',data:newDb})
+        //const newDb = await initializeDB();
+        res.render('../template/configuration',{})
     } catch (error) {
         res.json({error})
     }
