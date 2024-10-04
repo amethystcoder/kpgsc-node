@@ -28,7 +28,6 @@ router.get("/health",(req,res)=>{
 router.post("/convert/hls",firewall, auth, rateLimit, async (req,res)=>{
     try {
         let {email,linkId, persistenceId} = req.body
-        if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
         //select a random server from the database
         let Activeservers = await DB.serversDB.getActiveservers()
         //select a random server
@@ -36,13 +35,13 @@ router.post("/convert/hls",firewall, auth, rateLimit, async (req,res)=>{
         const response = await fetch(chosenServer.domain+"/api/convert/hls",{
             method:"POST",
             headers: {'Content-Type': 'application/json'},
-            body:{
+            body:JSON.stringify({
                 email,persistenceId,linkId:linkId,server_id:chosenServer.id
-            }
+            })
         })
         const data = await response.json()
         req.session.rateLimit++
-        res.status(202).send({success:true,message:"successful",data:convert})
+        res.status(202).send({success:true,message:"successful",data:data})
     } catch (error) {
         console.log(error);
         res.json({error})
@@ -123,15 +122,6 @@ router.delete("/hls/Multidelete/:ids",async (req,res)=>{
     } catch (error) {
         console.log(error)
         res.json({error})
-    }
-})
-
-router.get("/tester",async(req,res)=>{
-    try {
-        let availableServers = await DB.serversDB.getServerUsingId("35",["36"])
-        console.log(availableServers)
-    } catch (error) {
-        console.log(error)
     }
 })
 
@@ -313,10 +303,20 @@ router.get("/hls/:slug/:slugId",firewall,auth,async (req,res)=>{
 
 router.post("/server/create",firewall,auth,async (req,res)=>{
     try {
+        // we need to test the server that it is working properly
         const {name, domain, type} = req.body
-        let createServer = await DB.serversDB.createNewServer({name,domain,type})
+        let status = false
+        //send a request to the servers health route
+        const response = await fetch(`${domain}/api/health`,{
+            method:"GET"
+        }).catch(err => console.log(err))//this is the defining factor apparently
+        let data = null
+        if (response) data = await response.json()
+        if (data && data.data == "ok") status = true
+        let createServer = await DB.serversDB.createNewServer({name,domain,type,status})
         res.status(201).json({success:true,message:createServer})
     } catch (error) {
+        console.log(error)
         res.json({error})
     }
 })

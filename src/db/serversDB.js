@@ -133,9 +133,8 @@ let getDeletedServer = async (number=false)=>{
 let createNewServer = async (serverData)=>{
     if (typeof serverData != 'object') throw TypeError("argument type is not correct, it should be an object")
     //TODO some other checks here to be strict with the type of data coming in
-    serverData.status = true
-    let [results] = await dbInstance.query(`INSERT INTO ${table} (name,domain,type) VALUES (?,?,?)`, 
-    [serverData.name,serverData.domain,serverData.type])
+    let [results] = await dbInstance.query(`INSERT INTO ${table} (name,domain,type,status) VALUES (?,?,?,?)`, 
+    [serverData.name,serverData.domain,serverData.type,serverData.status])
     return results;
 }
 

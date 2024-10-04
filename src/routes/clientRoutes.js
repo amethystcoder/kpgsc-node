@@ -185,6 +185,8 @@ router.get('/video/:slug',firewall,authClient,async (req,res)=>{
         let OtherSources = await DBs.hlsLinksDB.getHlsLinkUsinglinkId(linkData.id)
         OtherSources = OtherSources.filter((othsrc)=>othsrc)
         let sources = [linkData,...OtherSources]
+        console.log(sources)
+        console.log(popUpAds)
         //othersources might also be several when it is in microservices architechture
         let player = await DBs.settingsDB.getConfig("player")
         res.render(`../template/players/${player[0].var}`,{

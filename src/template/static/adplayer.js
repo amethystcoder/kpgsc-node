@@ -15,6 +15,7 @@ class AdLoader {
         //add type of pop to ads
         this.adList = ads
         this.adList = [...this.adList,...this.initializePopAds(popads)]
+        console.log(this.adList)
         this.randomizeOffsets()
         this.beginAdPlay()
     }
