@@ -169,8 +169,6 @@ router.get('/video/:slug',firewall,authClient,async (req,res)=>{
         let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
         let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
         let drm = (await DBs.settingsDB.getConfig("drm"))[0].var
-        let popUpAds = await DBs.popupsDB.getAllPopUpAds()
-        let vastAds = await DBs.adsDB.getAllads()
         let routeData = {}
         const type = req.query.type || ""
         let slug = req.params.slug
@@ -185,15 +183,15 @@ router.get('/video/:slug',firewall,authClient,async (req,res)=>{
         let OtherSources = await DBs.hlsLinksDB.getHlsLinkUsinglinkId(linkData.id)
         OtherSources = OtherSources.filter((othsrc)=>othsrc)
         let sources = [linkData,...OtherSources]
-        console.log(sources)
-        console.log(popUpAds)
+        //console.log(sources)
+        console.log(Ads)
         //othersources might also be several when it is in microservices architechture
         let player = await DBs.settingsDB.getConfig("player")
         res.render(`../template/players/${player[0].var}`,{
             slug:slug,videoLink:videoLink,isHls:isHls,
             videoMime:videoMime,subtitles:linkData.subtitles,
             preview_img:linkData.preview_img,title:linkData.title,
-            logo:logo,favicon:favicon,popUpAds:popUpAds,vastAds:vastAds,sources:sources
+            logo:logo,favicon:favicon,sources:sources,ads:Ads
         })
     } catch (error) {
         console.log(error)

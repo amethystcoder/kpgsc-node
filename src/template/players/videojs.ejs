@@ -23,9 +23,12 @@
                 type:"<%=videoMime%>"
             }]
         }
-        window.addEventListener("DOMContentLoaded",()=>{
+        window.addEventListener("DOMContentLoaded",async ()=>{
             let player = videojs("video",options)
-            let vastAds = [{"tag":"http://localhost:3000/advast.xml","offset":"123","type":"nonlinear"}];
+            //fetch instead...
+            let response = await fetch("./api/ads/request")
+            let data = await response.json()
+            let vastAds = data.ads;
             let adplayer = new AdLoader('video',vastAds)
             let engine = new p2pml.hlsjs.Engine()
             if(isHls == "true" && engine){

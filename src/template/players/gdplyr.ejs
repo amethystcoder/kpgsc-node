@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="../static/videoPlayer.css">
     <script>
         let isHls = true
-        window.addEventListener("DOMContentLoaded",()=>{
+        window.addEventListener("DOMContentLoaded",async()=>{
             const player = new GDPlyr("video",{sources:[
                 {src:"<%=videoLink%>",title:"Despicable Me 4",subtitle:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).srt"},
             ]})
@@ -27,7 +27,9 @@
                 hls.loadSource('<%=videoLink%>')
                 hls.attachMedia(player.videoElement)
             }
-            let vastAds = [{"tag":"http://localhost:3000/advast.xml","offset":"123","type":"nonlinear"}];
+            let response = await fetch("./api/ads/request")
+            let data = await response.json()
+            let vastAds = data.ads;
             let adplayer = new AdLoader('video',vastAds)
         })
     </script>

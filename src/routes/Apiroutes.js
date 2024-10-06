@@ -1,7 +1,7 @@
 let express = require('express')
 const router = express.Router()
 const fs = require('fs');
-const HlsConverter = require("../utils/ffmpeg")
+//const HlsConverter = require("../utils/ffmpeg")
 const sources = require("../sources/sources")
 const getSourceName = require("../utils/getSourceName")
 const DB = require('../db/DBs')
@@ -373,6 +373,17 @@ router.post("/ads/create",firewall,auth,async (req,res)=>{
         const {title,type} = req.body
         let createAd = await DB.adsDB.createNewAd({title,type})
         res.status(201).send({message:"successful"})
+    } catch (error) {
+        res.json({error})
+    }
+})
+
+router.get("/ads/request",firewall,auth,async (req,res)=>{
+    try {
+        let popUpAds = await DBs.popupsDB.getAllPopUpAds()
+        let vastAds = await DBs.adsDB.getAllads()
+        let Ads = [...popUpAds,...vastAds]
+        res.status(201).send({successful:true,ads:Ads})
     } catch (error) {
         res.json({error})
     }

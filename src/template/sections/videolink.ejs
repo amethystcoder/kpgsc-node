@@ -16,10 +16,19 @@
 </script>
 <div class="source-chooser">
     <% sources.forEach((source)=>{ %>
-        <a href="">
-            <span class="source-box">
-                <h3>blah</h3>
-            </span>
-        </a>
+        <% if(source.slug){ %>
+            <a href="">
+                <span class="source-box">
+                    <h3>Stream</h3>
+                </span>
+            </a>
+        <% } %>
+        <% if(!source.slug){ %>
+            <a href=""><!-- Add the variables -->
+                <span class="source-box">
+                    <h3>HLS Source</h3>
+                </span>
+            </a>
+        <% } %>
     <% }) %>
 </div>

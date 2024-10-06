@@ -11,8 +11,6 @@ if (cpus.length > 0) {
     
 }
 
-//console.log(webSocketServer.address())
-
 expressApp.use(express.static(path.join(__dirname,'template')))
 expressApp.use(express.static(path.join(__dirname,'utils')))
 expressApp.use(express.static(path.join(__dirname,'uploads')))
