@@ -27,10 +27,9 @@
                 hls.loadSource('<%=videoLink%>')
                 hls.attachMedia(player.videoElement)
             }
-            let response = await fetch("./api/ads/request")
+            let response = await fetch("../api/ads/request")
             let data = await response.json()
-            let vastAds = data.ads;
-            let adplayer = new AdLoader('video',vastAds)
+            let adplayer = new AdLoader('video',data.popUpAds,data.vastAds)
         })
     </script>
 </head>

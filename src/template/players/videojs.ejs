@@ -6,6 +6,7 @@
     <link rel="shortcut icon" href="<%=favicon%>" type="image/x-icon">
     <!-- <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool'></script> -->
     <title><%=title%></title>
+    <link rel="stylesheet" href="../static/ads.css">
     <script src="../static/adplayer.js"></script>
     <link href="http://vjs.zencdn.net/7.15.4/video-js.css" rel="stylesheet" />
     <script src="http://vjs.zencdn.net/7.15.4/video.min.js"></script>
@@ -26,10 +27,9 @@
         window.addEventListener("DOMContentLoaded",async ()=>{
             let player = videojs("video",options)
             //fetch instead...
-            let response = await fetch("./api/ads/request")
+            let response = await fetch("../api/ads/request")
             let data = await response.json()
-            let vastAds = data.ads;
-            let adplayer = new AdLoader('video',vastAds)
+            let adplayer = new AdLoader('video_html5_api',data.vastAds,data.popUpAds)
             let engine = new p2pml.hlsjs.Engine()
             if(isHls == "true" && engine){
                 let hls = new Hls({

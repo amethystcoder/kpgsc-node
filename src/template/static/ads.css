@@ -6,3 +6,29 @@
     border: hidden;
     border-radius: 10px;
 }
+.cancel-elem{
+    font-size: xx-large;
+    color: white;
+    font-weight: 700;
+    background: transparent;
+    position: absolute;
+    left: 50px;
+    top:50px;
+    z-index: 50000000;
+}
+.main-pop-container{
+    z-index: 500000;
+    position: absolute;
+    top:50px;
+    left: 50px;
+    background-color: white;
+    border: hidden;
+    border-radius: 15px;
+}
+.pop-ad-body{
+}
+.pop-ad-image{
+    width: 60vw;
+    height: 60vh;
+}
+.pop-ad-title{}

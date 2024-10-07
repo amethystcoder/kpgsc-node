@@ -380,11 +380,11 @@ router.post("/ads/create",firewall,auth,async (req,res)=>{
 
 router.get("/ads/request",firewall,auth,async (req,res)=>{
     try {
-        let popUpAds = await DBs.popupsDB.getAllPopUpAds()
-        let vastAds = await DBs.adsDB.getAllads()
-        let Ads = [...popUpAds,...vastAds]
-        res.status(201).send({successful:true,ads:Ads})
+        let popUpAds = await DB.popupsDB.getAllPopUpAds()
+        let vastAds = await DB.adsDB.getAllads()
+        res.status(201).send({successful:true,popUpAds,vastAds})
     } catch (error) {
+        console.log(error)
         res.json({error})
     }
 })

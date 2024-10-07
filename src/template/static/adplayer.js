@@ -12,11 +12,13 @@ class AdLoader {
         this.popAdElement = this.initializePopAdContainer()
         this.skipButtonElement = this.createSkipButton()
         this.skipButtonElement.classList.add("skip-elem")
+        this.cancelButtonElement = this.createCancelButton()
+        this.cancelButtonElement.classList.add("cancel-elem")
         //add type of pop to ads
         this.adList = ads
-        this.adList = [...this.adList,...this.initializePopAds(popads)]
-        console.log(this.adList)
+        this.adList = [...this.initializePopAds(popads),...this.adList]
         this.randomizeOffsets()
+        console.log(this.adList)
         this.beginAdPlay()
     }
 
@@ -24,6 +26,7 @@ class AdLoader {
     popAdElement;
     AdElement;
     skipButtonElement;
+    cancelButtonElement;
 
     adList = []
 
@@ -103,16 +106,20 @@ class AdLoader {
     }
 
     displayPopAd(popad){
-        //get all elements and set their content
-        this.popAdElement.href = link
-        let poptitle = document.querySelector(".pop-ad-title")
-        poptitle.innerHTML = popad.title
-        let popimage = document.querySelector(".pop-ad-image")
-        popimage.src = popad.image
-        let popbody = document.querySelector(".pop-ad-body")
-        popbody.innerHTML = popad.content
-        this.popAdElement.style.display = "block"
-        //add an X button to remove the ad
+        if (this.videoElement) {
+            this.videoElement.pause()
+            //get all elements and set their content
+            this.popAdElement.href = popad.link
+            let poptitle = document.querySelector(".pop-ad-title")
+            poptitle.innerHTML = popad.title
+            let popimage = document.querySelector(".pop-ad-image")
+            popimage.src = popad.image
+            let popbody = document.querySelector(".pop-ad-body")
+            popbody.innerHTML = popad.content
+            this.cancelButtonElement.style.display = "block"
+            this.popAdElement.style.display = "block"
+            //add an X button to remove the ad
+        }
     }
 
     createSkipButton(){
@@ -123,6 +130,17 @@ class AdLoader {
         skip.addEventListener("click",this.skipAd)
         body.appendChild(skip);
         return skip
+    }
+
+    createCancelButton(){
+        let body = document.querySelector("body")
+        let cancel = document.createElement("button")
+        cancel.innerHTML = "X"
+        cancel.id = "cancel-button"
+        cancel.style.display = "none"
+        cancel.addEventListener("click",this.cancelPopAd)
+        body.appendChild(cancel);
+        return cancel
     }
 
     determineSkip(offset) {
@@ -156,6 +174,11 @@ class AdLoader {
     cancelPopAd(){
         let AdBlock = document.querySelector(".pop-ad-cont")
         AdBlock.style.display = "none"
+        let vidBlock = document.querySelector(".vid-elem")
+        vidBlock.style.display = "block"
+        vidBlock.play()
+        let cancelElem = document.querySelector(".cancel-elem")
+        cancelElem.style.display = "none"
     }
 
     /**
@@ -214,11 +237,13 @@ class AdLoader {
                 for (let index = 0; index < this.adList.length; index++) {
                     if (this.adList[index].offset <= this.videoElement.currentTime) {
                         if (this.adList[index].type == "popads") {
+                            console.log("popad displayed")
                             //display the popads directly
                             this.displayPopAd(this.adList[index])
                             this.adList.splice(index,1);
                         }
                         else{
+                            console.log("vastad displayed")
                             let adContent = await this.getAd(this.adList[index].tag)
                             let adDetails = this.extractvideolink(adContent)
                             if(adDetails.adMediaLink){

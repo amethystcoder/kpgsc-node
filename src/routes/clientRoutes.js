@@ -183,15 +183,17 @@ router.get('/video/:slug',firewall,authClient,async (req,res)=>{
         let OtherSources = await DBs.hlsLinksDB.getHlsLinkUsinglinkId(linkData.id)
         OtherSources = OtherSources.filter((othsrc)=>othsrc)
         let sources = [linkData,...OtherSources]
-        //console.log(sources)
-        console.log(Ads)
+        sources = sources.map((source)=>{
+            return {...source,link:`${req.url.split("?")[0]}${source.server_id ? '?sId='+source.server_id : ''}${!source.slug ? '&type=hls': ''}`}
+        })
+        console.log(sources)
         //othersources might also be several when it is in microservices architechture
         let player = await DBs.settingsDB.getConfig("player")
         res.render(`../template/players/${player[0].var}`,{
             slug:slug,videoLink:videoLink,isHls:isHls,
             videoMime:videoMime,subtitles:linkData.subtitles,
             preview_img:linkData.preview_img,title:linkData.title,
-            logo:logo,favicon:favicon,sources:sources,ads:Ads
+            logo:logo,favicon:favicon,sources:sources
         })
     } catch (error) {
         console.log(error)
