@@ -100,6 +100,18 @@
                 <p>DRM currently set to: <b><%=settings.drm == '0' ? 'off' : 'on'%></b></p>
                 <span class="gen-sect">
                     <span>
+                        <h3>Automatic Convert</h3>
+                        <p>Turn Automatic Conversion to hls immediately after upload on or off</p>
+                    </span>
+                    <select name="autoConvert" id="autoConvert" value="<%=settings.autoConvert%>" onchange="editSpecific('autoConvert','autoConvert')" class="light">
+                        <option value=""></option>
+                        <option value="0">off</option>
+                        <option value="1">on</option>
+                    </select>
+                </span>
+                <p>Automatic Conversion is currently: <b><%=settings.autoConvert  == '0' ? 'off' : 'on'%></b></p>
+                <span class="gen-sect">
+                    <span>
                         <h3>Rate Limiting</h3>
                         <p>For requests that are heavy, i.e HLS conversion, limit the request on a session.</p>
                     </span>

@@ -23,6 +23,14 @@ const sendHlsRequest = async (email,persistenceId,linkId)=>{
     return await response.json()
 }
 
+/**
+ * 
+ * @param {string} email 
+ * @param {string} persistenceId 
+ * @param {string[]} servers 
+ * @param {string[]} links 
+ * @returns 
+ */
 const sendMultipleHlsRequest = async (email,persistenceId,servers,links)=>{
     const data = []
     let availableServers = await DB.serversDB.getServerUsingId(servers[0],servers.slice(1))

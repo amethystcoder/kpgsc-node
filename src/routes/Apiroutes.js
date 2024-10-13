@@ -131,16 +131,18 @@ router.post("/link/create",firewall,auth,upload.fields([{name:'video_file',maxCo
             let linkId = getIdFromUrl(main_link,type)
             data = await getGdriveData(linkId)
         }
+        let linkdata = {title,main_link,alt_link,subtitles:subtitles,preview_img:preview_img,type,slug,data:JSON.stringify(data)}
+        if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
+        let newLinkCreate = await DB.linksDB.createNewLink(linkdata) 
         //get settings
         let autoConvert = (await DB.settingsDB.getConfig("autoConvert"))[0].var
         if (autoConvert == "1") {
             let {email, persistenceId} = req.body
-            const data = await sendHlsRequest(email,persistenceId,"") //determine link id later
+            //get link through slug
+            let linkId = (await DB.linksDB.getLinkUsingSlug(slug))[0].id
+            const data = await sendHlsRequest(email,persistenceId,linkId)
             req.session.rateLimit++
         }
-        let linkdata = {title,main_link,alt_link,subtitles:subtitles,preview_img:preview_img,type,slug,data:JSON.stringify(data)}
-        if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
-        let newLinkCreate = await DB.linksDB.createNewLink(linkdata) 
         res.status(201).json({success:true,message:newLinkCreate})
     } catch (error) {
         console.log(error)
