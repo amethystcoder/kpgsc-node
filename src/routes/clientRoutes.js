@@ -227,9 +227,11 @@ router.get('/link/new',firewall,authClient,async (req,res)=>{
     try {
         let logo = (await DBs.settingsDB.getConfig("logo"))[0].var
         let favicon = (await DBs.settingsDB.getConfig("favicon"))[0].var
+        let accounts = await DBs.driveAuthDB.getAlldrive_auth()
+        accounts = accounts.map(account => account.email)
         let title = "New Link"
         res.render('../template/linkcreate',{
-            title:title,logo,favicon
+            title:title,logo,favicon,emails:accounts
         })
     } catch (error) {
         res.render('../template/error',{

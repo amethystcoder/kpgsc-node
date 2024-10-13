@@ -16,6 +16,11 @@
                 linkForm.addEventListener("submit",(ev)=>{
                     ev.preventDefault()
                     let formdata = new FormData(linkForm)
+                    //for use in the case of auto convert
+                    let email = document.getElementById("email").value
+                    let persistenceId = sessionStorage.getItem("persistenceId")
+                    formdata.append("persisteceId",persistenceId)
+                    formdata.append("email",email)
                     fetch("../api/link/create",{
                         method:"POST",
                         body:formdata
@@ -29,14 +34,6 @@
                     .catch(error=>{console.log(error)})
                 })
             })
-            function convertHLS(){
-                fetch("../api/convert/hls",{
-                    method:"POST",
-                    body:formdata
-                }).then(Response=>Response.json())
-                .then(body=>{console.log(body)})
-                .catch(error=>{console.log(error)})
-            }
             function changeVideoInputType() {
                 const linkTypeSelect = document.getElementById("link-select")
                 let inputs = [document.getElementById("contains-link-inputs"),document.getElementById("contains-file-inputs"),document.getElementById("contains-ftp-inputs")]
@@ -169,6 +166,13 @@
                 </span>
                 <button>Submit</button>
             </form>
+            <section>
+                <select name="email" id="email">
+                    <% emails.forEach((email) => { %>
+                        <option value="<%=email%>"><%=email%></option>
+                  <% }) %>
+                </select>
+            </section>
         </main>
     </body>
 </html>
