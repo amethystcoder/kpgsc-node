@@ -1,7 +1,6 @@
 let express = require('express')
 const router = express.Router()
 const fs = require('fs');
-//const HlsConverter = require("../utils/ffmpeg")
 const sources = require("../sources/sources")
 const getSourceName = require("../utils/getSourceName")
 const DB = require('../db/DBs')
@@ -13,6 +12,7 @@ const getIdFromUrl = require('../utils/getIdFromUrl');
 const path = require('path');
 const parseFileSizeToReadable = require('../utils/parseFileSizesToReadable');
 const {auth,firewall,upload,rateLimit} = require("./middlewares");
+const {sendHlsRequest,sendMultipleHlsRequest} = require('../services/sendHlsRequest');
 let fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args))
 
 let captchas = []
@@ -28,18 +28,7 @@ router.get("/health",(req,res)=>{
 router.post("/convert/hls",firewall, auth, rateLimit, async (req,res)=>{
     try {
         let {email,linkId, persistenceId} = req.body
-        //select a random server from the database
-        let Activeservers = await DB.serversDB.getActiveservers()
-        //select a random server
-        let chosenServer = Activeservers[Math.floor(Math.random() * Activeservers.length)]
-        const response = await fetch(chosenServer.domain+"/api/convert/hls",{
-            method:"POST",
-            headers: {'Content-Type': 'application/json'},
-            body:JSON.stringify({
-                email,persistenceId,linkId:linkId,server_id:chosenServer.id
-            })
-        })
-        const data = await response.json()
+        const data = sendHlsRequest(email,persistenceId,linkId)
         req.session.rateLimit++
         res.status(202).send({success:true,message:"successful",data:data})
     } catch (error) {
@@ -54,21 +43,8 @@ router.post("/hls/bulkconvert",firewall, auth, rateLimit,async (req,res)=>{
         let {email, persistenceId} = req.body
         let servers = req.body.serverIds.split(',')
         let links = req.body.links.split(',')
-        let availableServers = await DB.serversDB.getServerUsingId(servers[0],servers.slice(1))
-        let rateLimitSize = (await DB.settingsDB("rateLimit"))[0].var
-        rateLimitSize = parseInt(rateLimitSize)
-        req.session.rateLimit += links.length
-        for (let index = 0; index < availableServers.length; index++) {
-            const response = await fetch(availableServers[index].domain+"/api/hls/bulkconvert/",{
-                method:"POST",
-                headers: {'Content-Type': 'application/json'},
-                body:{
-                    email,persistenceId,links:req.body.links
-                }
-            })
-            const data = await response.json()
-        }
-        res.status(202).send({message:"successful"})
+        const data = await sendMultipleHlsRequest(email,persistenceId,servers,links)
+        res.status(202).send({message:"successful",data:data})
     } catch (error) {
         console.log(error)
         res.json({error})
@@ -154,6 +130,13 @@ router.post("/link/create",firewall,auth,upload.fields([{name:'video_file',maxCo
         if (linkSource == "GoogleDrive") {
             let linkId = getIdFromUrl(main_link,type)
             data = await getGdriveData(linkId)
+        }
+        //get settings
+        let autoConvert = (await DB.settingsDB.getConfig("autoConvert"))[0].var
+        if (autoConvert == "1") {
+            let {email, persistenceId} = req.body
+            const data = await sendHlsRequest(email,persistenceId,"") //determine link id later
+            req.session.rateLimit++
         }
         let linkdata = {title,main_link,alt_link,subtitles:subtitles,preview_img:preview_img,type,slug,data:JSON.stringify(data)}
         if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")

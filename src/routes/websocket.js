@@ -7,6 +7,7 @@ const webSocketServer = new websocket.Server({
 })
 
 const clients = new Map()
+const activeVideoConnections = new Map()
 
 webSocketServer.on("connection",(websock)=>{
 
@@ -15,16 +16,21 @@ webSocketServer.on("connection",(websock)=>{
         //only messages to come through here are messages to persist connection to a particular client using their persistence id
         let Message = JSON.parse(data.toString())
 
-        if (Message.type == "conversionTrack") {
+        if (Message.type){
             const id = generateUniqueId();
             const metadata = { id, persistenceId:Message.persistenceId }
-            clients.set(websock, metadata)
+
+            if (Message.type == "conversionTrack") clients.set(websock, metadata)
+            if (Message.type == "p2pconnection") {}
+            if (Message.type == "vidWatchconnection") activeVideoConnections.set(websock, metadata)
         }
-        if (Message.type == "p2pconnection") {}
     })
 
     websock.on("close",(code,reason)=>{
+        //we need to remove the client from the map
         console.log("connection closed")
+        clients.delete(websock)
+        activeVideoConnections.delete(websock)
     })
     
     websock.on("error",(err)=>{
@@ -33,4 +39,4 @@ webSocketServer.on("connection",(websock)=>{
 
 })
 
-module.exports = {webSocketServer,clients}
+module.exports = {webSocketServer,clients,activeVideoConnections}

@@ -248,7 +248,8 @@ INSERT INTO `settings` (`config`, `var`) VALUES
 ('rateLimit', '10'),
 ('hlsSegmentName', 'ts'),
 ('m3u8Name', 'm3u8'),
-('allowCaptcha', '1');
+('allowCaptcha', '1'),
+('autoConvert','1');
 
 --
 -- Dumping data for table `users`
