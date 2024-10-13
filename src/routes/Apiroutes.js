@@ -121,7 +121,7 @@ router.post("/link/create",firewall,auth,upload.fields([{name:'video_file',maxCo
             main_link = req.protocol+"://"+req.headers.host+"/"+video_file[0].filename
         }
         const subtitles = req.files.subtitles ? req.protocol+"://"+req.headers.host+"/"+req.files.subtitles[0].filename : ""
-        const preview_img = req.files.preview_img ? req.protocol+"://"+req.headers.host+"/"+req.files.preview_img[0].filename : ""
+        const preview_img = req.body.preview_img_link ? req.body.preview_img_link : req.files.preview_img ? req.protocol+"://"+req.headers.host+"/"+req.files.preview_img[0].filename : ""
         //Write code to save files to upload folder
         let linkSource = getSourceName(main_link)
         let type = linkSource
