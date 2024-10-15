@@ -9,7 +9,6 @@ const Streamer = require('../services/streamer')
 const bcrypt = require('bcryptjs')
 const getGdriveData = require("../services/getGdriveData");
 const getIdFromUrl = require('../utils/getIdFromUrl');
-const path = require('path');
 const parseFileSizeToReadable = require('../utils/parseFileSizesToReadable');
 const {auth,firewall,upload,rateLimit} = require("./middlewares");
 const {sendHlsRequest,sendMultipleHlsRequest} = require('../services/sendHlsRequest');
@@ -252,7 +251,7 @@ router.get("/stream/:slug",firewall,auth,async (req,res)=>{
         //get all required data from headers and check if they are correct
         let range = req.headers.range
         const slug = req.params.slug
-        if (!range) res.status(400).send("Cannot Stream. Range not included in headers")
+        if (!range) throw Error("Cannot Stream. Range not included in headers")
 
         //get link for streaming using id
         const linkData = await DB.linksDB.getLinkUsingSlug(slug)

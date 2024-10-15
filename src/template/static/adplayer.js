@@ -18,7 +18,6 @@ class AdLoader {
         this.adList = ads
         this.adList = [...this.initializePopAds(popads),...this.adList]
         this.randomizeOffsets()
-        console.log(this.adList)
         this.beginAdPlay()
     }
 

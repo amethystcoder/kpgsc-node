@@ -179,6 +179,8 @@ thead>tr>td{
     right: 40px;
     top: 30px;
     padding: 10px;
+    z-index: 5000000;
+    background-color: white;
 }
 /* .percent{} */
 @media screen and (max-width:800px) {

@@ -9,18 +9,18 @@ window.addEventListener("DOMContentLoaded",(ev)=>{
 
     const webSocketServer = new WebSocket("ws://localhost:3200")
 
-    websocketConnection.addEventListener("open",(ev)=>{
+    webSocketServer.addEventListener("open",(ev)=>{
         console.log("connected")
         //create a persistence ID if one does not already exist in local storage
-        websocketConnection.send(JSON.stringify({persistenceId:persistenceId,type:"vidWatchconnection"}))
+        webSocketServer.send(JSON.stringify({persistenceId:persistenceId,type:"vidWatchconnection"}))
     })
-    websocketConnection.addEventListener("close",(ev)=>{
+    webSocketServer.addEventListener("close",(ev)=>{
         console.log("connection closed")
     })
-    websocketConnection.addEventListener("message",(ev)=>{
+    webSocketServer.addEventListener("message",(ev)=>{
         const data = JSON.parse(ev.data)
     })
-    websocketConnection.addEventListener("error",(ev)=>{
+    webSocketServer.addEventListener("error",(ev)=>{
         console.log(ev)
     })
 

@@ -11,9 +11,9 @@
     <link href="http://vjs.zencdn.net/7.15.4/video-js.css" rel="stylesheet" />
     <script src="http://vjs.zencdn.net/7.15.4/video.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js"></script>
-<!--     <script src="https://cdn.jsdelivr.net/npm/videojs-http-streaming@2.14.0/dist/videojs-http-streaming.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-core@latest/build/p2p-media-loader-core.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@latest/build/p2p-media-loader-hlsjs.min.js"></script>
+    <script src="../static/activeVideoConnection.js"></script>
 
 
      <!-- Import map for P2P Media Loader modules -->
@@ -29,39 +29,7 @@
       <!-- Module script to initialize Vidstack player with P2P Media Loader -->
     <script type="module">
         import { HlsJsP2PEngine } from "p2p-media-loader-hlsjs";
-  
-        const player = document.querySelector("media-player");
-        // Inject P2P capabilities into Hls.js
-        const HlsWithP2P = HlsJsP2PEngine.injectMixin(window.Hls);
-  
-        player.addEventListener("provider-change", (event) => {
-          const provider = event.detail;
-  
-          // Check if the provider is HLS
-          if (provider?.type === "hls") {
-            provider.library = HlsWithP2P;
-  
-            provider.config = {
-              p2p: {
-                core: {
-                  swarmId: "Optional custom swarm ID for stream",
-                  // other P2P engine config parameters go here
-                },
-                onHlsJsCreated: (hls) => {
-                  hls.p2pEngine.addEventListener("onPeerConnect", (params) => {
-                    console.log("Peer connected:", params.peerId);
-                  });
-                  // Subscribe to P2P engine and Hls.js events here
-                },
-              },
-            };
-          }
-        });
-      </script>
 
-
-
-    <script>
         let isHls = '<%=isHls%>';
         let options = {
             autoplay: true,
@@ -77,22 +45,44 @@
             let response = await fetch("../api/ads/request")
             let data = await response.json()
             let adplayer = new AdLoader('video_html5_api',data.vastAds,data.popUpAds)
-            let engine = new p2pml.hlsjs.Engine()
-            if(isHls == "true" && engine){
-                let hls = new Hls({
-                    liveSyncDurationCount: 7,
-                    loader: engine.createLoaderClass()
-                })
-                hls.loadSource('<%=videoLink%>')
-                hls.attachMedia(player.el())
-            }
-
         })
+        
+        if (isHls == "true") {
+          const player = document.querySelector(".gd-video");
+          // Inject P2P capabilities into Hls.js
+          const HlsWithP2P = HlsJsP2PEngine.injectMixin(window.Hls);
+
+          console.log(HlsWithP2P)
+    
+          const hls = new HlsWithP2P({
+            p2p: {
+              core: {
+                swarmId: "Optional custom swarm ID for stream",
+                // Other P2P engine config parameters go here
+              },
+              onHlsJsCreated(hls) {
+                hls.p2pEngine.addEventListener("onPeerConnect", (params) => {
+                  console.log("Peer connected:", params.peerId);
+                });
+                // Subscribe to P2P engine and Hls.js events here
+              },
+            },
+          });
+
+          hls.attachMedia(player);
+          hls.loadSource('<%=videoLink%>');
+        }
+      </script>
+
+
+
+    <script>
+        
     </script>
 </head>
 <body>
     <%- include('../sections/videolink')%>
-    <video id="video" class="video-js vjs-default-skin" controls playsinline>
+    <video id="video" class="video-js vjs-default-skin gd-video" controls playsinline>
         <source src="<%=videoLink%>" type="<%=videoMime%>">
     </video>
 </body>
