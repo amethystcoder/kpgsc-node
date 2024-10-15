@@ -13,7 +13,25 @@
             display:grid;
             place-items: center;
         }
+        .float-icons{
+            position: absolute;
+        }
     </style>
+    <script>
+        function submitConfiguration() {
+            const adminname = document.getElementById("adminname").value
+            const adminpassword = document.getElementById("adminpassword").value
+            const confirmpassword = document.getElementById("confirmpassword").value
+            const dbname = document.getElementById("dbname").value
+            const dbhost = document.getElementById("dbhost").value
+            const dbroot = document.getElementById("dbroot").value
+            const dbpassword = document.getElementById("dbpassword").value
+            fetch("")
+            .then()
+            .then()
+            .catch()
+        }
+    </script>
 </head>
 <body>
     <!-- 
@@ -26,17 +44,24 @@
         <h1>Welcome to GDPlyr</h1>
         <h3>Lets get you started</h3>
         <label for=""></label><br>
-        <input type="text" name="" id="" class="light" placeholder="Username">
+        <input type="text" name="" id="adminname" class="light" placeholder="Admin Name">
         <label for=""></label><br>
-        <input type="text" name="" id="" class="light" placeholder="Password">
+        <input type="password" name="" id="adminpassword" class="light" placeholder="Admin Password">
         <label for=""></label><br>
-        <input type="text" name="" id="" class="light" placeholder="Database Name">
+        <input type="password" name="" id="confirmpassword" class="light" placeholder="Confirm Password">
         <label for=""></label><br>
-        <input type="text" name="" id="" class="light" placeholder="">
+        <input type="text" name="" id="dbname" class="light" placeholder="Database Name">
         <label for=""></label><br>
-        <input type="text" name="" id="" class="light" placeholder="">
+        <input type="text" name="" id="dbhost" class="light" placeholder="Database Host">
         <label for=""></label><br>
-        <input type="text" name="" id="" class="light" placeholder="">
+        <input type="text" name="" id="dbroot" class="light" placeholder="Database root">
+        <label for=""></label><br>
+        <input type="password" name="" id="dbpassword" class="light" placeholder="Database Password">
+        
+        <button onclick="submitConfiguration()">Submit Configuration</button>
+     </div>
+     <div class="contains-images" >
+
      </div>
 </body>
 </html>
