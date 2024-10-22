@@ -1,6 +1,8 @@
-const ftp = require('ftp-client')
+//const ftp = require('ftp-client')
 const ftpServe = require('ftp')
+const fs = require('fs')
 
+const ftpClient = new ftpServe()
 
 const connectToFTP = ()=>{
     /* const Client = new ftp(
@@ -9,26 +11,45 @@ const connectToFTP = ()=>{
     )//assumes port is 21
     Client.ftp.connect()
     return Client.ftp */
-    const ftpClient = new ftpServe()
-    ftpClient.on( 'ready', function() {
-        ftpClient.put( './prueba.jpg', '/www/img/prueba.jpg', function( err, list ) {
-            if ( err ) throw err;
-            ftpClient.end();
-        } );
+    ftpClient.on( 'ready', () => {
     } );
     
     ftpClient.connect( {
-        'host': '*****************',
-        'user': '***************',
-        'password': '**************'
+        'host': 'ftp://127.0.0.1:21',
+        'user': '',
+        'password': ''
     } );
+    return ftpClient
 }
 
-const downloadFile = () => {
+const downloadFile = (fileloc) => {
     //connect to ftp server
     let FTPServer = connectToFTP()
-    FTPServer.list("/",(err,listing)=>{
-        if (err) console.log(err)
-        console.log(listing)
-    })
+    FTPServer.on( 'ready', () => {
+        FTPServer.get(fileloc,(err,stream)=>{
+            if (err) throw err;
+            stream.once('close', function() { FTPServer.end(); });
+            stream.pipe(fs.createWriteStream('foo.local-copy.txt'));
+        })
+    } );
+    return true
 }
+
+const listFiles = () => {
+    //connect to ftp server
+    let fileListing = []
+    let FTPServer = connectToFTP()
+    FTPServer.on( 'ready', () => {
+        FTPServer.list("/",(err,listing)=>{
+            if (err) console.log(err)
+            if (listing) {
+                fileListing = listing 
+                FTPServer.end();
+            }
+        })
+    } );
+    return listing
+}
+
+
+module.exports = {listFiles,downloadFile}

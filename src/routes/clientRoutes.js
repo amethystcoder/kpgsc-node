@@ -24,14 +24,14 @@ router.get('/',firewall,authClient,(req,res)=>{
     }
 })
 
-router.get("/initialize",async (req,res)=>{
+/* router.get("/initialize",async (req,res)=>{
     try {
         //const newDb = await initializeDB();
         res.render('../template/configuration',{})
     } catch (error) {
         res.json({error})
     }
-})
+}) */
 
 router.get('/login',firewall,async (req,res)=>{
     try {

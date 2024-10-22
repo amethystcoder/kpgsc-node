@@ -223,6 +223,14 @@ router.post("/login",firewall, async (req,res)=>{
     }
 })
 
+/* router.get("/initialize",async (req,res)=>{
+    try {
+        //
+    } catch (error) {
+        res.json({error})
+    }
+}) */
+
 router.get("/logout",firewall,async (req,res)=>{
     try {
         req.session.destroy()
