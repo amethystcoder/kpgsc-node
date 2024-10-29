@@ -4,32 +4,31 @@ const fs = require('fs')
 
 const ftpClient = new ftpServe()
 
-const connectToFTP = ()=>{
+
+const connectToFTP = (host,user,password)=>{
     /* const Client = new ftp(
         {host: ip_address,port: 21,user: username, password: password},
         {logging: 'debug'}
     )//assumes port is 21
     Client.ftp.connect()
     return Client.ftp */
-    ftpClient.on( 'ready', () => {
-    } );
     
     ftpClient.connect( {
-        'host': 'ftp://127.0.0.1:21',
-        'user': '',
-        'password': ''
+        'host': host,
+        'user': user,
+        'password': password
     } );
     return ftpClient
 }
 
-const downloadFile = (fileloc) => {
+const downloadFile = (fileloc,fileName) => {
     //connect to ftp server
     let FTPServer = connectToFTP()
     FTPServer.on( 'ready', () => {
         FTPServer.get(fileloc,(err,stream)=>{
             if (err) throw err;
             stream.once('close', function() { FTPServer.end(); });
-            stream.pipe(fs.createWriteStream('foo.local-copy.txt'));
+            stream.pipe(fs.createWriteStream('../uploads/'+fileName+'.mp4'));
         })
     } );
     return true

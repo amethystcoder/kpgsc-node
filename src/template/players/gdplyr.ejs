@@ -15,8 +15,11 @@
     <script>
         let isHls = true
         window.addEventListener("DOMContentLoaded",async()=>{
-            const player = new GDPlyr("video",{sources:[
+            /* const player = new GDPlyr("video",{sources:[
                 {src:"<%=videoLink%>",title:"Despicable Me 4",subtitle:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).srt"},
+            ]}) */
+            const player = new GDPlyr("video",{sources:[
+                {src:"http://localhost:3000/Succubus (2024) (NetNaija.xyz).mkv",title:"Despicable Me 4",subtitle:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).srt"},
             ]})
             let engine = new p2pml.hlsjs.Engine()
             if(isHls && engine){
