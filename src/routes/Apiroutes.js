@@ -565,7 +565,7 @@ router.patch("/settings/edit",firewall,auth,async (req,res)=>{
 router.get("/getmediafile/:filename",firewall, auth, async (req,res)=>{
     try {
         const fileName = req.params.filename
-        res.sendFile(path.join(__dirname,`..uploads/${fileName}`))
+        res.sendFile(path.join(__dirname,`../uploads/${fileName}`))
     } catch (error) {
         res.json({error})
     }
@@ -581,9 +581,9 @@ router.patch("/settings/upload_edit",firewall,auth,upload.single("filename"),asy
         if(!existingFileLocationInDB.includes("/static/icons")){
             let fileNameFromDBSplit = existingFileLocationInDB.split("/")
             let fileNameFromDB = fileNameFromDBSplit[fileNameFromDBSplit.length - 1]
-            fs.unlink(`./uploads/${fileNameFromDB}`,(err)=>console.log(err))
+            fs.unlink(path.join(__dirname,`../uploads/${fileNameFromDB}`),(err)=>console.log(err))
         }
-        const video_file = req.protocol+"://"+req.headers.host+"/"+req.file.filename
+        const video_file = req.protocol+"://"+req.headers.host+"/api/getmediafile/"+req.file.filename
         const result = await DB.settingsDB.updateSettings(name,video_file)
         res.status(202).send({success:true})
     } catch (error) {
