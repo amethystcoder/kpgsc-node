@@ -156,10 +156,10 @@ router.delete("/link/delete/:id",firewall,auth,async (req,res)=>{
         const link = await DB.linksDB.getLinkUsingId(linkid)
         //deletable items include subtitle and preview image
         if (link[0].subtitles && link[0].subtitles != "") {
-            fs.unlink(`../uploads/${subtitles}`, (err) => { if (err) throw err;}); //determine this later
+            fs.unlink(path.join(__dirname,`../uploads/${subtitles}`), (err) => { if (err) throw err;}); //determine this later
         }
         if (link[0].preview_img && link[0].preview_img != "") {
-            fs.unlink(`../uploads/${preview_img}`, (err) => { if (err) throw err;}); //determine this later
+            fs.unlink(path.join(__dirname,`../uploads/${preview_img}`), (err) => { if (err) throw err;}); //determine this later
         }
         const newLinkDelete = await DB.linksDB.deleteUsingId(linkid)
         res.status(201).json({success:true,message:newLinkDelete})
@@ -177,10 +177,10 @@ router.delete("/link/deleteMult/:ids",firewall,auth,async (req,res)=>{
             const link = await DB.linksDB.getLinkUsingId(linkids[index])
             //deletable items include subtitle and preview image
             if (link[0].subtitles && link[0].subtitles != "") {
-                fs.unlink(`../uploads/${subtitles}`, (err) => { if (err) throw err;}); //determine this later
+                fs.unlink(path.join(__dirname,`../uploads/${subtitles}`), (err) => { if (err) throw err;}); //determine this later
             }
             if (link[0].preview_img && link[0].preview_img != "") {
-                fs.unlink(`../uploads/${preview_img}`, (err) => { if (err) throw err;}); //determine this later
+                fs.unlink(path.join(__dirname,`../uploads/${preview_img}`), (err) => { if (err) throw err;}); //determine this later
             }
             let linkdel = await DB.linksDB.deleteUsingId(linkids[index])
             LinkDeletes.push(linkdel)
