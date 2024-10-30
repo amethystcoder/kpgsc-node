@@ -1,6 +1,7 @@
 let express = require('express')
 const router = express.Router()
 const fs = require('fs');
+const path = require('path')
 const sources = require("../sources/sources")
 const getSourceName = require("../utils/getSourceName")
 const DB = require('../db/DBs')
@@ -119,8 +120,8 @@ router.post("/link/create",firewall,auth,upload.fields([{name:'video_file',maxCo
             if (!video_file || video_file.length == 0) throw EvalError("Please Upload a video and try again")
             main_link = req.protocol+"://"+req.headers.host+"/"+video_file[0].filename
         }
-        const subtitles = req.files.subtitles ? req.protocol+"://"+req.headers.host+"/"+req.files.subtitles[0].filename : ""
-        const preview_img = req.body.preview_img_link ? req.body.preview_img_link : req.files.preview_img ? req.protocol+"://"+req.headers.host+"/"+req.files.preview_img[0].filename : ""
+        const subtitles = req.files.subtitles ? req.protocol+"://"+req.headers.host+"/api/getmediafile/"+req.files.subtitles[0].filename : ""
+        const preview_img = req.body.preview_img_link ? req.body.preview_img_link : req.files.preview_img ? req.protocol+"://"+req.headers.host+"/api/getmediafile/"+req.files.preview_img[0].filename : ""
         //Write code to save files to upload folder
         let linkSource = getSourceName(main_link)
         let type = linkSource
@@ -556,6 +557,15 @@ router.patch("/settings/edit",firewall,auth,async (req,res)=>{
         let {name,value} = req.body
         const result = await DB.settingsDB.updateSettings(name,value)
         res.status(202).send({success:true,message:result})
+    } catch (error) {
+        res.json({error})
+    }
+})
+
+router.get("/getmediafile/:filename",firewall, auth, async (req,res)=>{
+    try {
+        const fileName = req.params.filename
+        res.sendFile(path.join(__dirname,`..uploads/${fileName}`))
     } catch (error) {
         res.json({error})
     }
