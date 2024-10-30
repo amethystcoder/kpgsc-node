@@ -29,6 +29,25 @@
                 })
                 .catch(error=>{console.log(error)})
         }
+        function editCheck(id,section){
+            let checked = document.getElementById(id).checked
+            fetch(`../api/settings/edit`,{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        name:section,
+                        value:checked ? '1' : '0'
+                    }),
+                    method:"PATCH"
+                }).then(Response=>Response.json())
+                .then(body=>{
+                    if(body.success){
+                        window.location.reload()
+                    }
+                })
+                .catch(error=>{console.log(error)})
+        }
     </script>
     <style>
         .go-prev{
@@ -79,37 +98,46 @@
                         <h3>Captcha</h3>
                         <p>Turn Captcha validation on or off</p>
                     </span>
-                    <select name="allowCaptcha" id="allowCaptcha" value="<%=settings.allowCaptcha%>" onchange="editSpecific('allowCaptcha','allowCaptcha')" class="light">
-                        <option value=""></option>
-                        <option value="0">off</option>
-                        <option value="1">on</option>
-                    </select>
+                    <label class="switch">
+                        <% if(settings.allowCaptcha == '0') {%>
+                        <input type="checkbox" class="switch-input" name="allowCaptcha" id="allowCaptcha"  onchange="editCheck('allowCaptcha','allowCaptcha')">
+                        <% } %>
+                        <% if(settings.allowCaptcha == '1') {%>
+                            <input type="checkbox" class="switch-input" name="allowCaptcha" id="allowCaptcha" checked  onchange="editCheck('allowCaptcha','allowCaptcha')">
+                        <% } %>
+                        <span class="switch-slider"></span>
+                    </label>
                 </span>
-                <p>Captcha Validation is currently: <b><%=settings.allowCaptcha  == '0' ? 'off' : 'on'%></b></p>
                 <span class="gen-sect">
                     <span>
                         <h3>DRM</h3>
                         <p>if turned off allows users to have access to the direct hls (m3u8) file</p>
                     </span>
-                    <select name="drm" id="drm" value="<%=settings.drm%>" onchange="editSpecific('drm','drm')" class="light">
-                        <option value=""></option>
-                        <option value="0">off</option>
-                        <option value="1">on</option>
-                    </select>
+                    <label class="switch">
+                        <% if(settings.drm == '0') {%>
+                        <input type="checkbox" class="switch-input" name="drm" id="drm"   onchange="editCheck('drm','drm')">
+                        <% } %>
+                        <% if(settings.drm == '1') {%>
+                            <input type="checkbox" class="switch-input" name="drm" id="drm" checked  onchange="editCheck('drm','drm')">
+                        <% } %>
+                        <span class="switch-slider"></span>
+                    </label>
                 </span>
-                <p>DRM currently set to: <b><%=settings.drm == '0' ? 'off' : 'on'%></b></p>
                 <span class="gen-sect">
                     <span>
                         <h3>Automatic Convert</h3>
                         <p>Turn Automatic Conversion to hls immediately after upload on or off</p>
                     </span>
-                    <select name="autoConvert" id="autoConvert" value="<%=settings.autoConvert%>" onchange="editSpecific('autoConvert','autoConvert')" class="light">
-                        <option value=""></option>
-                        <option value="0">off</option>
-                        <option value="1">on</option>
-                    </select>
+                    <label class="switch">
+                        <% if(settings.autoConvert == '0') {%>
+                        <input type="checkbox" class="switch-input" name="autoConvert" id="autoConvert" onchange="editCheck('autoConvert','autoConvert')">
+                        <% } %>
+                        <% if(settings.autoConvert == '1') {%>
+                            <input type="checkbox" class="switch-input" name="autoConvert" id="autoConvert" checked  onchange="editCheck('autoConvert','autoConvert')">
+                        <% } %>
+                        <span class="switch-slider"></span>
+                    </label>
                 </span>
-                <p>Automatic Conversion is currently: <b><%=settings.autoConvert  == '0' ? 'off' : 'on'%></b></p>
                 <span class="gen-sect">
                     <span>
                         <h3>Rate Limiting</h3>

@@ -13,7 +13,7 @@ if (cpus.length > 0) {
 
 expressApp.use(express.static(path.join(__dirname,'template')))
 expressApp.use(express.static(path.join(__dirname,'utils')))
-expressApp.use(express.static(path.join(__dirname,'uploads')))
+expressApp.use(express.static(path.join(__dirname,'uploads')))//add code so it cannot be accessed directly
 
 const apiRoutes = require('./routes/Apiroutes');
 expressApp.use('/api',apiRoutes);

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%=title%></title>
     <link rel="shortcut icon" href="<%=favicon%>" type="image/x-icon">
-    <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool'></script>
+    <!-- <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool'></script> -->
     <script src="../static/videoPlayer.js"></script>
     <script src="../static/adplayer.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -19,7 +19,7 @@
                 {src:"<%=videoLink%>",title:"Despicable Me 4",subtitle:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).srt"},
             ]}) */
             const player = new GDPlyr("video",{sources:[
-                {src:"http://localhost:3000/Succubus (2024) (NetNaija.xyz).mkv",title:"Despicable Me 4",subtitle:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).srt"},
+                {src:"",title:"Despicable Me 4",subtitle:"http://localhost:3000/Despicable Me 4 (2024) (Awafim.tv).srt"},
             ]})
             let engine = new p2pml.hlsjs.Engine()
             if(isHls && engine){
@@ -27,7 +27,8 @@
                     liveSyncDurationCount: 7,
                     loader: engine.createLoaderClass()
                 })
-                hls.loadSource('<%=videoLink%>')
+                //hls.loadSource('<%=videoLink%>')
+                hls.loadSource('')
                 hls.attachMedia(player.videoElement)
             }
             let response = await fetch("../api/ads/request")
