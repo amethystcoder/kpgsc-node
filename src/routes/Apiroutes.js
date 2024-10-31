@@ -11,6 +11,7 @@ const bcrypt = require('bcryptjs')
 const getGdriveData = require("../services/getGdriveData");
 const getIdFromUrl = require('../utils/getIdFromUrl');
 const parseFileSizeToReadable = require('../utils/parseFileSizesToReadable');
+const {encryptVideoStream} = require('../utils/encryptMediaFile')
 const {auth,firewall,upload,rateLimit} = require("./middlewares");
 const {sendHlsRequest,sendMultipleHlsRequest} = require('../services/sendHlsRequest');
 let fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args))
@@ -272,7 +273,9 @@ router.get("/stream/:slug",firewall,auth,async (req,res)=>{
         let streamingData = Streamer.streamVideoFile(slug,source,range)//we need to be able to determine the kind of source
         //encrypt video data
         res.writeHead(206,streamingData.headers)
-        streamingData.videoStream.pipe(res)
+        let encryptedStream = await encryptVideoStream(streamingData.videoStream)
+        encryptedStream.pipe(res)
+        //streamingData.videoStream.pipe(res)
     } catch (error) {
         console.log(error)
         res.json({error})

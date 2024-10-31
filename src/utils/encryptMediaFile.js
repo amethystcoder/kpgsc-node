@@ -1,36 +1,41 @@
 const fs = require('fs')
 const crypto = require('crypto')
-
+const Stream = require('stream')
 
 /**
+ * Encrypts a video stream using AES-256-CBC encryption.
  * 
- * @param {fs.ReadStream} MediaFile 
+ * @param {stream.Readable} readStream - Node.js ReadStream of the video file.
+ * @param {string} encryptionKey - 32-byte encryption key.
+ * @param {string} iv - 16-byte initialization vector.
+ * @returns {Promise<Stream.Readable>} - Encrypted video data.
  */
-const encryptFile = (MediaFile) => {
-    //check if mediafile is correct 
-    //encrypt media file
-    const algorithm = 'aes-256-cbc';
-    const key = crypto.randomBytes(32);
-    const iv = crypto.randomBytes(16);
+const encryptVideoStream = (readStream, encryptionKey, iv) => {
+    return new Promise((resolve, reject) => {
+        const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(encryptionKey), Buffer.from(iv));
+        const encryptedChunks = [];
 
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    //add readStream into buffers 
-    let buff = []
-    while (MediaFile.readable && (MediaFile.readableAborted || MediaFile.readableEnded)) {
-        let dt = MediaFile.read()
-        buff.push(dt)
-        console.log(dt)
-    }
-    buff = Buffer.concat(buff)
-    //return encrypted media file
-    return cipher.update(buff)
+        readStream.on('data', (chunk) => {
+            encryptedChunks.push(cipher.update(chunk));
+        });
+
+        readStream.on('end', () => {
+            encryptedChunks.push(cipher.final());
+            const encryptedData = Buffer.concat(encryptedChunks);
+            const readable = new Stream.Readable();
+            readable.push(encryptedData);
+            readable.push(null); // Signals the end of the stream
+            resolve(readable);
+        });
+
+        readStream.on('error', (err) => {
+            reject(err);
+        });
+    });
 }
 
 
-//test code
-let stream = fs.createReadStream("../uploads/8iyv7MUjLBuIRdRL3IRonyUrWjyRNp8n2MjpY7HSrfRTJWLUXv.mp4")
-console.log(encryptFile(stream))
 
 module.exports = {
-    encryptFile
+    encryptVideoStream
 }
