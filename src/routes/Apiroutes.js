@@ -273,7 +273,7 @@ router.get("/stream/:slug",firewall,auth,async (req,res)=>{
         let streamingData = Streamer.streamVideoFile(slug,source,range)//we need to be able to determine the kind of source
         //encrypt video data
         res.writeHead(206,streamingData.headers)
-        let encryptedStream = await encryptVideoStream(streamingData.videoStream)
+        let encryptedStream = await encryptVideoStream(streamingData.videoStream)//note to create code for getting the key e.t.c
         encryptedStream.pipe(res)
         //streamingData.videoStream.pipe(res)
     } catch (error) {
