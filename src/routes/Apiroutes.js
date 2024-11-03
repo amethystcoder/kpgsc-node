@@ -31,7 +31,7 @@ router.get("/health",(req,res)=>{
 router.post("/convert/hls",firewall, auth, rateLimit, async (req,res)=>{
     try {
         let {email,linkId, persistenceId} = req.body
-        const data = sendHlsRequest(email,persistenceId,linkId)
+        const data = await sendHlsRequest(email,persistenceId,linkId)
         req.session.rateLimit++
         res.status(202).send({success:true,message:"successful",data:data})
     } catch (error) {

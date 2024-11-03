@@ -35,7 +35,10 @@
                         persistenceId:persistenceId
                     })
                 }).then(Response=>Response.json())
-                .then(body=>{console.log(body)})
+                .then(body=>{
+                    addPersister(body.data.persist)
+                    console.log(body)
+                })
                 .catch(error=>{console.log(error)})
             }
         </script>
