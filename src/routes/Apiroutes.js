@@ -123,7 +123,7 @@ router.post("/link/create",firewall,auth,upload.fields([{name:'video_file',maxCo
             const {video_file} = req.files
             const allowedMimes = ["video/mp4"]
             if (!video_file || video_file.length == 0) throw EvalError("Please Upload a video and try again")
-            main_link = req.protocol+"://"+req.headers.host+"/api/getmediafile/"+video_file[0].filename 
+            main_link = req.protocol+"://"+req.headers.host+"/api/getmediafile/"+video_file[0].filename
             slug = video_file[0].filename.slice(0,video_file[0].lastIndexOf(".")) //without the extensions
             //multer takes care of uploading the files from here
         }
@@ -136,11 +136,13 @@ router.post("/link/create",firewall,auth,upload.fields([{name:'video_file',maxCo
         let data = ""
         if (linkSource == "GoogleDrive") {
             let linkId = getIdFromUrl(main_link,type)
-            data = await getGdriveData(linkId)
+            data = await getGdriveData(linkId) //this gets the stream paths from google dirve that are usually saved in `data`
         }
         let linkdata = {title,main_link,alt_link,subtitles:subtitles,preview_img:preview_img,type,slug,data:JSON.stringify(data)}
         if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
         let newLinkCreate = await DB.linksDB.createNewLink(linkdata)
+        //convert file to mp4
+        //let convertedFile = await convertVideo("../uploads/"+slug)//get the file extension somehow
         //get settings
         let autoConvert = (await DB.settingsDB.getConfig("autoConvert"))[0].var
         if (autoConvert == "1") {

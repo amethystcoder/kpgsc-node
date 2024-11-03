@@ -16,7 +16,7 @@ const convertVideo = (filePath)=>{
         let fileExtension = filePath.slice(lastDotOccurence + 1)
         let filewithoutExtension = filePath.slice(0,lastDotOccurence)
         if (acceptedVideoExtensions.includes(fileExtension)) {
-            fluentFfmpeg(`${filePath}`,{timeout:4200}).output(`${filewithoutExtension}.mp4`).on("end",()=>{
+            fluentFfmpeg(`${path.join(__dirname,filePath)}`,{timeout:4200}).output(path.join(__dirname,`${filewithoutExtension}.mp4`)).on("end",()=>{
                 console.log("done")
                 fs.unlink(path.join(__dirname,filePath))
                 //add code here to delete the mkv or other file
