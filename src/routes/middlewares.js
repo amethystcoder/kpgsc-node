@@ -70,7 +70,7 @@ const storage = multer.diskStorage({
       cb(null, './uploads');  // 'uploads/' is the directory
     },
     filename: function (req, file, cb) {
-      cb(null, generateUniqueId(25) + path.extname(file.originalname));
+      cb(null, generateUniqueId(50) + path.extname(file.originalname));
     }
   });
 const upload = multer({storage:storage})

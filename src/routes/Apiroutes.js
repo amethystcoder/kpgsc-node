@@ -1,6 +1,7 @@
 let express = require('express')
 const router = express.Router()
 const fs = require('fs');
+const crypto = require('crypto')
 const path = require('path')
 const sources = require("../sources/sources")
 const getSourceName = require("../utils/getSourceName")
@@ -11,6 +12,7 @@ const bcrypt = require('bcryptjs')
 const getGdriveData = require("../services/getGdriveData");
 const getIdFromUrl = require('../utils/getIdFromUrl');
 const parseFileSizeToReadable = require('../utils/parseFileSizesToReadable');
+const {convertVideo} = require('../utils/convertUnusableCodec')
 const {encryptVideoStream} = require('../utils/encryptMediaFile')
 const {auth,firewall,upload,rateLimit} = require("./middlewares");
 const {sendHlsRequest,sendMultipleHlsRequest} = require('../services/sendHlsRequest');
@@ -104,8 +106,10 @@ router.delete("/hls/Multidelete/:ids",async (req,res)=>{
 
 router.post("/link/create",firewall,auth,upload.fields([{name:'video_file',maxCount:1},
     {name:'subtitles',maxCount:1},{name:'preview_img',maxCount:1}]),async (req,res)=>{
+        //find a way to get the video file name. either from the slug or the file itself
     try {
         let main_link = ""
+        let slug = ""
         const {title,alt_link} = req.body
         if(req.body.link_select == "link"){
             main_link = req.body.main_link
@@ -119,14 +123,16 @@ router.post("/link/create",firewall,auth,upload.fields([{name:'video_file',maxCo
             const {video_file} = req.files
             const allowedMimes = ["video/mp4"]
             if (!video_file || video_file.length == 0) throw EvalError("Please Upload a video and try again")
-            main_link = req.protocol+"://"+req.headers.host+"/"+video_file[0].filename
+            main_link = req.protocol+"://"+req.headers.host+"/api/getmediafile/"+video_file[0].filename 
+            slug = video_file[0].filename.slice(0,video_file[0].lastIndexOf(".")) //without the extensions
+            //multer takes care of uploading the files from here
         }
         const subtitles = req.files.subtitles ? req.protocol+"://"+req.headers.host+"/api/getmediafile/"+req.files.subtitles[0].filename : ""
         const preview_img = req.body.preview_img_link ? req.body.preview_img_link : req.files.preview_img ? req.protocol+"://"+req.headers.host+"/api/getmediafile/"+req.files.preview_img[0].filename : ""
-        //Write code to save files to upload folder
+        //Write code to save files from links like gdrive to upload folder
         let linkSource = getSourceName(main_link)
         let type = linkSource
-        let slug = generateUniqueId(50)
+        slug = slug == "" ? slug : generateUniqueId(50) //check if the slug has already been set i.e by an uploaded file
         let data = ""
         if (linkSource == "GoogleDrive") {
             let linkId = getIdFromUrl(main_link,type)
@@ -134,7 +140,7 @@ router.post("/link/create",firewall,auth,upload.fields([{name:'video_file',maxCo
         }
         let linkdata = {title,main_link,alt_link,subtitles:subtitles,preview_img:preview_img,type,slug,data:JSON.stringify(data)}
         if (!linkSource || linkSource == '') throw EvalError("Incorrect link provided. Check that the link is either a GDrive, Yandex, Box, OkRu or Direct link")
-        let newLinkCreate = await DB.linksDB.createNewLink(linkdata) 
+        let newLinkCreate = await DB.linksDB.createNewLink(linkdata)
         //get settings
         let autoConvert = (await DB.settingsDB.getConfig("autoConvert"))[0].var
         if (autoConvert == "1") {
@@ -273,9 +279,9 @@ router.get("/stream/:slug",firewall,auth,async (req,res)=>{
         let streamingData = Streamer.streamVideoFile(slug,source,range)//we need to be able to determine the kind of source
         //encrypt video data
         res.writeHead(206,streamingData.headers)
-        let encryptedStream = await encryptVideoStream(streamingData.videoStream)//note to create code for getting the key e.t.c
-        encryptedStream.pipe(res)
-        //streamingData.videoStream.pipe(res)
+        /* let encryptedStream = await encryptVideoStream(streamingData.videoStream,crypto.randomBytes(32),crypto.randomBytes(16))//note to create code for getting the key e.t.c
+        encryptedStream.pipe(res) */
+        streamingData.videoStream.pipe(res)
     } catch (error) {
         console.log(error)
         res.json({error})
