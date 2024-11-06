@@ -14,6 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-core@latest/build/p2p-media-loader-core.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@latest/build/p2p-media-loader-hlsjs.min.js"></script>
     <script src="../static/activeVideoConnection.js"></script>
+    <script src="../static/clientvid.js"></script>
 
 
      <!-- Import map for P2P Media Loader modules -->
@@ -39,6 +40,9 @@
                 type:"<%=videoMime%>"
             }]
         }
+
+        
+
         window.addEventListener("DOMContentLoaded",async ()=>{
             let player = videojs("video",options)
             //fetch instead...
