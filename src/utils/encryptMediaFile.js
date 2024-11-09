@@ -12,7 +12,7 @@ const Stream = require('stream')
  */
 const encryptVideoStream = (readStream, encryptionKey, iv) => {
     return new Promise((resolve, reject) => {
-        const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(encryptionKey), Buffer.from(iv));
+        const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(encryptionKey), Buffer.from(iv));
         const encryptedChunks = [];
 
         readStream.on('data', (chunk) => {

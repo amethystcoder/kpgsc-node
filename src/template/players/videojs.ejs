@@ -28,17 +28,17 @@
       </script>
 
       <!-- Module script to initialize Vidstack player with P2P Media Loader -->
-    <script type="module">
+    <!-- <script type="module">
         import { HlsJsP2PEngine } from "p2p-media-loader-hlsjs";
 
         let isHls = '<%=isHls%>';
         let options = {
             autoplay: true,
             controls:true,
-            sources : [{
+            /* sources : [{
                 src:'<%=videoLink%>',
                 type:"<%=videoMime%>"
-            }]
+            }] */
         }
 
         
@@ -74,20 +74,16 @@
           });
 
           hls.attachMedia(player);
-          hls.loadSource('<%=videoLink%>');
+          //hls.loadSource('<%=videoLink%>');
         }
-      </script>
-
-
-
-    <script>
-        
-    </script>
+      </script> -->
 </head>
-<body>
+<body><!-- <%=videoLink%> -->
     <%- include('../sections/videolink')%>
-    <video id="video" class="video-js vjs-default-skin gd-video" controls playsinline>
-        <source src="<%=videoLink%>" type="<%=videoMime%>">
-    </video>
+    <!-- <video id="video" class="video-js vjs-default-skin gd-video" controls playsinline>
+        <source src="" type="<%=videoMime%>">
+    </video> -->
+
+    <video id="test-vid" controls width="500px"></video>
 </body>
 </html>
