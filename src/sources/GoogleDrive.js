@@ -92,6 +92,30 @@ const downloadStreamFile = async (driveInstance,fileId,access_token,res) =>{
     }).pipe(dest);
 }
 
+/**
+ * 
+ * @param {undefined | {}} authData 
+ * @param {string} fileId 
+ * @param {string} DestinationName 
+ * @returns {fs.ReadStream}
+ */
+const downloadGDriveStreamFile = async (authData,fileId,res) =>{
+    //get refresh token
+    const refresh_data = await axios.post("https://oauth2.googleapis.com/token",{
+        client_id:authData.client_id,
+        client_secret:authData.client_secret,
+        grant_type:"refresh_token",
+        refresh_token:authData.refresh_token
+    })
+    
+    const data = await axios.get(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,{
+    headers:{
+        "Authorization" : "Bearer " + refresh_data.data.access_token
+    },responseType:"stream"
+    }) 
+    return data.data
+}
+
 
 /**
  * 
