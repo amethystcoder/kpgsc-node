@@ -125,6 +125,21 @@
                 </span>
                 <span class="gen-sect">
                     <span>
+                        <h3>AES Encryption</h3>
+                        <p>if turned on streams from videos (basic and hls), would be encrypted</p>
+                    </span>
+                    <label class="switch">
+                        <% if(settings.aes == '0') {%>
+                        <input type="checkbox" class="switch-input" name="aes" id="aes"   onchange="editCheck('aes','aes')">
+                        <% } %>
+                        <% if(settings.aes == '1') {%>
+                            <input type="checkbox" class="switch-input" name="aes" id="aes" checked  onchange="editCheck('aes','aes')">
+                        <% } %>
+                        <span class="switch-slider"></span>
+                    </label>
+                </span>
+                <span class="gen-sect">
+                    <span>
                         <h3>Automatic Convert</h3>
                         <p>Turn Automatic Conversion to hls immediately after upload on or off</p>
                     </span>

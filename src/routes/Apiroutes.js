@@ -278,15 +278,22 @@ router.get("/stream/:slug",firewall,auth,async (req,res)=>{
         //set headers
         range = Number(range.replace(/\D/g,""));
 
+        //check if encryption is enabled
+        let AESEncryptionEnabled = (await DB.settingsDB.getConfig("aes"))[0].var
+
         let streamingData = Streamer.streamVideoFile(slug,source,range)//we need to be able to determine the kind of source
-        //encrypt video data
-        /* const initializationVector = crypto.randomBytes(16)
-        const encryptionKey = crypto.randomBytes(32)
-        let encryptedStream = await encryptVideoStream(streamingData.videoStream,encryptionKey,initializationVector)//note to create code for getting the key e.t.c
-        res.writeHead(206,{...streamingData.headers,"impdata":encodeURI(encryptionKey.toString("base64")+";"+initializationVector.toString("base64")+";"+"AES-GCM"+";"+String(128))})
-        encryptedStream.pipe(res) */
-        res.writeHead(206,streamingData.headers)
-        streamingData.videoStream.pipe(res)
+        if(AESEncryptionEnabled == "1"){
+            //encrypt video data
+            const initializationVector = crypto.randomBytes(16)
+            const encryptionKey = crypto.randomBytes(32)
+            let encryptedStream = await encryptVideoStream(streamingData.videoStream,encryptionKey,initializationVector)//note to create code for getting the key e.t.c
+            res.writeHead(206,{...streamingData.headers,"impdata":encodeURI(encryptionKey.toString("base64")+";"+initializationVector.toString("base64")+";"+"AES-GCM"+";"+String(128))})
+            encryptedStream.pipe(res)
+        }
+        else{
+            res.writeHead(206,streamingData.headers)
+            streamingData.videoStream.pipe(res)
+        }
     } catch (error) {
         console.log(error)
         res.json({error})

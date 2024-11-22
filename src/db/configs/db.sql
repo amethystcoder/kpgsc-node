@@ -249,7 +249,9 @@ INSERT INTO `settings` (`config`, `var`) VALUES
 ('hlsSegmentName', 'ts'),
 ('m3u8Name', 'm3u8'),
 ('allowCaptcha', '1'),
-('autoConvert','1');
+('autoConvert','1'),
+('aes','1'),
+('gpu_enabled','1');
 
 --
 -- Dumping data for table `users`

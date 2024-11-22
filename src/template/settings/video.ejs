@@ -29,6 +29,25 @@
                 })
                 .catch(error=>{console.log(error)})
         }
+        function editCheck(id,section){
+            let checked = document.getElementById(id).checked
+            fetch(`../api/settings/edit`,{
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        name:section,
+                        value:checked ? '1' : '0'
+                    }),
+                    method:"PATCH"
+                }).then(Response=>Response.json())
+                .then(body=>{
+                    if(body.success){
+                        window.location.reload()
+                    }
+                })
+                .catch(error=>{console.log(error)})
+        }
     </script>
     <style>
         .go-prev{
@@ -87,6 +106,21 @@
                         <p>Add your jw player license</p>
                     </span>
                     <input type="text" class="light" placeholder="Add your jw player license" onchange="editSpecific('jw-license','jw_license')" value="<%=settings.jw_license%>" id="jw-license" name="jw-license">
+                </span>
+                <span class="gen-sect">
+                    <span>
+                        <h3>GPU enhanced HLS conversion</h3>
+                        <p>normally, the cpu handles conversion, but when turned on, the GPU takes over making conversion faster (falls back to CPU if GPU is not present)</p>
+                    </span>
+                    <label class="switch">
+                        <% if(settings.gpu_enabled == '0') {%>
+                        <input type="checkbox" class="switch-input" name="gpu_enabled" id="gpu_enabled"   onchange="editCheck('gpu_enabled','gpu_enabled')">
+                        <% } %>
+                        <% if(settings.gpu_enabled == '1') {%>
+                            <input type="checkbox" class="switch-input" name="gpu_enabled" id="gpu_enabled" checked  onchange="editCheck('gpu_enabled','gpu_enabled')">
+                        <% } %>
+                        <span class="switch-slider"></span>
+                    </label>
                 </span>
                 <!-- More to add here, check back later -->
                 <span class="gen-sect">
