@@ -161,6 +161,6 @@ const getSource = async (url,id) =>{
 }
 
 module.exports = {
-    getSource,downloadFile,getFileData,generateGoogleAuthUrl,downloadStreamFile,initiateDrive,generateOauth,getFiles,downloadGdriveVideo
+    getSource,downloadFile,getFileData,generateGoogleAuthUrl,downloadStreamFile,downloadGDriveStreamFile,initiateDrive,generateOauth,getFiles,downloadGdriveVideo
 }
 
