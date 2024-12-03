@@ -100,6 +100,13 @@ let getHlsLinkUsinglinkId = async (linkId,ids = [])=>{
 }
 
 /**
+ * @argument {string} slug
+ */
+let getHlsLinkUsingslug = async (slug,slugs = [])=>{
+    return await get(`file_id = ${dbInstance.escape(slug)}${slugs && slugs.length > 0 ? " OR '" : ""}` + slugs.join("' OR file_id = '") + `${slugs && slugs.length > 0 ? "'" : ""}`)
+}
+
+/**
  * @argument {string} linkId
  */
 let getHlsLinkUsingServerId = async (serverId)=>{
@@ -188,6 +195,7 @@ module.exports = {
     getHlsLinkUsingServerId,
     getHlsLinkUsingId,
     getHlsLinkUsinglinkId,
+    getHlsLinkUsingslug,
     updateUsingId,
     deleteUsingId,
     customDelete,

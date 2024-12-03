@@ -172,9 +172,16 @@ router.get('/video/:slug',firewall,authClient,async (req,res)=>{
         const type = req.query.type || ""
         let slug = req.params.slug
         let isHls = (type == "hls")
-        let videoLink = type == "hls" ? `../api/hls/${slug}/${slug}` : `../api/stream/${slug}` //check if `drm` is on, then use direct m3u8 link
-        if (isHls && drm == "0") {
-            videoLink = `../videos/${slug}/${slug}.m3u8`
+        if (isHls) {
+            //get the id of server and get the domain
+            let hlsData = (await DBs.hlsLinksDB.getHlsLinkUsingslug(slug))[0]
+            //get the domain of the server based on the server id
+            const serverData = (await DBs.serversDB.getServerUsingId(hlsData.server_id))[0]       
+            //hls data comes from the domain, streaming data comes from the app
+            let videoLink = type == "hls" ? `${serverData.domain}/api/hls/${slug}/${slug}` : `../api/stream/${slug}` //check if `drm` is on, then use direct m3u8 link
+            if (drm == "0") {
+                videoLink = `../videos/${slug}/${slug}.m3u8`
+            }
         }
         let videoMime = type == "hls" ? `application/x-mpegURL` : `video/mp4`
         //get all available link Data

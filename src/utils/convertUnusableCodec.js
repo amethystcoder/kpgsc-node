@@ -2,6 +2,7 @@ const fluentFfmpeg = require('fluent-ffmpeg')
 const Ffmpeg = require('@ffmpeg-installer/ffmpeg')
 const fs = require('fs/promises')
 const path = require("path")
+const settings = require("../db/settingsDB")
 
 fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
 
@@ -11,6 +12,7 @@ fluentFfmpeg.setFfmpegPath(Ffmpeg.path)
  */
 const convertVideo = (filePath)=>{
     try {
+        /* if ((await settings.getConfig(""))) {} */
         const acceptedVideoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'mkv', 'flv']
         const lastDotOccurence = filePath.lastIndexOf(".")
         let fileExtension = filePath.slice(lastDotOccurence + 1)
